@@ -3,8 +3,8 @@ from typing import Optional
 from cytoolz.curried import assoc, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from param_types import Content, Label, Length, Relative
-from utils import RenderType, attach_func, examine_sharp, render
+from .param_types import Content, Label, Length, Relative
+from .utils import RenderType, attach_func, examine_sharp, render
 
 
 def text(

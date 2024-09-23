@@ -1,7 +1,7 @@
 import doctest
 import unittest
 
-import functions
+from typstpy import functions
 
 
 def load_tests(loader, tests, ignore):

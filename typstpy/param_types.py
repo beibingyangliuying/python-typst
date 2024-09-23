@@ -1,6 +1,6 @@
 from attrs import field, frozen
 
-from utils import FormatType, format
+from .utils import FormatType, format
 
 
 @frozen
