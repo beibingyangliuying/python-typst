@@ -71,15 +71,7 @@ def format(format_type: FormatType, target: Any) -> str:
 
 
 # endregion
-# region utils
-
-
-def examine_sharp(content: str) -> str:
-    return content.lstrip("#")
-
-
-# endregion
-# region decorators
+# region decorator
 
 
 def attach_func(func: Callable, name: Optional[str] = None) -> Callable:

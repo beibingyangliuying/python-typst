@@ -1,5 +1,5 @@
 from .functions import emph, figure, heading, image, par, strong, text
-from .param_types import Content, Label, Length, Relative
+from .param_types import Block, Content, Label, Length, Relative
 
 __all__ = [
     "emph",
@@ -9,6 +9,7 @@ __all__ = [
     "par",
     "strong",
     "text",
+    "Block",
     "Content",
     "Label",
     "Length",

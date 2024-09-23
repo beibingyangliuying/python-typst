@@ -3,25 +3,25 @@ from typing import Optional
 from cytoolz.curried import assoc, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from .param_types import Content, Label, Length, Relative
-from .utils import RenderType, attach_func, examine_sharp, render
+from .param_types import Block, Content, Label, Length, Relative
+from .utils import RenderType, attach_func, render
 
 
 def text(
-    content: str,
+    content: Block,
     *,
     font: Optional[str | tuple[str]] = None,
     fallback: Optional[bool] = None,
-) -> str:
+) -> Block:
     """Interface of `text` function in typst.
 
     Args:
-        content (str): Content in which all text is styled according to the other arguments.
+        content (Block): Content in which all text is styled according to the other arguments.
         font (Optional[str  |  tuple[str]], optional): A font family name or priority list of font family names. Defaults to None.
         fallback (Optional[bool], optional): Whether to allow last resort font fallback when the primary font list contains no match. This lets Typst search through all available fonts for the most similar one that has the necessary glyphs. Defaults to None.
 
     Returns:
-        str: Executable typst code.
+        Block: Executable typst block.
 
     Examples:
         >>> print(text("Hello, World!", font="Arial", fallback=True))
@@ -39,14 +39,14 @@ def text(
     return rf"#text({render(RenderType.DICT)(params)})[{content}]"
 
 
-def emph(content: str) -> str:
+def emph(content: Block) -> Block:
     """Interface of `emph` function in typst.
 
     Args:
-        content (str): The content to emphasize.
+        content (Block): The content to emphasize.
 
     Returns:
-        str: Executable typst code.
+        Block: Executable typst block.
 
     Examples:
         >>> print(emph("Hello, World!"))
@@ -55,15 +55,15 @@ def emph(content: str) -> str:
     return rf"#emph[{content}]"
 
 
-def strong(content: str, *, delta: Optional[int] = None) -> str:
+def strong(content: Block, *, delta: Optional[int] = None) -> Block:
     """Interface of `strong` function in typst.
 
     Args:
-        content (str): The content to strongly emphasize.
+        content (Block): The content to strongly emphasize.
         delta (Optional[int], optional): The delta to apply on the font weight. Defaults to None.
 
     Returns:
-        str: Executable typst code.
+        Block: Executable typst block.
 
     Examples:
         >>> print(strong("Hello, World!"))
@@ -78,26 +78,26 @@ def strong(content: str, *, delta: Optional[int] = None) -> str:
 
 
 def par(
-    content: str,
+    content: Block,
     *,
     leading: Optional[Length] = None,
     justify: Optional[bool] = None,
     linebreaks: Optional[str] = None,
     first_line_indent: Optional[Length] = None,
     hanging_indent: Optional[Length] = None,
-) -> str:
+) -> Block:
     """Interface of `par` function in typst.
 
     Args:
-        content (str): The contents of the paragraph.
+        content (Block): The contents of the paragraph.
         leading (Optional[Length], optional): The spacing between lines. Defaults to None.
         justify (Optional[bool], optional): Whether to justify text in its line. Defaults to None.
-        linebreaks (Optional[str], optional): How to determine line breaks. Defaults to None.
+        linebreaks (Optional[str], optional): How to determine line breaks. Options are "simple" and "optimized". Defaults to None.
         first_line_indent (Optional[Length], optional): The indent the first line of a paragraph should have. Defaults to None.
         hanging_indent (Optional[Length], optional): The indent all but the first line of a paragraph should have. Defaults to None.
 
     Returns:
-        str: Executable typst code.
+        Block: Executable typst block.
 
     Examples:
         >>> print(par("Hello, World!", leading=Length(1.5, "em")))
@@ -128,24 +128,24 @@ def par(
 
 
 def heading(
-    content: str,
+    content: Block,
     *,
     level: int = 1,
     supplement: Optional[Content] = None,
     numbering: Optional[str] = None,
     label: Optional[Label] = None,
-) -> str:
+) -> Block:
     """Interface of `heading` function in typst.
 
     Args:
-        content (str): The heading's title.
+        content (Block): The heading's title.
         level (int, optional): The absolute nesting depth of the heading, starting from one. Defaults to 1.
         supplement (Optional[Content], optional): A supplement for the heading. Defaults to None.
         numbering (Optional[str], optional): How to number the heading. Defaults to None.
         label (Optional[Label], optional): Cross-reference for the heading. Defaults to None.
 
     Returns:
-        str: Executable typst code.
+        Block: Executable typst block.
 
     Examples:
         >>> print(heading("Hello, World!", level=2, supplement=Content("Chapter"), label=Label("chap:chapter")))
@@ -175,23 +175,23 @@ def image(
     height: Optional[Relative] = None,
     alt: Optional[str] = None,
     fit: Optional[str] = None,
-) -> str:
+) -> Block:
     """Interface of `image` function in typst.
 
     Args:
         path (str): Path to an image file.
-        format (Optional[str], optional): The image's format. Detected automatically by default. Defaults to None.
+        format (Optional[str], optional): The image's format. Detected automatically by default. Options are "png", "jpg", "gif", and "svg". Defaults to None.
         width (Optional[Relative], optional): The width of the image. Defaults to None.
         height (Optional[Relative], optional): The height of the image. Defaults to None.
         alt (Optional[str], optional): A text describing the image. Defaults to None.
-        fit (Optional[str], optional): How the image should adjust itself to a given area (the area is defined by the width and height fields). Note that fit doesn't visually change anything if the area's aspect ratio is the same as the image's one. Defaults to None.
+        fit (Optional[str], optional): How the image should adjust itself to a given area (the area is defined by the width and height fields). Note that fit doesn't visually change anything if the area's aspect ratio is the same as the image's one. Options are "cover", "contain", and "stretch". Defaults to None.
 
     Returns:
-        str: Executable typst code.
+        Block: Executable typst block.
 
     Examples:
         >>> print(image("image.png"))
-        #image("image.png", )
+        #image("image.png")
         >>> print(image("image.png", format="png"))
         #image("image.png", format: "png")
     """
@@ -206,16 +206,18 @@ def image(
         .map(valfilter(lambda x: x is not None))
         .flush()
     )
+    if not params:
+        return rf"#image({render(RenderType.VALUE)(path)})"
     return (
         rf"#image({render(RenderType.VALUE)(path)}, {render(RenderType.DICT)(params)})"
     )
 
 
-def _figure_caption(content: str, *, separator: Optional[Content] = None) -> Content:
+def _figure_caption(content: Block, *, separator: Optional[Content] = None) -> Content:
     """Interface of `figure.caption` function in typst.
 
     Args:
-        content (str): The caption's body.
+        content (Block): The caption's body.
         separator (Optional[Content], optional): The separator which will appear between the number and body. Defaults to None.
 
     Returns:
@@ -231,30 +233,33 @@ def _figure_caption(content: str, *, separator: Optional[Content] = None) -> Con
 
 @attach_func(_figure_caption, "caption")
 def figure(
-    content: str, *, caption: Optional[Content] = None, label: Optional[Label] = None
-) -> str:
+    content: Block, *, caption: Optional[Content] = None, label: Optional[Label] = None
+) -> Block:
     """Interface of `figure` function in typst.
 
     Args:
-        content (str): The content of the figure. Often, an image.
+        content (Block): The content of the figure. Often, an image.
         caption (Optional[Content], optional): The figure's caption. Defaults to None.
         label (Optional[Label], optional): Cross-reference for the figure. Defaults to None.
 
     Returns:
-        str: Executable typst code.
+        Block: Executable typst block.
 
     Examples:
         >>> print(figure(image("image.png")))
-        #figure(image("image.png", ), )
+        #figure(image("image.png"))
         >>> print(figure(image("image.png"), caption=Content("This is a figure.")))
-        #figure(image("image.png", ), caption: [This is a figure.])
+        #figure(image("image.png"), caption: [This is a figure.])
         >>> print(figure(image("image.png"), caption=Content("This is a figure."), label=Label("fig:figure")))
-        #figure(image("image.png", ), caption: [This is a figure.]) <fig:figure>
+        #figure(image("image.png"), caption: [This is a figure.]) <fig:figure>
         >>> print(figure(image("image.png"), caption=figure.caption("This is a figure.", separator=Content("---"))))
-        #figure(image("image.png", ), caption: [#figure.caption(separator: [---])[This is a figure.]])
+        #figure(image("image.png"), caption: figure.caption(separator: [---])[This is a figure.])
     """
     params = Pipe({"caption": caption}).map(valfilter(lambda x: x is not None)).flush()
-    result = rf"#figure({examine_sharp(content)}, {render(RenderType.DICT)(params)})"
+    if not params:
+        result = rf"#figure({Content.examine_sharp(content)})"
+    else:
+        result = rf"#figure({Content.examine_sharp(content)}, {render(RenderType.DICT)(params)})"
     if label:
         result += f" {label}"
     return result
