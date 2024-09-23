@@ -12,6 +12,7 @@ def text(
     *,
     font: Optional[str | tuple[str]] = None,
     fallback: Optional[bool] = None,
+    size: Optional[Length] = None,
 ) -> Block:
     """Interface of `text` function in typst.
 
@@ -19,6 +20,7 @@ def text(
         content (Block): Content in which all text is styled according to the other arguments.
         font (Optional[str  |  tuple[str]], optional): A font family name or priority list of font family names. Defaults to None.
         fallback (Optional[bool], optional): Whether to allow last resort font fallback when the primary font list contains no match. This lets Typst search through all available fonts for the most similar one that has the necessary glyphs. Defaults to None.
+        size (Optional[Length], optional): The size of the glyphs. Defaults to None.
 
     Returns:
         Block: Executable typst block.
@@ -28,9 +30,11 @@ def text(
         #text(font: "Arial", fallback: true)[Hello, World!]
         >>> print(text("Hello, World!", font=("Arial", "Times New Roman"), fallback=True))
         #text(font: ("Arial", "Times New Roman"), fallback: true)[Hello, World!]
+        >>> print(text("Hello, World!", size=Length(12, "pt")))
+        #text(size: 12pt)[Hello, World!]
     """
     params = (
-        Pipe({"font": font, "fallback": fallback})
+        Pipe({"font": font, "fallback": fallback, "size": size})
         .map(valfilter(lambda x: x is not None))
         .flush()
     )
