@@ -1,7 +1,9 @@
 from enum import Enum, auto
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from cytoolz.curried import curry, map  # type:ignore
+
+# region render
 
 
 class RenderType(Enum):
@@ -46,6 +48,10 @@ def render(render_type: RenderType, target: Any) -> str:
     return _render(render_type)(target)
 
 
+# endregion
+# region format
+
+
 class FormatType(Enum):
     FLOAT = auto()
 
@@ -64,5 +70,27 @@ def format(format_type: FormatType, target: Any) -> str:
     return _format(format_type)(target)
 
 
+# endregion
+# region utils
+
+
 def examine_sharp(content: str) -> str:
     return content.lstrip("#")
+
+
+# endregion
+# region decorators
+
+
+def attach_func(func: Callable, name: Optional[str] = None) -> Callable:
+    def wrapper(_func: Callable) -> Callable:
+        _name = name if name else _func.__name__
+        if _name.startswith("_"):
+            raise ValueError(f"Invalid name: {_name}.")
+        setattr(_func, _name, func)
+        return _func
+
+    return wrapper
+
+
+# endregion
