@@ -1,6 +1,6 @@
 from typing import Optional
 
-from cytoolz.curried import valfilter  # type:ignore
+from cytoolz.curried import assoc, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
 from param_types import Content, Label, Length, Relative
@@ -96,6 +96,8 @@ def par(
     Examples:
         >>> par("Hello, World!", leading=Length(1.5, "em"))
         '#par(leading: 1.5em)[Hello, World!]'
+        >>> par("Hello, World!", justify=True)
+        '#par(justify: true)[Hello, World!]'
     """
     params = (
         Pipe(
@@ -113,6 +115,46 @@ def par(
     if not params:
         return content
     return rf"#par({render(RenderType.DICT)(params)})[{content}]"
+
+
+def heading(
+    content: str,
+    *,
+    level: int = 1,
+    supplement: Optional[Content] = None,
+    numbering: Optional[str] = None,
+    label: Optional[Label] = None,
+) -> str:
+    """_summary_
+
+    Args:
+        content (str): _description_
+        level (int, optional): _description_. Defaults to 1.
+        supplement (Optional[Content], optional): _description_. Defaults to None.
+        numbering (Optional[str], optional): _description_. Defaults to None.
+        label (Optional[Label], optional): _description_. Defaults to None.
+
+    Returns:
+        str: _description_
+
+    Examples:
+        >>> heading("Hello, World!", level=2, supplement=Content("Chapter"), label=Label("chap:chapter"))
+        '#heading(supplement: [Chapter], level: 2)[Hello, World!] <chap:chapter>'
+        >>> heading("Hello, World!", level=2)
+        '== Hello, World!'
+    """
+    params = (
+        Pipe({"supplement": supplement, "numbering": numbering})
+        .map(valfilter(lambda x: x is not None))
+        .flush()
+    )
+    if not params:
+        result = rf"{"="*level} {content}"
+    else:
+        result = rf"#heading({render(RenderType.DICT)(assoc(params,'level',level))})[{content}]"
+    if label:
+        result += f" {label}"
+    return result
 
 
 def image(
@@ -136,6 +178,12 @@ def image(
 
     Returns:
         str: _description_
+
+    Examples:
+        >>> image("image.png")
+        '#image("image.png", )'
+        >>> image("image.png", format="png")
+        '#image("image.png", format: "png")'
     """
     params = (
         Pipe(
@@ -161,9 +209,17 @@ def figure(
 
     Returns:
         str: _description_
+
+    Examples:
+        >>> figure(image("image.png"))
+        '#figure(image("image.png", ), )'
+        >>> figure(image("image.png"), caption=Content("This is a figure."))
+        '#figure(image("image.png", ), caption: [This is a figure.])'
+        >>> figure(image("image.png"), caption=Content("This is a figure."), label=Label("fig:figure"))
+        '#figure(image("image.png", ), caption: [This is a figure.]) <fig:figure>'
     """
     params = Pipe({"caption": caption}).map(valfilter(lambda x: x is not None)).flush()
     result = rf"#figure({examine_sharp(content)}, {render(RenderType.DICT)(params)})"
     if label:
-        result += str(label)
+        result += f" {label}"
     return result
