@@ -9,8 +9,8 @@ show_column_numbers = true
 disallow_incomplete_defs = true
 
 [tool.poetry]
-name = "python-typst"
-version = "0.1.0"
+name = "typstpy"
+version = "0.0.1"
 description = "Python interface to generate Typst code."
 authors = ["chenjunhan <beibingyangliuying@foxmail.com>"]
 license = "MIT"

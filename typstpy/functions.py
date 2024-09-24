@@ -26,12 +26,12 @@ def text(
         Block: Executable typst block.
 
     Examples:
-        >>> print(text("Hello, World!", font="Arial", fallback=True))
-        #text(font: "Arial", fallback: true)[Hello, World!]
-        >>> print(text("Hello, World!", font=("Arial", "Times New Roman"), fallback=True))
-        #text(font: ("Arial", "Times New Roman"), fallback: true)[Hello, World!]
-        >>> print(text("Hello, World!", size=Length(12, "pt")))
-        #text(size: 12pt)[Hello, World!]
+        >>> text("Hello, World!", font="Arial", fallback=True)
+        '#text(font: "Arial", fallback: true)[Hello, World!]'
+        >>> text("Hello, World!", font=("Arial", "Times New Roman"), fallback=True)
+        '#text(font: ("Arial", "Times New Roman"), fallback: true)[Hello, World!]'
+        >>> text("Hello, World!", size=Length(12, "pt"))
+        '#text(size: 12pt)[Hello, World!]'
     """
     params = (
         Pipe({"font": font, "fallback": fallback, "size": size})
@@ -53,8 +53,8 @@ def emph(content: Block) -> Block:
         Block: Executable typst block.
 
     Examples:
-        >>> print(emph("Hello, World!"))
-        #emph[Hello, World!]
+        >>> emph("Hello, World!")
+        '#emph[Hello, World!]'
     """
     return rf"#emph[{content}]"
 
@@ -70,10 +70,10 @@ def strong(content: Block, *, delta: Optional[int] = None) -> Block:
         Block: Executable typst block.
 
     Examples:
-        >>> print(strong("Hello, World!"))
-        #strong[Hello, World!]
-        >>> print(strong("Hello, World!", delta=300))
-        #strong(delta: 300)[Hello, World!]
+        >>> strong("Hello, World!")
+        '#strong[Hello, World!]'
+        >>> strong("Hello, World!", delta=300)
+        '#strong(delta: 300)[Hello, World!]'
     """
     params = Pipe({"delta": delta}).map(valfilter(lambda x: x is not None)).flush()
     if not params:
@@ -104,12 +104,12 @@ def par(
         Block: Executable typst block.
 
     Examples:
-        >>> print(par("Hello, World!", leading=Length(1.5, "em")))
-        #par(leading: 1.5em)[Hello, World!]
-        >>> print(par("Hello, World!", justify=True))
-        #par(justify: true)[Hello, World!]
-        >>> print(par("Hello, World!"))
-        Hello, World!
+        >>> par("Hello, World!", leading=Length(1.5, "em"))
+        '#par(leading: 1.5em)[Hello, World!]'
+        >>> par("Hello, World!", justify=True)
+        '#par(justify: true)[Hello, World!]'
+        >>> par("Hello, World!")
+        'Hello, World!'
     """
     if linebreaks and linebreaks not in ("simple", "optimized"):
         raise ValueError(f"Invalid value for linebreaks: {linebreaks}.")
@@ -152,10 +152,10 @@ def heading(
         Block: Executable typst block.
 
     Examples:
-        >>> print(heading("Hello, World!", level=2, supplement=Content("Chapter"), label=Label("chap:chapter")))
-        #heading(supplement: [Chapter], level: 2)[Hello, World!] <chap:chapter>
-        >>> print(heading("Hello, World!", level=2))
-        == Hello, World!
+        >>> heading("Hello, World!", level=2, supplement=Content("Chapter"), label=Label("chap:chapter"))
+        '#heading(supplement: [Chapter], level: 2)[Hello, World!] <chap:chapter>'
+        >>> heading("Hello, World!", level=2)
+        '== Hello, World!'
     """
     params = (
         Pipe({"supplement": supplement, "numbering": numbering})
@@ -194,10 +194,10 @@ def image(
         Block: Executable typst block.
 
     Examples:
-        >>> print(image("image.png"))
-        #image("image.png")
-        >>> print(image("image.png", format="png"))
-        #image("image.png", format: "png")
+        >>> image("image.png")
+        '#image("image.png")'
+        >>> image("image.png", format="png")
+        '#image("image.png", format: "png")'
     """
     if format and format not in ("png", "jpg", "gif", "svg"):
         raise ValueError(f"Invalid value for format: {format}.")
@@ -250,14 +250,14 @@ def figure(
         Block: Executable typst block.
 
     Examples:
-        >>> print(figure(image("image.png")))
-        #figure(image("image.png"))
-        >>> print(figure(image("image.png"), caption=Content("This is a figure.")))
-        #figure(image("image.png"), caption: [This is a figure.])
-        >>> print(figure(image("image.png"), caption=Content("This is a figure."), label=Label("fig:figure")))
-        #figure(image("image.png"), caption: [This is a figure.]) <fig:figure>
-        >>> print(figure(image("image.png"), caption=figure.caption("This is a figure.", separator=Content("---"))))
-        #figure(image("image.png"), caption: figure.caption(separator: [---])[This is a figure.])
+        >>> figure(image("image.png"))
+        '#figure(image("image.png"))'
+        >>> figure(image("image.png"), caption=Content("This is a figure."))
+        '#figure(image("image.png"), caption: [This is a figure.])'
+        >>> figure(image("image.png"), caption=Content("This is a figure."), label=Label("fig:figure"))
+        '#figure(image("image.png"), caption: [This is a figure.]) <fig:figure>'
+        >>> figure(image("image.png"), caption=figure.caption("This is a figure.", separator=Content("---")))
+        '#figure(image("image.png"), caption: figure.caption(separator: [---])[This is a figure.])'
     """
     params = Pipe({"caption": caption}).map(valfilter(lambda x: x is not None)).flush()
     if not params:
