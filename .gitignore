@@ -1,4 +1,5 @@
 dist/
 *.pyc
+*.ipynb
 *.typ
 *.png

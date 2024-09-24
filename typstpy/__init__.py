@@ -1,15 +1,19 @@
-from .functions import emph, figure, heading, image, par, strong, text
-from .param_types import Block, Content, Label, Length, Ratio, Relative
+from .functions import color, emph, figure, heading, image, luma, par, rgb, strong, text
+from .param_types import Block, Color, Content, Label, Length, Ratio, Relative
 
 __all__ = [
+    "color",
     "emph",
     "figure",
     "heading",
     "image",
+    "luma",
     "par",
+    "rgb",
     "strong",
     "text",
     "Block",
+    "Color",
     "Content",
     "Label",
     "Length",

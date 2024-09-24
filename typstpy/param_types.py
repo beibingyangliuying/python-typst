@@ -15,6 +15,8 @@ Block: TypeAlias = str
 
 @frozen
 class Content:
+    """A piece of document content."""
+
     content: Block = field()
 
     @content.validator
@@ -37,6 +39,8 @@ class Content:
 
 @frozen
 class Label:
+    """A label for an element."""
+
     label: str = field()
 
     @label.validator
@@ -50,12 +54,15 @@ class Label:
 
 @frozen
 class Length:
+    """A size or distance, possibly expressed with contextual units."""
+
     value: float = field(repr=format(FormatType.FLOAT))
     unit: str = field()
+    """One of "pt", "mm", "cm", "em" and "in"."""
 
     @unit.validator
     def _check_unit(self, attribute, value):
-        if value not in ("pt", "mm", "cm", "em"):
+        if value not in ("pt", "mm", "cm", "em", "in"):
             raise ValueError(f"Invalid unit: {value}.")
 
     def __pos__(self) -> "Length":
@@ -87,9 +94,49 @@ class Length:
     def __str__(self) -> str:
         return f"{format(FormatType.FLOAT)(self.value)}{self.unit}"
 
+    @staticmethod
+    def pt(value: float) -> "Length":
+        return Length(value, "pt")
+
+    @staticmethod
+    def mm(value: float) -> "Length":
+        return Length(value, "mm")
+
+    @staticmethod
+    def cm(value: float) -> "Length":
+        return Length(value, "cm")
+
+    @staticmethod
+    def em(value: float) -> "Length":
+        return Length(value, "em")
+
+    @staticmethod
+    def inch(value: float) -> "Length":
+        return Length(value, "in")
+
+    @staticmethod
+    def zihao(name: str) -> "Length":
+        zihao_dict = {
+            "一号": 26,
+            "小一": 24,
+            "二号": 22,
+            "小二": 18,
+            "三号": 16,
+            "小三": 15,
+            "四号": 14,
+            "小四": 12,
+            "五号": 10.5,
+            "小五": 9,
+            "六号": 7.5,
+            "小六": 6.5,
+        }
+        return Length.pt(zihao_dict[name])
+
 
 @frozen
 class Ratio:
+    """A ratio of a whole. Written as a number, followed by a percent sign."""
+
     value: float = field(repr=format(FormatType.FLOAT))
 
     def __pos__(self) -> "Ratio":
@@ -176,3 +223,6 @@ class _Relative:
 
 
 Relative: TypeAlias = Length | Ratio | _Relative
+"""This type is a combination of a `Length` and a `Ratio`."""
+Color: TypeAlias = Content
+"""A color in a specific color space."""

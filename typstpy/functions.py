@@ -1,26 +1,29 @@
-from typing import Optional
+from typing import Optional, overload
 
 from cytoolz.curried import assoc, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from .param_types import Block, Content, Label, Length, Relative
-from .utils import RenderType, attach_func, render
+from .param_types import Block, Color, Content, Label, Length, Ratio, Relative
+from .utils import ImplementType, RenderType, attach_func, implement_type, render
 
 
+@implement_type(ImplementType.STANDARD)
 def text(
     content: Block,
     *,
-    font: Optional[str | tuple[str]] = None,
+    font: Optional[str | tuple[str, ...]] = None,
     fallback: Optional[bool] = None,
     size: Optional[Length] = None,
+    fill: Optional[Color] = None,
 ) -> Block:
     """Interface of `text` function in typst.
 
     Args:
         content (Block): Content in which all text is styled according to the other arguments.
-        font (Optional[str  |  tuple[str]], optional): A font family name or priority list of font family names. Defaults to None.
+        font (Optional[str  |  tuple[str, ...]], optional): A font family name or priority list of font family names. Defaults to None.
         fallback (Optional[bool], optional): Whether to allow last resort font fallback when the primary font list contains no match. This lets Typst search through all available fonts for the most similar one that has the necessary glyphs. Defaults to None.
         size (Optional[Length], optional): The size of the glyphs. Defaults to None.
+        fill (Optional[Color], optional): The glyph fill paint. Defaults to None.
 
     Returns:
         Block: Executable typst block.
@@ -32,9 +35,11 @@ def text(
         '#text(font: ("Arial", "Times New Roman"), fallback: true)[Hello, World!]'
         >>> text("Hello, World!", size=Length(12, "pt"))
         '#text(size: 12pt)[Hello, World!]'
+        >>> text("Hello, World!", fill=color("red"))
+        '#text(fill: rgb("#ff4136"))[Hello, World!]'
     """
     params = (
-        Pipe({"font": font, "fallback": fallback, "size": size})
+        Pipe({"font": font, "fallback": fallback, "size": size, "fill": fill})
         .map(valfilter(lambda x: x is not None))
         .flush()
     )
@@ -43,6 +48,7 @@ def text(
     return rf"#text({render(RenderType.DICT)(params)})[{content}]"
 
 
+@implement_type(ImplementType.STANDARD)
 def emph(content: Block) -> Block:
     """Interface of `emph` function in typst.
 
@@ -59,6 +65,7 @@ def emph(content: Block) -> Block:
     return rf"#emph[{content}]"
 
 
+@implement_type(ImplementType.STANDARD)
 def strong(content: Block, *, delta: Optional[int] = None) -> Block:
     """Interface of `strong` function in typst.
 
@@ -81,6 +88,7 @@ def strong(content: Block, *, delta: Optional[int] = None) -> Block:
     return rf"#strong({render(RenderType.DICT)(params)})[{content}]"
 
 
+@implement_type(ImplementType.STANDARD)
 def par(
     content: Block,
     *,
@@ -131,6 +139,7 @@ def par(
     return rf"#par({render(RenderType.DICT)(params)})[{content}]"
 
 
+@implement_type(ImplementType.STANDARD)
 def heading(
     content: Block,
     *,
@@ -171,6 +180,7 @@ def heading(
     return result
 
 
+@implement_type(ImplementType.STANDARD)
 def image(
     path: str,
     *,
@@ -217,7 +227,11 @@ def image(
     )
 
 
-def _figure_caption(content: Block, *, separator: Optional[Content] = None) -> Content:
+# region figure
+
+
+@implement_type(ImplementType.STANDARD)
+def _caption(content: Block, *, separator: Optional[Content] = None) -> Content:
     """Interface of `figure.caption` function in typst.
 
     Args:
@@ -235,7 +249,8 @@ def _figure_caption(content: Block, *, separator: Optional[Content] = None) -> C
     return Content(rf"#figure.caption({render(RenderType.DICT)(params)})[{content}]")
 
 
-@attach_func(_figure_caption, "caption")
+@attach_func(_caption, "caption")
+@implement_type(ImplementType.STANDARD)
 def figure(
     content: Block, *, caption: Optional[Content] = None, label: Optional[Label] = None
 ) -> Block:
@@ -267,3 +282,121 @@ def figure(
     if label:
         result += f" {label}"
     return result
+
+
+# endregion
+# region color
+
+
+@overload
+def rgb(
+    red: int | Ratio,
+    green: int | Ratio,
+    blue: int | Ratio,
+    alpha: Optional[int | Ratio] = None,
+) -> Color:
+    """Interface of `rgb` function in typst.
+
+    Args:
+        red (int | Ratio): The red component.
+        green (int | Ratio): The green component.
+        blue (int | Ratio): The blue component.
+        alpha (Optional[int | Ratio], optional): The alpha component. Defaults to None.
+
+    Returns:
+        Color: The color in RGB space.
+    """
+
+
+@overload
+def rgb(hex: str) -> Color:
+    """Interface of `rgb` function in typst.
+
+    Args:
+        hex (str): The color in hexadecimal notation. Accepts three, four, six or eight hexadecimal digits and optionally a leading hash.
+
+    Returns:
+        Color: The color in RGB space.
+    """
+
+
+@implement_type(ImplementType.STANDARD)
+def rgb(*args):
+    if len(args) not in (1, 3, 4):
+        raise ValueError(f"Invalid number of arguments: {len(args)}.")
+    return Color(rf"#rgb{render(RenderType.VALUE)(args)}")
+
+
+@implement_type(ImplementType.STANDARD)
+def luma(lightness: int | Ratio, alpha: Optional[Ratio] = None) -> Color:
+    """Interface of `luma` function in typst.
+
+    Args:
+        lightness (int | Ratio): The lightness component.
+        alpha (Optional[Ratio], optional): The alpha component. Defaults to None.
+
+    Returns:
+        Color: The color in luma space.
+    """
+    if alpha:
+        return Color(rf"#luma{render(RenderType.VALUE)((lightness, alpha))}")
+    return Color(rf"#luma({render(RenderType.VALUE)(lightness)})")
+
+
+@attach_func(rgb)
+@attach_func(luma)
+@implement_type(ImplementType.NOTSTANDARD)
+def color(name: str) -> Color:
+    """Return the corresponding color based on the color name.
+
+    Args:
+        name (str): The color name.
+
+    Raises:
+        ValueError: Unsupported color name.
+
+    Returns:
+        Color: The color in RGB/luma space.
+    """
+    match name:
+        case "black":
+            return luma(0)
+        case "gray":
+            return luma(170)
+        case "silver":
+            return luma(221)
+        case "white":
+            return luma(255)
+        case "navy":
+            return rgb("#001f3f")
+        case "blue":
+            return rgb("#0074d9")
+        case "aqua":
+            return rgb("#7fdbff")
+        case "teal":
+            return rgb("#39cccc")
+        case "eastern":
+            return rgb("#239dad")
+        case "purple":
+            return rgb("#b10dc9")
+        case "fuchsia":
+            return rgb("#f012be")
+        case "maroon":
+            return rgb("#85144b")
+        case "red":
+            return rgb("#ff4136")
+        case "orange":
+            return rgb("#ff851b")
+        case "yellow":
+            return rgb("#ffdc00")
+        case "olive":
+            return rgb("#3d9970")
+        case "green":
+            return rgb("#2ecc40")
+        case "lime":
+            return rgb("#01ff70")
+        case _:
+            raise ValueError(f"Unsupported color name: {name}.")
+
+
+# endregion

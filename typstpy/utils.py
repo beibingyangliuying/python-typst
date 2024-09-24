@@ -85,4 +85,17 @@ def attach_func(func: Callable, name: Optional[str] = None) -> Callable:
     return wrapper
 
 
+class ImplementType(Enum):
+    STANDARD = auto()
+    NOTSTANDARD = auto()
+
+
+def implement_type(implement_type: ImplementType) -> Callable:
+    def wrapper(_func: Callable) -> Callable:
+        setattr(_func, "_implement_type", implement_type)
+        return _func
+
+    return wrapper
+
+
 # endregion
