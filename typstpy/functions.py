@@ -3,8 +3,8 @@ from typing import Optional, overload
 from cytoolz.curried import assoc, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from .param_types import Block, Color, Content, Label, Length, Ratio, Relative
-from .utils import ImplementType, RenderType, attach_func, implement_type, render
+from ._utils import ImplementType, RenderType, attach_func, implement_type, render
+from .param_types import Angle, Block, Color, Content, Label, Length, Ratio, Relative
 
 
 @implement_type(ImplementType.STANDARD)
@@ -343,8 +343,53 @@ def luma(lightness: int | Ratio, alpha: Optional[Ratio] = None) -> Color:
     return Color(rf"#luma({render(RenderType.VALUE)(lightness)})")
 
 
+@implement_type(ImplementType.STANDARD)
+def cmyk(cyan: Ratio, magenta: Ratio, yellow: Ratio, key: Ratio) -> Color:
+    """Interface of `cmyk` function in typst.
+
+    Args:
+        cyan (Ratio): The cyan component.
+        magenta (Ratio): The magenta component.
+        yellow (Ratio): The yellow component.
+        key (Ratio): The key component.
+
+    Returns:
+        Color: The color in CMYK space.
+    """
+    return Color(rf"#cmyk{render(RenderType.VALUE)((cyan, magenta, yellow, key))}")
+
+
+@implement_type(ImplementType.STANDARD)
+def _linear_rgb(
+    red: int | Ratio,
+    green: int | Ratio,
+    blue: int | Ratio,
+    alpha: Optional[int | Ratio] = None,
+) -> Color:
+    params = (red, green, blue)
+    if alpha:
+        params += (alpha,)  # type:ignore
+    return Color(rf"#color.linear-rgb{render(RenderType.VALUE)(params)}")
+
+
+@implement_type(ImplementType.STANDARD)
+def _hsl(
+    hue: Angle,
+    saturation: int | Ratio,
+    lightness: int | Ratio,
+    alpha: Optional[int | Ratio] = None,
+) -> Color:
+    params = (hue, saturation, lightness)
+    if alpha:
+        params += (alpha,)  # type:ignore
+    return Color(rf"#color.hsl{render(RenderType.VALUE)(params)}")
+
+
 @attach_func(rgb)
 @attach_func(luma)
+@attach_func(cmyk)
+@attach_func(_linear_rgb, "linear_rgb")
+@attach_func(_hsl, "hsl")
 @implement_type(ImplementType.NOTSTANDARD)
 def color(name: str) -> Color:
     """Return the corresponding color based on the color name.

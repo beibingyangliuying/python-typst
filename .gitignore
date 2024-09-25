@@ -3,3 +3,5 @@ dist/
 *.ipynb
 *.typ
 *.png
+*.wpr
+*.wpu
