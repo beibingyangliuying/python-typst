@@ -30,7 +30,7 @@ class _Sign(Enum):
 
 @frozen(slots=False)
 class _ValueUnit(ABC):
-    """Represent a field with a value and a unit."""
+    """Represent a field with a float value and a unit."""
 
     value: float = field(repr=format(FormatType.FLOAT))
     unit: str = field()
@@ -98,6 +98,8 @@ class _ValueUnit(ABC):
 @final
 @frozen
 class _ValueUnits:
+    """Represent a series of `ValueUnit`s."""
+
     items: tuple[_ValueUnit, ...] = field(
         validator=validators.deep_iterable(validators.instance_of(_ValueUnit))
     )

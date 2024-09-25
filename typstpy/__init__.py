@@ -12,7 +12,17 @@ from .functions import (
     strong,
     text,
 )
-from .param_types import Angle, Block, Color, Content, Label, Length, Ratio, Relative
+from .param_types import (
+    Alignment,
+    Angle,
+    Block,
+    Color,
+    Content,
+    Label,
+    Length,
+    Ratio,
+    Relative,
+)
 
 __all__ = [
     "Document",
@@ -27,6 +37,7 @@ __all__ = [
     "rgb",
     "strong",
     "text",
+    "Alignment",
     "Angle",
     "Block",
     "Color",

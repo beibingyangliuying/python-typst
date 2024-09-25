@@ -1,7 +1,10 @@
-from enum import Enum, auto
+"""Render Python object to valid typst function param."""
+
+from enum import Enum, IntFlag, auto
 from typing import Any, Callable
 
-from cytoolz.curried import curry, isiterable, map  # type:ignore
+from cytoolz.curried import curry, identity, isiterable, map  # type:ignore
+from pymonad.maybe import Maybe  # type:ignore
 
 
 class RenderType(Enum):
@@ -20,6 +23,14 @@ def _render(render_type: RenderType) -> Callable[[Any], str]:
                 return "true" if value else "false"
             case str():
                 return f'"{value}"'
+            case IntFlag():
+                name = value.name
+                return (
+                    Maybe(name, name)
+                    .map(str.lower)
+                    .map(lambda x: x.replace("|", "+"))
+                    .maybe(ValueError(), identity)
+                )
             case value if isiterable(value):
                 return f"({', '.join(map(render_value, value))})"
             case _:

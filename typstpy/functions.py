@@ -4,7 +4,17 @@ from cytoolz.curried import assoc, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
 from ._utils import ImplementType, RenderType, attach_func, implement_type, render
-from .param_types import Angle, Block, Color, Content, Label, Length, Ratio, Relative
+from .param_types import (
+    Alignment,
+    Angle,
+    Block,
+    Color,
+    Content,
+    Label,
+    Length,
+    Ratio,
+    Relative,
+)
 
 
 @implement_type(ImplementType.STANDARD)
@@ -231,18 +241,30 @@ def image(
 
 
 @implement_type(ImplementType.STANDARD)
-def _caption(content: Block, *, separator: Optional[Content] = None) -> Content:
+def _caption(
+    content: Block,
+    *,
+    position: Optional[Alignment] = None,
+    separator: Optional[Content] = None,
+) -> Content:
     """Interface of `figure.caption` function in typst.
 
     Args:
         content (Block): The caption's body.
+        position (Optional[Alignment], optional): The caption's position in the figure. Either top or bottom. Defaults to None.
         separator (Optional[Content], optional): The separator which will appear between the number and body. Defaults to None.
 
     Returns:
         Content: The caption's content.
     """
+    if (
+        position and not (Alignment.TOP | Alignment.BOTTOM) & position
+    ):  # TODO: Solve problem: Alignment.TOP|Alignment.BOTTOM
+        raise ValueError(f"Invalid value for position: {position}.")
     params = (
-        Pipe({"separator": separator}).map(valfilter(lambda x: x is not None)).flush()
+        Pipe({"position": position, "separator": separator})
+        .map(valfilter(lambda x: x is not None))
+        .flush()
     )
     if not params:
         return Content(content)
@@ -273,6 +295,8 @@ def figure(
         '#figure(image("image.png"), caption: [This is a figure.]) <fig:figure>'
         >>> figure(image("image.png"), caption=figure.caption("This is a figure.", separator=Content("---")))
         '#figure(image("image.png"), caption: figure.caption(separator: [---])[This is a figure.])'
+        >>> figure(image("image.png"), caption=figure.caption("This is a figure.", position=Alignment.TOP, separator=Content("---")))
+        '#figure(image("image.png"), caption: figure.caption(position: top, separator: [---])[This is a figure.])'
     """
     params = Pipe({"caption": caption}).map(valfilter(lambda x: x is not None)).flush()
     if not params:
@@ -305,6 +329,12 @@ def rgb(
 
     Returns:
         Color: The color in RGB space.
+
+    Examples:
+        >>> rgb(255, 255, 255)
+        Content(content='#rgb(255, 255, 255)')
+        >>> rgb(255, 255, 255, 0.5)
+        Content(content='#rgb(255, 255, 255, 0.5)')
     """
 
 
@@ -317,11 +347,24 @@ def rgb(hex: str) -> Color:
 
     Returns:
         Color: The color in RGB space.
+
+    Examples:
+        >>> rgb("#ffffff")
+        Content(content='#rgb("#ffffff")')
     """
 
 
 @implement_type(ImplementType.STANDARD)
 def rgb(*args):
+    """
+    Examples:
+        >>> rgb(255, 255, 255)
+        Content(content='#rgb(255, 255, 255)')
+        >>> rgb(255, 255, 255, 0.5)
+        Content(content='#rgb(255, 255, 255, 0.5)')
+        >>> rgb("#ffffff")
+        Content(content='#rgb("#ffffff")')
+    """
     if len(args) not in (1, 3, 4):
         raise ValueError(f"Invalid number of arguments: {len(args)}.")
     return Color(rf"#rgb{render(RenderType.VALUE)(args)}")
@@ -337,6 +380,12 @@ def luma(lightness: int | Ratio, alpha: Optional[Ratio] = None) -> Color:
 
     Returns:
         Color: The color in luma space.
+
+    Examples:
+        >>> luma(50)
+        Content(content='#luma(50)')
+        >>> luma(50, 0.5)
+        Content(content='#luma(50, 0.5)')
     """
     if alpha:
         return Color(rf"#luma{render(RenderType.VALUE)((lightness, alpha))}")
@@ -355,6 +404,12 @@ def cmyk(cyan: Ratio, magenta: Ratio, yellow: Ratio, key: Ratio) -> Color:
 
     Returns:
         Color: The color in CMYK space.
+
+    Examples:
+        >>> cmyk(0, 0, 0, 0)
+        Content(content='#cmyk(0, 0, 0, 0)')
+        >>> cmyk(0, 0, 0, 0.5)
+        Content(content='#cmyk(0, 0, 0, 0.5)')
     """
     return Color(rf"#cmyk{render(RenderType.VALUE)((cyan, magenta, yellow, key))}")
 
@@ -366,6 +421,23 @@ def _linear_rgb(
     blue: int | Ratio,
     alpha: Optional[int | Ratio] = None,
 ) -> Color:
+    """Interface of `color.linear-rgb` function in typst.
+
+    Args:
+        red (int | Ratio): The red component.
+        green (int | Ratio): The green component.
+        blue (int | Ratio): The blue component.
+        alpha (Optional[int  |  Ratio], optional): The alpha component. Defaults to None.
+
+    Returns:
+        Color: The color in linear RGB space.
+
+    Examples:
+        >>> color.linear_rgb(255, 255, 255)
+        Content(content='#color.linear-rgb(255, 255, 255)')
+        >>> color.linear_rgb(255, 255, 255, 0.5)
+        Content(content='#color.linear-rgb(255, 255, 255, 0.5)')
+    """
     params = (red, green, blue)
     if alpha:
         params += (alpha,)  # type:ignore
@@ -379,6 +451,25 @@ def _hsl(
     lightness: int | Ratio,
     alpha: Optional[int | Ratio] = None,
 ) -> Color:
+    """Interface of `color.hsl` function in typst.
+
+    Args:
+        hue (Angle): The hue angle.
+        saturation (int | Ratio): The saturation component.
+        lightness (int | Ratio): The lightness component.
+        alpha (Optional[int  |  Ratio], optional): The alpha component. Defaults to None.
+
+    Returns:
+        Color: The color in HSL space.
+
+    Examples:
+        >>> color.hsl(0, 0, 0)
+        Content(content='#color.hsl(0, 0, 0)')
+        >>> color.hsl(0, 0, 0, 0.5)
+        Content(content='#color.hsl(0, 0, 0, 0.5)')
+        >>> color.hsl(Ratio(30), Ratio(100), Ratio(50), 0.5)
+        Content(content='#color.hsl(30%, 100%, 50%, 0.5)')
+    """
     params = (hue, saturation, lightness)
     if alpha:
         params += (alpha,)  # type:ignore

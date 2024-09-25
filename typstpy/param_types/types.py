@@ -1,5 +1,6 @@
 """Classes in this module should only be used as parameter types in the `functions` module."""
 
+from enum import IntFlag, auto
 from typing import TypeAlias
 
 from attrs import field, frozen, validators
@@ -18,7 +19,7 @@ class Content:
 
     @content.validator
     def _check_content(self, attribute, value):
-        # todo: Check if the content is executable typst block.
+        # TODO: Check if the content is executable typst block.
         pass
 
     def _can_simplify(self) -> bool:
@@ -42,7 +43,7 @@ class Label:
 
     @label.validator
     def _check_label(self, attribute, value):
-        # todo: Check for illegal characters in label.
+        # TODO: Check for illegal characters in label.
         pass
 
     def __str__(self) -> str:
@@ -109,4 +110,18 @@ Color: TypeAlias = Content
 
 @frozen(slots=False)
 class Angle(_ValueUnit):
+    """An angle describing a rotation."""
+
     unit: str = field(validator=validators.in_(("deg", "rad")))
+
+
+class Alignment(IntFlag):
+    START = auto()
+    END = auto()
+    LEFT = auto()
+    CENTER = auto()
+    RIGHT = auto()
+    TOP = auto()
+    HORIZON = auto()
+    BOTTOM = auto()
+    # TODO: Add inverse operation.
