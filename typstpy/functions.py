@@ -39,6 +39,8 @@ def text(
         Block: Executable typst block.
 
     Examples:
+        >>> text("Hello, World!")
+        'Hello, World!'
         >>> text("Hello, World!", font="Arial", fallback=True)
         '#text(font: "Arial", fallback: true)[Hello, World!]'
         >>> text("Hello, World!", font=("Arial", "Times New Roman"), fallback=True)
@@ -55,7 +57,7 @@ def text(
     )
     if not params:
         return content
-    return rf"#text({render(RenderType.DICT)(params)})[{content}]"
+    return rf"#text({render(RenderType.DICT)(params)}){Content(content)}"
 
 
 @implement_type(ImplementType.STANDARD)
@@ -72,7 +74,7 @@ def emph(content: Block) -> Block:
         >>> emph("Hello, World!")
         '#emph[Hello, World!]'
     """
-    return rf"#emph[{content}]"
+    return rf"#emph{Content(content)}"
 
 
 @implement_type(ImplementType.STANDARD)
@@ -92,10 +94,11 @@ def strong(content: Block, *, delta: Optional[int] = None) -> Block:
         >>> strong("Hello, World!", delta=300)
         '#strong(delta: 300)[Hello, World!]'
     """
+    _content = Content(content)
     params = Pipe({"delta": delta}).map(valfilter(lambda x: x is not None)).flush()
     if not params:
-        return rf"#strong[{content}]"
-    return rf"#strong({render(RenderType.DICT)(params)})[{content}]"
+        return rf"#strong{_content}"
+    return rf"#strong({render(RenderType.DICT)(params)}){_content}"
 
 
 @implement_type(ImplementType.STANDARD)
@@ -146,7 +149,7 @@ def par(
     )
     if not params:
         return content
-    return rf"#par({render(RenderType.DICT)(params)})[{content}]"
+    return rf"#par({render(RenderType.DICT)(params)}){Content(content)}"
 
 
 @implement_type(ImplementType.STANDARD)
@@ -184,7 +187,7 @@ def heading(
     if not params:
         result = rf"{"="*level} {content}"
     else:
-        result = rf"#heading({render(RenderType.DICT)(assoc(params,'level',level))})[{content}]"
+        result = rf"#heading({render(RenderType.DICT)(assoc(params,'level',level))}){Content(content)}"
     if label:
         result += f" {label}"
     return result
@@ -256,19 +259,28 @@ def _caption(
 
     Returns:
         Content: The caption's content.
+
+    Examples:
+        >>> figure.caption("This is a caption.")
+        Content(content='This is a caption.')
+        >>> figure.caption("This is a caption.", position=Alignment.TOP)
+        Content(content='#figure.caption(position: top)[This is a caption.]')
+        >>> figure.caption("This is a caption.", position=Alignment.TOP, separator=Content("---"))
+        Content(content='#figure.caption(position: top, separator: [---])[This is a caption.]')
     """
     if (
         position and not (Alignment.TOP | Alignment.BOTTOM) & position
     ):  # TODO: Solve problem: Alignment.TOP|Alignment.BOTTOM
         raise ValueError(f"Invalid value for position: {position}.")
+    _content = Content(content)
     params = (
         Pipe({"position": position, "separator": separator})
         .map(valfilter(lambda x: x is not None))
         .flush()
     )
     if not params:
-        return Content(content)
-    return Content(rf"#figure.caption({render(RenderType.DICT)(params)})[{content}]")
+        return _content
+    return Content(rf"#figure.caption({render(RenderType.DICT)(params)}){_content}")
 
 
 @attach_func(_caption, "caption")
@@ -298,11 +310,12 @@ def figure(
         >>> figure(image("image.png"), caption=figure.caption("This is a figure.", position=Alignment.TOP, separator=Content("---")))
         '#figure(image("image.png"), caption: figure.caption(position: top, separator: [---])[This is a figure.])'
     """
+    _content = Content(content)
     params = Pipe({"caption": caption}).map(valfilter(lambda x: x is not None)).flush()
     if not params:
-        result = rf"#figure({Content.examine_sharp(content)})"
+        result = rf"#figure({render(RenderType.VALUE)(_content)})"
     else:
-        result = rf"#figure({Content.examine_sharp(content)}, {render(RenderType.DICT)(params)})"
+        result = rf"#figure({render(RenderType.VALUE)(_content)}, {render(RenderType.DICT)(params)})"
     if label:
         result += f" {label}"
     return result
@@ -493,6 +506,44 @@ def color(name: str) -> Color:
 
     Returns:
         Color: The color in RGB/luma space.
+
+    Examples:
+        >>> color("black")
+        Content(content='#luma(0)')
+        >>> color("gray")
+        Content(content='#luma(170)')
+        >>> color("silver")
+        Content(content='#luma(221)')
+        >>> color("white")
+        Content(content='#luma(255)')
+        >>> color("navy")
+        Content(content='#rgb("#001f3f")')
+        >>> color("blue")
+        Content(content='#rgb("#0074d9")')
+        >>> color("aqua")
+        Content(content='#rgb("#7fdbff")')
+        >>> color("teal")
+        Content(content='#rgb("#39cccc")')
+        >>> color("eastern")
+        Content(content='#rgb("#239dad")')
+        >>> color("purple")
+        Content(content='#rgb("#b10dc9")')
+        >>> color("fuchsia")
+        Content(content='#rgb("#f012be")')
+        >>> color("maroon")
+        Content(content='#rgb("#85144b")')
+        >>> color("red")
+        Content(content='#rgb("#ff4136")')
+        >>> color("orange")
+        Content(content='#rgb("#ff851b")')
+        >>> color("yellow")
+        Content(content='#rgb("#ffdc00")')
+        >>> color("olive")
+        Content(content='#rgb("#3d9970")')
+        >>> color("green")
+        Content(content='#rgb("#2ecc40")')
+        >>> color("lime")
+        Content(content='#rgb("#01ff70")')
     """
     match name:
         case "black":

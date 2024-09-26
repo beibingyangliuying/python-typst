@@ -1,4 +1,4 @@
-"""Decorators used in `functions` module."""
+"""Function decorators."""
 
 from enum import Enum, auto
 from typing import Callable, Optional

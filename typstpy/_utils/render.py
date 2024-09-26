@@ -1,10 +1,12 @@
-"""Render Python object to valid typst function param."""
+"""Render Python object to valid typst function parameter."""
 
 from enum import Enum, IntFlag, auto
 from typing import Any, Callable
 
 from cytoolz.curried import curry, identity, isiterable, map  # type:ignore
 from pymonad.maybe import Maybe  # type:ignore
+
+from ..param_types.types import Content
 
 
 class RenderType(Enum):
@@ -28,9 +30,11 @@ def _render(render_type: RenderType) -> Callable[[Any], str]:
                 return (
                     Maybe(name, name)
                     .map(str.lower)
-                    .map(lambda x: x.replace("|", "+"))
+                    .map(lambda x: str.replace(x, "|", "+"))
                     .maybe(ValueError(), identity)
                 )
+            case Content() if value.content.startswith("#"):
+                return value.content.lstrip("#")
             case value if isiterable(value):
                 return f"({', '.join(map(render_value, value))})"
             case _:
@@ -38,7 +42,7 @@ def _render(render_type: RenderType) -> Callable[[Any], str]:
 
     def render_dict(params: dict[str, Any]) -> str:
         if not params:
-            return ""
+            raise ValueError("Empty parameters.")
         return ", ".join(
             f"{render_key(k)}: {render_value(v)}" for k, v in params.items()
         )

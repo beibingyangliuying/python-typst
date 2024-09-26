@@ -1,5 +1,3 @@
-"""Format the representation of fields in `param_types` package."""
-
 from enum import Enum, auto
 from typing import Any, Callable
 

@@ -7,7 +7,7 @@ from attrs import field, frozen, validators
 from cytoolz.curried import curry, map  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from .._utils import FormatType, format
+from ._format import FormatType, format
 
 
 class _Sign(Enum):
@@ -17,7 +17,7 @@ class _Sign(Enum):
     MINUS = "-"
 
     @property
-    def inverse(self) -> "_Sign":
+    def inv(self) -> "_Sign":
         match self:
             case _Sign.PLUS:
                 return _Sign.MINUS
@@ -59,9 +59,7 @@ class _ValueUnit(ABC):
         if isinstance(other, _ValueUnit):
             return _ValueUnits((self, other), (_Sign.PLUS, _Sign.MINUS))
         elif isinstance(other, _ValueUnits):
-            return _ValueUnits(
-                (self,) + other.items, (_Sign.PLUS,) + other.inverse_signs
-            )
+            return _ValueUnits((self,) + other.items, (_Sign.PLUS,) + other.inv_signs)
         else:
             raise TypeError(
                 f"Unsupported operand type(s) for +: '{self.__class__}' and '{type(other)}'."
@@ -108,8 +106,8 @@ class _ValueUnits:
     )
 
     @property
-    def inverse_signs(self) -> tuple[_Sign, ...]:
-        return Pipe(self.signs).map(map(lambda x: x.inverse)).map(tuple).flush()
+    def inv_signs(self) -> tuple[_Sign, ...]:
+        return Pipe(self.signs).map(map(lambda x: x.inv)).map(tuple).flush()
 
     def __add__(self, other: Union["_ValueUnit", "_ValueUnits"]) -> "_ValueUnits":
         if isinstance(other, _ValueUnit):
@@ -125,9 +123,7 @@ class _ValueUnits:
         if isinstance(other, _ValueUnit):
             return _ValueUnits(self.items + (other,), self.signs + (_Sign.MINUS,))
         elif isinstance(other, _ValueUnits):
-            return _ValueUnits(
-                self.items + other.items, self.signs + other.inverse_signs
-            )
+            return _ValueUnits(self.items + other.items, self.signs + other.inv_signs)
         else:
             raise TypeError(
                 f"Unsupported operand type(s) for -: '{self.__class__}' and '{type(other)}'."

@@ -1,4 +1,4 @@
-"""Classes in this module should only be used as parameter types in the `functions` module."""
+"""Classes in this module should only be used as parameters' type in the `functions` module."""
 
 from enum import IntFlag, auto
 from typing import TypeAlias
@@ -22,16 +22,7 @@ class Content:
         # TODO: Check if the content is executable typst block.
         pass
 
-    def _can_simplify(self) -> bool:
-        return self.content.startswith("#")
-
-    @staticmethod
-    def examine_sharp(content: Block) -> str:
-        return content.lstrip("#")
-
     def __str__(self) -> str:
-        if self._can_simplify():
-            return Content.examine_sharp(self.content)
         return f"[{self.content}]"
 
 
@@ -58,26 +49,120 @@ class Length(_ValueUnit):
 
     @staticmethod
     def pt(value: float) -> "Length":
+        """Create a new `Length` object with a `pt` unit.
+
+        Args:
+            value (float): The value of the `pt` unit.
+
+        Returns:
+            Length: The created `Length` object.
+
+        Examples:
+            >>> Length.pt(10)
+            Length(value=10, unit='pt')
+        """
         return Length(value, "pt")
 
     @staticmethod
     def mm(value: float) -> "Length":
+        """Create a new `Length` object with a `mm` unit.
+
+        Args:
+            value (float): The value of the `mm` unit.
+
+        Returns:
+            Length: The created `Length` object.
+
+        Examples:
+            >>> Length.mm(10)
+            Length(value=10, unit='mm')
+        """
         return Length(value, "mm")
 
     @staticmethod
     def cm(value: float) -> "Length":
+        """Create a new `Length` object with a `cm` unit.
+
+        Args:
+            value (float): The value of the `cm` unit.
+
+        Returns:
+            Length: The created `Length` object.
+
+        Examples:
+            >>> Length.cm(10)
+            Length(value=10, unit='cm')
+        """
         return Length(value, "cm")
 
     @staticmethod
     def em(value: float) -> "Length":
+        """Create a new `Length` object with a `em` unit.
+
+        Args:
+            value (float): The value of the `em` unit.
+
+        Returns:
+            Length: The created `Length` object.
+
+        Examples:
+            >>> Length.em(10)
+            Length(value=10, unit='em')
+        """
         return Length(value, "em")
 
     @staticmethod
     def inch(value: float) -> "Length":
+        """Create a new `Length` object with an `in` unit.
+
+        Args:
+            value (float): The value of the `in` unit.
+
+        Returns:
+            Length: The created `Length` object.
+
+        Examples:
+            >>> Length.inch(10)
+            Length(value=10, unit='in')
+        """
         return Length(value, "in")
 
     @staticmethod
     def zihao(name: str) -> "Length":
+        """Create a new `Length` object with a `pt` unit based on a Chinese zihao.
+
+        Args:
+            name (str): The Chinese zihao of the `pt` unit.
+
+        Returns:
+            Length: The created `Length` object.
+
+        Examples:
+            >>> Length.zihao("一号")
+            Length(value=26, unit='pt')
+            >>> Length.zihao("小一")
+            Length(value=24, unit='pt')
+            >>> Length.zihao("二号")
+            Length(value=22, unit='pt')
+            >>> Length.zihao("小二")
+            Length(value=18, unit='pt')
+            >>> Length.zihao("三号")
+            Length(value=16, unit='pt')
+            >>> Length.zihao("小三")
+            Length(value=15, unit='pt')
+            >>> Length.zihao("四号")
+            Length(value=14, unit='pt')
+            >>> Length.zihao("小四")
+            Length(value=12, unit='pt')
+            >>> Length.zihao("五号")
+            Length(value=10.5, unit='pt')
+            >>> Length.zihao("小五")
+            Length(value=9, unit='pt')
+            >>> Length.zihao("六号")
+            Length(value=7.5, unit='pt')
+            >>> Length.zihao("小六")
+            Length(value=6.5, unit='pt')
+        """
         zihao_dict = {
             "一号": 26,
             "小一": 24,
