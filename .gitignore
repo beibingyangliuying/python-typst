@@ -1,4 +1,5 @@
 dist/
+cov.xml
 *.pyc
 *.ipynb
 *.typ

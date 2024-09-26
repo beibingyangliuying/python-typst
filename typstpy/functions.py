@@ -283,7 +283,7 @@ def _caption(
     return Content(rf"#figure.caption({render(RenderType.DICT)(params)}){_content}")
 
 
-@attach_func(_caption, "caption")
+@attach_func(_caption, _caption.__name__.strip("_"))
 @implement_type(ImplementType.STANDARD)
 def figure(
     content: Block, *, caption: Optional[Content] = None, label: Optional[Label] = None
@@ -492,8 +492,8 @@ def _hsl(
 @attach_func(rgb)
 @attach_func(luma)
 @attach_func(cmyk)
-@attach_func(_linear_rgb, "linear_rgb")
-@attach_func(_hsl, "hsl")
+@attach_func(_linear_rgb, _linear_rgb.__name__.strip("_"))
+@attach_func(_hsl, _hsl.__name__.strip("_"))
 @implement_type(ImplementType.NOTSTANDARD)
 def color(name: str) -> Color:
     """Return the corresponding color based on the color name.

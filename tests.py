@@ -1,3 +1,5 @@
+"""Unit tests for package `typstpy`."""
+
 import doctest
 import unittest
 

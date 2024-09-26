@@ -93,18 +93,21 @@ pip install typstpy
 
 | Name | Parameters | Implement Type |
 | --- | --- | --- |
-| text | font, fallback, size, fill | Standard |
-| emph | | Standard |
-| strong | delta | Standard |
-| par | leading, justify, linebreaks, first_line_indent, hanging_indent | Standard |
-| heading | level, supplement, numbering, label | Standard |
-| image | path, format, width, height, alt, fit | Standard |
-| figure | caption, label | Standard |
-| figure.caption | separator | Standard |
-| rgb | red, green, blue, alpha | Standard |
-| rgb | hex | Standard |
-| luma | lightness, alpha | Standard |
-| color | name | Not Standard |
+| cmyk | cyan, magenta, yellow, key | STANDARD |
+| color | name | NOTSTANDARD |
+| rgb | args | STANDARD |
+| color.hsl | hue, saturation, lightness, alpha | STANDARD |
+| color.linear_rgb | red, green, blue, alpha | STANDARD |
+| emph | content | STANDARD |
+| figure | content, caption, label | STANDARD |
+| figure.caption | content, position, separator | STANDARD |
+| heading | content, level, supplement, numbering, label | STANDARD |
+| image | path, format, width, height, alt, fit | STANDARD |
+| luma | lightness, alpha | STANDARD |
+| par | content, leading, justify, linebreaks, first_line_indent, hanging_indent | STANDARD |
+| rgb | args | STANDARD |
+| strong | content, delta | STANDARD |
+| text | content, font, fallback, size, fill | STANDARD |
 
-_Standard_ means you could find implementation in typst.
-_Not Standard_ means this function is not the standard implementation of corresponding function in typst, or is not implemented in typst but for convenience.
+_STANDARD_ means you could find implementation in typst.
+_NOTSTANDARD_ means this function is not the standard implementation of corresponding function in typst, or is not implemented in typst but for convenience.
