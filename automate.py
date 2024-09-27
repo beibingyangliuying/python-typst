@@ -4,14 +4,19 @@ from typing import Callable
 from cytoolz.curried import concat, map, pipe  # type:ignore
 
 from typstpy import (
+    bibliography,
+    cite,
     cmyk,
     color,
     emph,
     figure,
     heading,
     image,
+    lorem,
     luma,
+    pagebreak,
     par,
+    ref,
     rgb,
     strong,
     text,
@@ -44,14 +49,19 @@ def format(name: str, params: tuple[str, ...], implement_type: str) -> str:
 
 
 funcs = (
+    bibliography,
+    cite,
     cmyk,
     color,
     emph,
     figure,
     heading,
     image,
+    lorem,
     luma,
+    pagebreak,
     par,
+    ref,
     rgb,
     strong,
     text,

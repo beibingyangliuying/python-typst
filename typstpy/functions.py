@@ -1,6 +1,6 @@
 from typing import Optional, overload
 
-from cytoolz.curried import assoc, valfilter  # type:ignore
+from cytoolz.curried import assoc, memoize, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
 from ._utils import ImplementType, RenderType, attach_func, implement_type, render
@@ -23,6 +23,9 @@ def text(
     *,
     font: Optional[str | tuple[str, ...]] = None,
     fallback: Optional[bool] = None,
+    style: Optional[str] = None,
+    weight: Optional[int | str] = None,
+    stretch: Optional[Ratio] = None,
     size: Optional[Length] = None,
     fill: Optional[Color] = None,
 ) -> Block:
@@ -30,8 +33,11 @@ def text(
 
     Args:
         content (Block): Content in which all text is styled according to the other arguments.
-        font (Optional[str  |  tuple[str, ...]], optional): A font family name or priority list of font family names. Defaults to None.
+        font (Optional[str | tuple[str, ...]], optional): A font family name or priority list of font family names. Defaults to None.
         fallback (Optional[bool], optional): Whether to allow last resort font fallback when the primary font list contains no match. This lets Typst search through all available fonts for the most similar one that has the necessary glyphs. Defaults to None.
+        style (Optional[str], optional): The desired font style. Options are "normal", "italic", and "oblique". Defaults to None.
+        weight (Optional[int | str], optional): The desired thickness of the font's glyphs. Accepts an integer between 100 and 900 or one of the predefined weight names. When the desired weight is not available, Typst selects the font from the family that is closest in weight. When passing a string, options are "thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black", and "extrablack". Defaults to None.
+        stretch (Optional[Ratio], optional): The desired width of the glyphs. Accepts a ratio between 50% and 200%. When the desired width is not available, Typst selects the font from the family that is closest in stretch. This will only stretch the text if a condensed or expanded version of the font is available. Defaults to None.
         size (Optional[Length], optional): The size of the glyphs. Defaults to None.
         fill (Optional[Color], optional): The glyph fill paint. Defaults to None.
 
@@ -49,15 +55,64 @@ def text(
         '#text(size: 12pt)[Hello, World!]'
         >>> text("Hello, World!", fill=color("red"))
         '#text(fill: rgb("#ff4136"))[Hello, World!]'
+        >>> text("Hello, World!", style="italic")
+        '#text(style: "italic")[Hello, World!]'
+        >>> text("Hello, World!", weight="bold")
+        '#text(weight: "bold")[Hello, World!]'
+        >>> text("Hello, World!", stretch=Ratio(50))
+        '#text(stretch: 50%)[Hello, World!]'
     """
+    if style and style not in ("normal", "italic", "oblique"):
+        raise ValueError("style must be one of 'normal','italic','oblique'.")
+    if isinstance(weight, str) and weight not in (
+        "thin",
+        "extralight",
+        "light",
+        "regular",
+        "medium",
+        "semibold",
+        "bold",
+        "extrabold",
+        "black",
+    ):
+        raise ValueError(
+            "When passing a string, weight must be one of 'thin','extralight','light','regular','medium','semibold','bold','extrabold','black'."
+        )
     params = (
-        Pipe({"font": font, "fallback": fallback, "size": size, "fill": fill})
+        Pipe(
+            {
+                "font": font,
+                "fallback": fallback,
+                "style": style,
+                "weight": weight,
+                "stretch": stretch,
+                "size": size,
+                "fill": fill,
+            }
+        )
         .map(valfilter(lambda x: x is not None))
         .flush()
     )
     if not params:
         return content
     return rf"#text({render(RenderType.DICT)(params)}){Content(content)}"
+
+
+@implement_type(ImplementType.STANDARD)
+def lorem(words: int) -> Block:
+    """Interface of `lorem` function in typst.
+
+    Args:
+        words (int): The length of the blind text in words.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> lorem(10)
+        '#lorem(10)'
+    """
+    return rf"#lorem({render(RenderType.VALUE)(words)})"
 
 
 @implement_type(ImplementType.STANDARD)
@@ -73,6 +128,8 @@ def emph(content: Block) -> Block:
     Examples:
         >>> emph("Hello, World!")
         '#emph[Hello, World!]'
+        >>> emph(text("Hello, World!", font="Arial", fallback=True))
+        '#emph[#text(font: "Arial", fallback: true)[Hello, World!]]'
     """
     return rf"#emph{Content(content)}"
 
@@ -93,12 +150,203 @@ def strong(content: Block, *, delta: Optional[int] = None) -> Block:
         '#strong[Hello, World!]'
         >>> strong("Hello, World!", delta=300)
         '#strong(delta: 300)[Hello, World!]'
+        >>> strong(text("Hello, World!", font="Arial", fallback=True), delta=300)
+        '#strong(delta: 300)[#text(font: "Arial", fallback: true)[Hello, World!]]'
     """
     _content = Content(content)
     params = Pipe({"delta": delta}).map(valfilter(lambda x: x is not None)).flush()
     if not params:
         return rf"#strong{_content}"
     return rf"#strong({render(RenderType.DICT)(params)}){_content}"
+
+
+@implement_type(ImplementType.STANDARD)
+def ref(target: Label) -> Block:
+    """Interface of `ref` function in typst.
+
+    Args:
+        target (Label): The target label that should be referenced.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> ref(Label("chap:chapter"))
+        '#ref(<chap:chapter>)'
+    """
+    return rf"#ref({target})"
+
+
+@memoize
+def _valid_styles() -> tuple[str, ...]:
+    return (
+        "annual-reviews",
+        "pensoft",
+        "annual-reviews-author-date",
+        "the-lancet",
+        "elsevier-with-titles",
+        "gb-7714-2015-author-date",
+        "royal-society-of-chemistry",
+        "american-anthropological-association",
+        "sage-vancouver",
+        "british-medical-journal",
+        "frontiers",
+        "elsevier-harvard",
+        "gb-7714-2005-numeric",
+        "angewandte-chemie",
+        "gb-7714-2015-note",
+        "springer-basic-author-date",
+        "trends",
+        "american-geophysical-union",
+        "american-political-science-association",
+        "american-psychological-association",
+        "cell",
+        "spie",
+        "harvard-cite-them-right",
+        "american-institute-of-aeronautics-and-astronautics",
+        "council-of-science-editors-author-date",
+        "copernicus",
+        "sist02",
+        "springer-socpsych-author-date",
+        "modern-language-association-8",
+        "nature",
+        "iso-690-numeric",
+        "springer-mathphys",
+        "springer-lecture-notes-in-computer-science",
+        "future-science",
+        "current-opinion",
+        "deutsche-gesellschaft-für-psychologie",
+        "american-meteorological-society",
+        "modern-humanities-research-association",
+        "american-society-of-civil-engineers",
+        "chicago-notes",
+        "institute-of-electrical-and-electronics-engineers",
+        "deutsche-sprache",
+        "gb-7714-2015-numeric",
+        "bristol-university-press",
+        "association-for-computing-machinery",
+        "associacao-brasileira-de-normas-tecnicas",
+        "american-medical-association",
+        "elsevier-vancouver",
+        "chicago-author-date",
+        "vancouver",
+        "chicago-fullnotes",
+        "turabian-author-date",
+        "springer-fachzeitschriften-medizin-psychologie",
+        "thieme",
+        "taylor-and-francis-national-library-of-medicine",
+        "american-chemical-society",
+        "american-institute-of-physics",
+        "taylor-and-francis-chicago-author-date",
+        "gost-r-705-2008-numeric",
+        "institute-of-physics-numeric",
+        "iso-690-author-date",
+        "the-institution-of-engineering-and-technology",
+        "american-society-for-microbiology",
+        "multidisciplinary-digital-publishing-institute",
+        "springer-basic",
+        "springer-humanities-author-date",
+        "turabian-fullnote-8",
+        "karger",
+        "springer-vancouver",
+        "vancouver-superscript",
+        "american-physics-society",
+        "mary-ann-liebert-vancouver",
+        "american-society-of-mechanical-engineers",
+        "council-of-science-editors",
+        "american-physiological-society",
+        "future-medicine",
+        "biomed-central",
+        "public-library-of-science",
+        "american-sociological-association",
+        "modern-language-association",
+        "alphanumeric",
+    )
+
+
+@implement_type(ImplementType.STANDARD)
+def cite(
+    key: Label, *, form: Optional[str] = None, style: Optional[str] = None
+) -> Block:
+    """Interface of `cite` function in typst.
+
+    Args:
+        key (Label): The citation key that identifies the entry in the bibliography that shall be cited, as a label.
+        form (Optional[str], optional): The kind of citation to produce. Different forms are useful in different scenarios: A normal citation is useful as a source at the end of a sentence, while a "prose" citation is more suitable for inclusion in the flow of text. Defaults to None.
+        style (Optional[str], optional): The citation style. Defaults to None.
+
+    Raises:
+        ValueError: If form is not one of "normal","prose","full","author","year" and style is not valid.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> cite(Label("Essay1"))
+        '#cite(<Essay1>)'
+        >>> cite(Label("Essay1"), form="prose")
+        '#cite(<Essay1>, form: "prose")'
+        >>> cite(Label("Essay1"), style="annual-reviews")
+        '#cite(<Essay1>, style: "annual-reviews")'
+    """
+    if form and form not in ("normal", "prose", "full", "author", "year"):
+        raise ValueError("form must be one of 'normal','prose','full','author','year'.")
+    if style and style not in _valid_styles():
+        raise ValueError(
+            "See https://typst.app/docs/reference/model/cite/ for available styles."
+        )
+    params = (
+        Pipe({"form": form, "style": style})
+        .map(valfilter(lambda x: x is not None))
+        .flush()
+    )
+    if not params:
+        return rf"#cite({key})"
+    return rf"#cite({key}, {render(RenderType.DICT)(params)})"
+
+
+@implement_type(ImplementType.STANDARD)
+def bibliography(
+    path: str | tuple[str, ...],
+    *,
+    title: Optional[Content] = None,
+    full: Optional[bool] = None,
+    style: Optional[str] = None,
+) -> Block:
+    """Interface of `bibliography` function in typst.
+
+    Args:
+        path (str | tuple[str, ...]): Path(s) to Hayagriva .yml and/or BibLaTeX .bib files.
+        title (Optional[Content], optional): The title of the bibliography. Defaults to None.
+        full (Optional[bool], optional): Whether to include all works from the given bibliography files, even those that weren't cited in the document. Defaults to None.
+        style (Optional[str], optional): The bibliography style. Defaults to None.
+
+    Raises:
+        ValueError: If style is not valid.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> bibliography("bibliography.bib")
+        '#bibliography("bibliography.bib")'
+        >>> bibliography("bibliography.bib", title="My Bib")
+        '#bibliography("bibliography.bib", title: "My Bib")'
+        >>> bibliography("bibliography.bib", full=True)
+        '#bibliography("bibliography.bib", full: true)'
+    """
+    if style and style not in _valid_styles():
+        raise ValueError(
+            "See https://typst.app/docs/reference/model/bibliography/ for available styles."
+        )
+    params = (
+        Pipe({"title": title, "full": full, "style": style})
+        .map(valfilter(lambda x: x is not None))
+        .flush()
+    )
+    if not params:
+        return rf"#bibliography({render(RenderType.VALUE)(path)})"
+    return rf"#bibliography({render(RenderType.VALUE)(path)}, {render(RenderType.DICT)(params)})"
 
 
 @implement_type(ImplementType.STANDARD)
@@ -150,6 +398,44 @@ def par(
     if not params:
         return content
     return rf"#par({render(RenderType.DICT)(params)}){Content(content)}"
+
+
+@implement_type(ImplementType.STANDARD)
+def pagebreak(*, weak: Optional[bool] = None, to: Optional[str] = None) -> Block:
+    """Interface of `pagebreak` function in typst.
+
+    Args:
+        weak (Optional[bool], optional): If true, the page break is skipped if the current page is already empty. Defaults to None.
+        to (Optional[str], optional): If given, ensures that the next page will be an even/odd page, with an empty page in between if necessary. Defaults to None.
+
+    Raises:
+        ValueError: If to is not "even" or "odd".
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> pagebreak()
+        '#pagebreak()'
+        >>> pagebreak(weak=True)
+        '#pagebreak(weak: true)'
+        >>> pagebreak(to="even")
+        '#pagebreak(to: "even")'
+        >>> pagebreak(to="odd")
+        '#pagebreak(to: "odd")'
+        >>> pagebreak(weak=True, to="even")
+        '#pagebreak(weak: true, to: "even")'
+        >>> pagebreak(weak=True, to="odd")
+        '#pagebreak(weak: true, to: "odd")'
+    """
+    if to and to not in ("even", "odd"):
+        raise ValueError(f"Invalid value for to: {to}.")
+    params = (
+        Pipe({"weak": weak, "to": to}).map(valfilter(lambda x: x is not None)).flush()
+    )
+    if not params:
+        return "#pagebreak()"
+    return rf"#pagebreak({render(RenderType.DICT)(params)})"
 
 
 @implement_type(ImplementType.STANDARD)

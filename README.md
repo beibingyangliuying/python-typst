@@ -2,6 +2,7 @@
 
 `python-typst` is a library for generating executable typst code (See [typst repository](https://github.com/typst/typst) and [typst documentation](https://typst.app/docs/) for more information).
 It is written primarily in functional programming paradigm with some OOP content.
+Each module has greater than 90% unit test coverage.
 
 This package provides the interfaces in a way that is as close as possible to typst's native functions.
 Through `python-typst` and other data processing packages, you can generate data reports quickly.
@@ -17,6 +18,8 @@ pip install typstpy
 ```
 
 ## Examples
+
+To be continued.
 
 ### `text`
 
@@ -91,8 +94,8 @@ pip install typstpy
 
 ## Current Support
 
-| Name | Parameters | Implement Type |
-| --- | --- | --- |
+| bibliography | path, title, full, style | STANDARD |
+| cite | key, form, style | STANDARD |
 | cmyk | cyan, magenta, yellow, key | STANDARD |
 | color | name | NOTSTANDARD |
 | rgb | args | STANDARD |
@@ -103,11 +106,14 @@ pip install typstpy
 | figure.caption | content, position, separator | STANDARD |
 | heading | content, level, supplement, numbering, label | STANDARD |
 | image | path, format, width, height, alt, fit | STANDARD |
+| lorem | words | STANDARD |
 | luma | lightness, alpha | STANDARD |
+| pagebreak | weak, to | STANDARD |
 | par | content, leading, justify, linebreaks, first_line_indent, hanging_indent | STANDARD |
+| ref | target | STANDARD |
 | rgb | args | STANDARD |
 | strong | content, delta | STANDARD |
-| text | content, font, fallback, size, fill | STANDARD |
+| text | content, font, fallback, style, weight, stretch, size, fill | STANDARD |
 
 _STANDARD_ means you could find implementation in typst.
 _NOTSTANDARD_ means this function is not the standard implementation of corresponding function in typst, or is not implemented in typst but for convenience.
