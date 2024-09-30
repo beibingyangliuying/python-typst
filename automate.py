@@ -1,9 +1,7 @@
-import inspect
-from typing import Callable
-
-from cytoolz.curried import concat, map, pipe  # type:ignore
-
-from typstpy import (
+from typstpy.functions import (
+    _caption,
+    _hsl,
+    _linear_rgb,
     bibliography,
     cite,
     cmyk,
@@ -21,34 +19,11 @@ from typstpy import (
     strong,
     text,
 )
-
-
-def information(func: Callable) -> tuple[tuple[str, tuple[str, ...], str], ...]:
-    _funcs = (func,) + tuple(
-        getattr(func, attribute)
-        for attribute in dir(func)
-        if not attribute.startswith("_")
-    )
-    return pipe(
-        _funcs,
-        map(
-            lambda x: (
-                x.__name__
-                if not x.__name__.startswith("_")
-                else f"{func.__name__}.{x.__name__.strip('_')}",
-                tuple(inspect.signature(x).parameters),
-                str(x._implement_type.name),
-            )
-        ),
-        tuple,
-    )
-
-
-def format(name: str, params: tuple[str, ...], implement_type: str) -> str:
-    return f"| {name} | {', '.join(params)} | {implement_type} |"
-
 
 funcs = (
+    _caption,
+    _hsl,
+    _linear_rgb,
     bibliography,
     cite,
     cmyk,
@@ -67,6 +42,5 @@ funcs = (
     text,
 )
 
-informations = pipe(funcs, map(information), tuple, concat)
-for i, j, k in informations:
-    print(format(i, j, k))
+for func in funcs:
+    print(func._implement.to_markdown())  # type:ignore

@@ -3,7 +3,7 @@ from typing import Optional, overload
 from cytoolz.curried import assoc, memoize, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from ._utils import ImplementType, RenderType, attach_func, implement_type, render
+from ._utils import RenderType, attach_func, implement, render
 from .param_types import (
     Alignment,
     Angle,
@@ -17,169 +17,9 @@ from .param_types import (
 )
 
 
-@implement_type(ImplementType.STANDARD)
-def text(
-    content: Block,
-    *,
-    font: Optional[str | tuple[str, ...]] = None,
-    fallback: Optional[bool] = None,
-    style: Optional[str] = None,
-    weight: Optional[int | str] = None,
-    stretch: Optional[Ratio] = None,
-    size: Optional[Length] = None,
-    fill: Optional[Color] = None,
-) -> Block:
-    """Interface of `text` function in typst.
-
-    Args:
-        content (Block): Content in which all text is styled according to the other arguments.
-        font (Optional[str | tuple[str, ...]], optional): A font family name or priority list of font family names. Defaults to None.
-        fallback (Optional[bool], optional): Whether to allow last resort font fallback when the primary font list contains no match. This lets Typst search through all available fonts for the most similar one that has the necessary glyphs. Defaults to None.
-        style (Optional[str], optional): The desired font style. Options are "normal", "italic", and "oblique". Defaults to None.
-        weight (Optional[int | str], optional): The desired thickness of the font's glyphs. Accepts an integer between 100 and 900 or one of the predefined weight names. When the desired weight is not available, Typst selects the font from the family that is closest in weight. When passing a string, options are "thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black", and "extrablack". Defaults to None.
-        stretch (Optional[Ratio], optional): The desired width of the glyphs. Accepts a ratio between 50% and 200%. When the desired width is not available, Typst selects the font from the family that is closest in stretch. This will only stretch the text if a condensed or expanded version of the font is available. Defaults to None.
-        size (Optional[Length], optional): The size of the glyphs. Defaults to None.
-        fill (Optional[Color], optional): The glyph fill paint. Defaults to None.
-
-    Returns:
-        Block: Executable typst block.
-
-    Examples:
-        >>> text("Hello, World!")
-        'Hello, World!'
-        >>> text("Hello, World!", font="Arial", fallback=True)
-        '#text(font: "Arial", fallback: true)[Hello, World!]'
-        >>> text("Hello, World!", font=("Arial", "Times New Roman"), fallback=True)
-        '#text(font: ("Arial", "Times New Roman"), fallback: true)[Hello, World!]'
-        >>> text("Hello, World!", size=Length(12, "pt"))
-        '#text(size: 12pt)[Hello, World!]'
-        >>> text("Hello, World!", fill=color("red"))
-        '#text(fill: rgb("#ff4136"))[Hello, World!]'
-        >>> text("Hello, World!", style="italic")
-        '#text(style: "italic")[Hello, World!]'
-        >>> text("Hello, World!", weight="bold")
-        '#text(weight: "bold")[Hello, World!]'
-        >>> text("Hello, World!", stretch=Ratio(50))
-        '#text(stretch: 50%)[Hello, World!]'
-    """
-    if style and style not in ("normal", "italic", "oblique"):
-        raise ValueError("style must be one of 'normal','italic','oblique'.")
-    if isinstance(weight, str) and weight not in (
-        "thin",
-        "extralight",
-        "light",
-        "regular",
-        "medium",
-        "semibold",
-        "bold",
-        "extrabold",
-        "black",
-    ):
-        raise ValueError(
-            "When passing a string, weight must be one of 'thin','extralight','light','regular','medium','semibold','bold','extrabold','black'."
-        )
-    params = (
-        Pipe(
-            {
-                "font": font,
-                "fallback": fallback,
-                "style": style,
-                "weight": weight,
-                "stretch": stretch,
-                "size": size,
-                "fill": fill,
-            }
-        )
-        .map(valfilter(lambda x: x is not None))
-        .flush()
-    )
-    if not params:
-        return content
-    return rf"#text({render(RenderType.DICT)(params)}){Content(content)}"
-
-
-@implement_type(ImplementType.STANDARD)
-def lorem(words: int) -> Block:
-    """Interface of `lorem` function in typst.
-
-    Args:
-        words (int): The length of the blind text in words.
-
-    Returns:
-        Block: Executable typst block.
-
-    Examples:
-        >>> lorem(10)
-        '#lorem(10)'
-    """
-    return rf"#lorem({render(RenderType.VALUE)(words)})"
-
-
-@implement_type(ImplementType.STANDARD)
-def emph(content: Block) -> Block:
-    """Interface of `emph` function in typst.
-
-    Args:
-        content (Block): The content to emphasize.
-
-    Returns:
-        Block: Executable typst block.
-
-    Examples:
-        >>> emph("Hello, World!")
-        '#emph[Hello, World!]'
-        >>> emph(text("Hello, World!", font="Arial", fallback=True))
-        '#emph[#text(font: "Arial", fallback: true)[Hello, World!]]'
-    """
-    return rf"#emph{Content(content)}"
-
-
-@implement_type(ImplementType.STANDARD)
-def strong(content: Block, *, delta: Optional[int] = None) -> Block:
-    """Interface of `strong` function in typst.
-
-    Args:
-        content (Block): The content to strongly emphasize.
-        delta (Optional[int], optional): The delta to apply on the font weight. Defaults to None.
-
-    Returns:
-        Block: Executable typst block.
-
-    Examples:
-        >>> strong("Hello, World!")
-        '#strong[Hello, World!]'
-        >>> strong("Hello, World!", delta=300)
-        '#strong(delta: 300)[Hello, World!]'
-        >>> strong(text("Hello, World!", font="Arial", fallback=True), delta=300)
-        '#strong(delta: 300)[#text(font: "Arial", fallback: true)[Hello, World!]]'
-    """
-    _content = Content(content)
-    params = Pipe({"delta": delta}).map(valfilter(lambda x: x is not None)).flush()
-    if not params:
-        return rf"#strong{_content}"
-    return rf"#strong({render(RenderType.DICT)(params)}){_content}"
-
-
-@implement_type(ImplementType.STANDARD)
-def ref(target: Label) -> Block:
-    """Interface of `ref` function in typst.
-
-    Args:
-        target (Label): The target label that should be referenced.
-
-    Returns:
-        Block: Executable typst block.
-
-    Examples:
-        >>> ref(Label("chap:chapter"))
-        '#ref(<chap:chapter>)'
-    """
-    return rf"#ref({target})"
-
-
 @memoize
-def _valid_styles() -> tuple[str, ...]:
-    return (
+def _valid_bibliography_styles() -> set[str]:
+    return {
         "annual-reviews",
         "pensoft",
         "annual-reviews-author-date",
@@ -261,10 +101,195 @@ def _valid_styles() -> tuple[str, ...]:
         "american-sociological-association",
         "modern-language-association",
         "alphanumeric",
+    }
+
+
+# region text
+
+
+@implement(
+    True,
+    original_name="text",
+    hyperlink="https://typst.app/docs/reference/text/text/",
+)
+def text(
+    content: Block,
+    *,
+    font: Optional[str | tuple[str, ...]] = None,
+    fallback: Optional[bool] = None,
+    style: Optional[str] = None,
+    weight: Optional[int | str] = None,
+    stretch: Optional[Ratio] = None,
+    size: Optional[Length] = None,
+    fill: Optional[Color] = None,
+) -> Block:
+    """Interface of `text` function in typst.
+
+    Args:
+        content (Block): Content in which all text is styled according to the other arguments.
+        font (Optional[str | tuple[str, ...]], optional): A font family name or priority list of font family names. Defaults to None.
+        fallback (Optional[bool], optional): Whether to allow last resort font fallback when the primary font list contains no match. This lets Typst search through all available fonts for the most similar one that has the necessary glyphs. Defaults to None.
+        style (Optional[str], optional): The desired font style. Options are "normal", "italic", and "oblique". Defaults to None.
+        weight (Optional[int | str], optional): The desired thickness of the font's glyphs. Accepts an integer between 100 and 900 or one of the predefined weight names. When the desired weight is not available, Typst selects the font from the family that is closest in weight. When passing a string, options are "thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black", and "extrablack". Defaults to None.
+        stretch (Optional[Ratio], optional): The desired width of the glyphs. Accepts a ratio between 50% and 200%. When the desired width is not available, Typst selects the font from the family that is closest in stretch. This will only stretch the text if a condensed or expanded version of the font is available. Defaults to None.
+        size (Optional[Length], optional): The size of the glyphs. Defaults to None.
+        fill (Optional[Color], optional): The glyph fill paint. Defaults to None.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> text("Hello, World!")
+        'Hello, World!'
+        >>> text("Hello, World!", font="Arial", fallback=True)
+        '#text(font: "Arial", fallback: true)[Hello, World!]'
+        >>> text("Hello, World!", font=("Arial", "Times New Roman"), fallback=True)
+        '#text(font: ("Arial", "Times New Roman"), fallback: true)[Hello, World!]'
+        >>> text("Hello, World!", size=Length(12, "pt"))
+        '#text(size: 12pt)[Hello, World!]'
+        >>> text("Hello, World!", fill=color("red"))
+        '#text(fill: rgb("#ff4136"))[Hello, World!]'
+        >>> text("Hello, World!", style="italic")
+        '#text(style: "italic")[Hello, World!]'
+        >>> text("Hello, World!", weight="bold")
+        '#text(weight: "bold")[Hello, World!]'
+        >>> text("Hello, World!", stretch=Ratio(50))
+        '#text(stretch: 50%)[Hello, World!]'
+    """
+    if style and style not in ("normal", "italic", "oblique"):
+        raise ValueError("style must be one of 'normal','italic','oblique'.")
+    if isinstance(weight, str) and weight not in (
+        "thin",
+        "extralight",
+        "light",
+        "regular",
+        "medium",
+        "semibold",
+        "bold",
+        "extrabold",
+        "black",
+    ):
+        raise ValueError(
+            "When passing a string, weight must be one of 'thin','extralight','light','regular','medium','semibold','bold','extrabold','black'."
+        )
+    params = (
+        Pipe(
+            {
+                "font": font,
+                "fallback": fallback,
+                "style": style,
+                "weight": weight,
+                "stretch": stretch,
+                "size": size,
+                "fill": fill,
+            }
+        )
+        .map(valfilter(lambda x: x is not None))
+        .flush()
     )
+    if not params:
+        return content
+    return rf"#text({render(RenderType.DICT)(params)}){Content(content)}"
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="lorem",
+    hyperlink="https://typst.app/docs/reference/text/lorem/",
+)
+def lorem(words: int) -> Block:
+    """Interface of `lorem` function in typst.
+
+    Args:
+        words (int): The length of the blind text in words.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> lorem(10)
+        '#lorem(10)'
+    """
+    return rf"#lorem({render(RenderType.VALUE)(words)})"
+
+
+# endregion
+# region model
+
+
+@implement(
+    True, original_name="emph", hyperlink="https://typst.app/docs/reference/model/emph/"
+)
+def emph(content: Block) -> Block:
+    """Interface of `emph` function in typst.
+
+    Args:
+        content (Block): The content to emphasize.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> emph("Hello, World!")
+        '#emph[Hello, World!]'
+        >>> emph(text("Hello, World!", font="Arial", fallback=True))
+        '#emph[#text(font: "Arial", fallback: true)[Hello, World!]]'
+    """
+    return rf"#emph{Content(content)}"
+
+
+@implement(
+    True,
+    original_name="strong",
+    hyperlink="https://typst.app/docs/reference/model/strong/",
+)
+def strong(content: Block, *, delta: Optional[int] = None) -> Block:
+    """Interface of `strong` function in typst.
+
+    Args:
+        content (Block): The content to strongly emphasize.
+        delta (Optional[int], optional): The delta to apply on the font weight. Defaults to None.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> strong("Hello, World!")
+        '#strong[Hello, World!]'
+        >>> strong("Hello, World!", delta=300)
+        '#strong(delta: 300)[Hello, World!]'
+        >>> strong(text("Hello, World!", font="Arial", fallback=True), delta=300)
+        '#strong(delta: 300)[#text(font: "Arial", fallback: true)[Hello, World!]]'
+    """
+    _content = Content(content)
+    params = Pipe({"delta": delta}).map(valfilter(lambda x: x is not None)).flush()
+    if not params:
+        return rf"#strong{_content}"
+    return rf"#strong({render(RenderType.DICT)(params)}){_content}"
+
+
+@implement(
+    True, original_name="ref", hyperlink="https://typst.app/docs/reference/model/ref/"
+)
+def ref(target: Label) -> Block:
+    """Interface of `ref` function in typst.
+
+    Args:
+        target (Label): The target label that should be referenced.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> ref(Label("chap:chapter"))
+        '#ref(<chap:chapter>)'
+    """
+    return rf"#ref({target})"
+
+
+@implement(
+    True, original_name="cite", hyperlink="https://typst.app/docs/reference/model/cite/"
+)
 def cite(
     key: Label, *, form: Optional[str] = None, style: Optional[str] = None
 ) -> Block:
@@ -291,7 +316,7 @@ def cite(
     """
     if form and form not in ("normal", "prose", "full", "author", "year"):
         raise ValueError("form must be one of 'normal','prose','full','author','year'.")
-    if style and style not in _valid_styles():
+    if style and style not in _valid_bibliography_styles():
         raise ValueError(
             "See https://typst.app/docs/reference/model/cite/ for available styles."
         )
@@ -305,7 +330,11 @@ def cite(
     return rf"#cite({key}, {render(RenderType.DICT)(params)})"
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="bibliography",
+    hyperlink="https://typst.app/docs/reference/model/bibliography/",
+)
 def bibliography(
     path: str | tuple[str, ...],
     *,
@@ -335,7 +364,7 @@ def bibliography(
         >>> bibliography("bibliography.bib", full=True)
         '#bibliography("bibliography.bib", full: true)'
     """
-    if style and style not in _valid_styles():
+    if style and style not in _valid_bibliography_styles():
         raise ValueError(
             "See https://typst.app/docs/reference/model/bibliography/ for available styles."
         )
@@ -349,7 +378,9 @@ def bibliography(
     return rf"#bibliography({render(RenderType.VALUE)(path)}, {render(RenderType.DICT)(params)})"
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True, original_name="par", hyperlink="https://typst.app/docs/reference/model/par/"
+)
 def par(
     content: Block,
     *,
@@ -400,45 +431,11 @@ def par(
     return rf"#par({render(RenderType.DICT)(params)}){Content(content)}"
 
 
-@implement_type(ImplementType.STANDARD)
-def pagebreak(*, weak: Optional[bool] = None, to: Optional[str] = None) -> Block:
-    """Interface of `pagebreak` function in typst.
-
-    Args:
-        weak (Optional[bool], optional): If true, the page break is skipped if the current page is already empty. Defaults to None.
-        to (Optional[str], optional): If given, ensures that the next page will be an even/odd page, with an empty page in between if necessary. Defaults to None.
-
-    Raises:
-        ValueError: If to is not "even" or "odd".
-
-    Returns:
-        Block: Executable typst block.
-
-    Examples:
-        >>> pagebreak()
-        '#pagebreak()'
-        >>> pagebreak(weak=True)
-        '#pagebreak(weak: true)'
-        >>> pagebreak(to="even")
-        '#pagebreak(to: "even")'
-        >>> pagebreak(to="odd")
-        '#pagebreak(to: "odd")'
-        >>> pagebreak(weak=True, to="even")
-        '#pagebreak(weak: true, to: "even")'
-        >>> pagebreak(weak=True, to="odd")
-        '#pagebreak(weak: true, to: "odd")'
-    """
-    if to and to not in ("even", "odd"):
-        raise ValueError(f"Invalid value for to: {to}.")
-    params = (
-        Pipe({"weak": weak, "to": to}).map(valfilter(lambda x: x is not None)).flush()
-    )
-    if not params:
-        return "#pagebreak()"
-    return rf"#pagebreak({render(RenderType.DICT)(params)})"
-
-
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="heading",
+    hyperlink="https://typst.app/docs/reference/model/heading/",
+)
 def heading(
     content: Block,
     *,
@@ -479,7 +476,147 @@ def heading(
     return result
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="figure.caption",
+    hyperlink="https://typst.app/docs/reference/model/figure/#definitions-caption",
+)
+def _caption(
+    content: Block,
+    *,
+    position: Optional[Alignment] = None,
+    separator: Optional[Content] = None,
+) -> Content:
+    """Interface of `figure.caption` function in typst.
+
+    Args:
+        content (Block): The caption's body.
+        position (Optional[Alignment], optional): The caption's position in the figure. Either top or bottom. Defaults to None.
+        separator (Optional[Content], optional): The separator which will appear between the number and body. Defaults to None.
+
+    Returns:
+        Content: The caption's content.
+
+    Examples:
+        >>> figure.caption("This is a caption.")
+        Content(content='This is a caption.')
+        >>> figure.caption("This is a caption.", position=Alignment.TOP)
+        Content(content='#figure.caption(position: top)[This is a caption.]')
+        >>> figure.caption("This is a caption.", position=Alignment.TOP, separator=Content("---"))
+        Content(content='#figure.caption(position: top, separator: [---])[This is a caption.]')
+    """
+    if (
+        position and not (Alignment.TOP | Alignment.BOTTOM) & position
+    ):  # TODO: Solve problem: Alignment.TOP|Alignment.BOTTOM
+        raise ValueError(f"Invalid value for position: {position}.")
+    _content = Content(content)
+    params = (
+        Pipe({"position": position, "separator": separator})
+        .map(valfilter(lambda x: x is not None))
+        .flush()
+    )
+    if not params:
+        return _content
+    return Content(rf"#figure.caption({render(RenderType.DICT)(params)}){_content}")
+
+
+@attach_func(_caption, _caption.__name__.strip("_"))
+@implement(
+    True,
+    original_name="figure",
+    hyperlink="https://typst.app/docs/reference/model/figure/",
+)
+def figure(
+    content: Block, *, caption: Optional[Content] = None, label: Optional[Label] = None
+) -> Block:
+    """Interface of `figure` function in typst.
+
+    Args:
+        content (Block): The content of the figure. Often, an image.
+        caption (Optional[Content], optional): The figure's caption. Defaults to None.
+        label (Optional[Label], optional): Cross-reference for the figure. Defaults to None.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> figure(image("image.png"))
+        '#figure(image("image.png"))'
+        >>> figure(image("image.png"), caption=Content("This is a figure."))
+        '#figure(image("image.png"), caption: [This is a figure.])'
+        >>> figure(image("image.png"), caption=Content("This is a figure."), label=Label("fig:figure"))
+        '#figure(image("image.png"), caption: [This is a figure.]) <fig:figure>'
+        >>> figure(image("image.png"), caption=figure.caption("This is a figure.", separator=Content("---")))
+        '#figure(image("image.png"), caption: figure.caption(separator: [---])[This is a figure.])'
+        >>> figure(image("image.png"), caption=figure.caption("This is a figure.", position=Alignment.TOP, separator=Content("---")))
+        '#figure(image("image.png"), caption: figure.caption(position: top, separator: [---])[This is a figure.])'
+    """
+    _content = Content(content)
+    params = Pipe({"caption": caption}).map(valfilter(lambda x: x is not None)).flush()
+    if not params:
+        result = rf"#figure({render(RenderType.VALUE)(_content)})"
+    else:
+        result = rf"#figure({render(RenderType.VALUE)(_content)}, {render(RenderType.DICT)(params)})"
+    if label:
+        result += f" {label}"
+    return result
+
+
+# endregion
+# region layout
+
+
+@implement(
+    True,
+    original_name="pagebreak",
+    hyperlink="https://typst.app/docs/reference/layout/pagebreak/",
+)
+def pagebreak(*, weak: Optional[bool] = None, to: Optional[str] = None) -> Block:
+    """Interface of `pagebreak` function in typst.
+
+    Args:
+        weak (Optional[bool], optional): If true, the page break is skipped if the current page is already empty. Defaults to None.
+        to (Optional[str], optional): If given, ensures that the next page will be an even/odd page, with an empty page in between if necessary. Defaults to None.
+
+    Raises:
+        ValueError: If to is not "even" or "odd".
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> pagebreak()
+        '#pagebreak()'
+        >>> pagebreak(weak=True)
+        '#pagebreak(weak: true)'
+        >>> pagebreak(to="even")
+        '#pagebreak(to: "even")'
+        >>> pagebreak(to="odd")
+        '#pagebreak(to: "odd")'
+        >>> pagebreak(weak=True, to="even")
+        '#pagebreak(weak: true, to: "even")'
+        >>> pagebreak(weak=True, to="odd")
+        '#pagebreak(weak: true, to: "odd")'
+    """
+    if to and to not in ("even", "odd"):
+        raise ValueError(f"Invalid value for to: {to}.")
+    params = (
+        Pipe({"weak": weak, "to": to}).map(valfilter(lambda x: x is not None)).flush()
+    )
+    if not params:
+        return "#pagebreak()"
+    return rf"#pagebreak({render(RenderType.DICT)(params)})"
+
+
+# endregion
+# region visualize
+
+
+@implement(
+    True,
+    original_name="image",
+    hyperlink="https://typst.app/docs/reference/visualize/image/",
+)
 def image(
     path: str,
     *,
@@ -526,91 +663,6 @@ def image(
     )
 
 
-# region figure
-
-
-@implement_type(ImplementType.STANDARD)
-def _caption(
-    content: Block,
-    *,
-    position: Optional[Alignment] = None,
-    separator: Optional[Content] = None,
-) -> Content:
-    """Interface of `figure.caption` function in typst.
-
-    Args:
-        content (Block): The caption's body.
-        position (Optional[Alignment], optional): The caption's position in the figure. Either top or bottom. Defaults to None.
-        separator (Optional[Content], optional): The separator which will appear between the number and body. Defaults to None.
-
-    Returns:
-        Content: The caption's content.
-
-    Examples:
-        >>> figure.caption("This is a caption.")
-        Content(content='This is a caption.')
-        >>> figure.caption("This is a caption.", position=Alignment.TOP)
-        Content(content='#figure.caption(position: top)[This is a caption.]')
-        >>> figure.caption("This is a caption.", position=Alignment.TOP, separator=Content("---"))
-        Content(content='#figure.caption(position: top, separator: [---])[This is a caption.]')
-    """
-    if (
-        position and not (Alignment.TOP | Alignment.BOTTOM) & position
-    ):  # TODO: Solve problem: Alignment.TOP|Alignment.BOTTOM
-        raise ValueError(f"Invalid value for position: {position}.")
-    _content = Content(content)
-    params = (
-        Pipe({"position": position, "separator": separator})
-        .map(valfilter(lambda x: x is not None))
-        .flush()
-    )
-    if not params:
-        return _content
-    return Content(rf"#figure.caption({render(RenderType.DICT)(params)}){_content}")
-
-
-@attach_func(_caption, _caption.__name__.strip("_"))
-@implement_type(ImplementType.STANDARD)
-def figure(
-    content: Block, *, caption: Optional[Content] = None, label: Optional[Label] = None
-) -> Block:
-    """Interface of `figure` function in typst.
-
-    Args:
-        content (Block): The content of the figure. Often, an image.
-        caption (Optional[Content], optional): The figure's caption. Defaults to None.
-        label (Optional[Label], optional): Cross-reference for the figure. Defaults to None.
-
-    Returns:
-        Block: Executable typst block.
-
-    Examples:
-        >>> figure(image("image.png"))
-        '#figure(image("image.png"))'
-        >>> figure(image("image.png"), caption=Content("This is a figure."))
-        '#figure(image("image.png"), caption: [This is a figure.])'
-        >>> figure(image("image.png"), caption=Content("This is a figure."), label=Label("fig:figure"))
-        '#figure(image("image.png"), caption: [This is a figure.]) <fig:figure>'
-        >>> figure(image("image.png"), caption=figure.caption("This is a figure.", separator=Content("---")))
-        '#figure(image("image.png"), caption: figure.caption(separator: [---])[This is a figure.])'
-        >>> figure(image("image.png"), caption=figure.caption("This is a figure.", position=Alignment.TOP, separator=Content("---")))
-        '#figure(image("image.png"), caption: figure.caption(position: top, separator: [---])[This is a figure.])'
-    """
-    _content = Content(content)
-    params = Pipe({"caption": caption}).map(valfilter(lambda x: x is not None)).flush()
-    if not params:
-        result = rf"#figure({render(RenderType.VALUE)(_content)})"
-    else:
-        result = rf"#figure({render(RenderType.VALUE)(_content)}, {render(RenderType.DICT)(params)})"
-    if label:
-        result += f" {label}"
-    return result
-
-
-# endregion
-# region color
-
-
 @overload
 def rgb(
     red: int | Ratio,
@@ -653,7 +705,11 @@ def rgb(hex: str) -> Color:
     """
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="rgb",
+    hyperlink="https://typst.app/docs/reference/visualize/color/#definitions-rgb",
+)
 def rgb(*args):
     """
     Examples:
@@ -669,7 +725,11 @@ def rgb(*args):
     return Color(rf"#rgb{render(RenderType.VALUE)(args)}")
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="luma",
+    hyperlink="https://typst.app/docs/reference/visualize/color/#definitions-luma",
+)
 def luma(lightness: int | Ratio, alpha: Optional[Ratio] = None) -> Color:
     """Interface of `luma` function in typst.
 
@@ -691,7 +751,11 @@ def luma(lightness: int | Ratio, alpha: Optional[Ratio] = None) -> Color:
     return Color(rf"#luma({render(RenderType.VALUE)(lightness)})")
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="cmyk",
+    hyperlink="https://typst.app/docs/reference/visualize/color/#definitions-cmyk",
+)
 def cmyk(cyan: Ratio, magenta: Ratio, yellow: Ratio, key: Ratio) -> Color:
     """Interface of `cmyk` function in typst.
 
@@ -713,7 +777,11 @@ def cmyk(cyan: Ratio, magenta: Ratio, yellow: Ratio, key: Ratio) -> Color:
     return Color(rf"#cmyk{render(RenderType.VALUE)((cyan, magenta, yellow, key))}")
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="color.linear_rgb",
+    hyperlink="https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb",
+)
 def _linear_rgb(
     red: int | Ratio,
     green: int | Ratio,
@@ -743,7 +811,11 @@ def _linear_rgb(
     return Color(rf"#color.linear-rgb{render(RenderType.VALUE)(params)}")
 
 
-@implement_type(ImplementType.STANDARD)
+@implement(
+    True,
+    original_name="color.hsl",
+    hyperlink="https://typst.app/docs/reference/visualize/color/#definitions-hsl",
+)
 def _hsl(
     hue: Angle,
     saturation: int | Ratio,
@@ -780,7 +852,7 @@ def _hsl(
 @attach_func(cmyk)
 @attach_func(_linear_rgb, _linear_rgb.__name__.strip("_"))
 @attach_func(_hsl, _hsl.__name__.strip("_"))
-@implement_type(ImplementType.NOTSTANDARD)
+@implement(False)
 def color(name: str) -> Color:
     """Return the corresponding color based on the color name.
 
