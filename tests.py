@@ -7,6 +7,7 @@ import unittest
 def load_tests(loader, tests, ignore):
     modules = [
         "typstpy._utils.render",
+        "typstpy._utils.utils",
         "typstpy.functions",
         "typstpy.param_types",
         "typstpy.param_types.types",

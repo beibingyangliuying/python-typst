@@ -1,9 +1,16 @@
-from typing import Callable, Iterable, Optional, overload
+from typing import Iterable, Optional, overload
 
-from cytoolz.curried import assoc, memoize, valfilter  # type:ignore
+from cytoolz.curried import assoc, valfilter  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from ._utils import RenderType, attach_func, implement, render
+from ._utils import (
+    RenderType,
+    attach_func,
+    implement,
+    original_name,
+    render,
+    valid_styles,
+)
 from .param_types import (
     Alignment,
     Angle,
@@ -15,101 +22,6 @@ from .param_types import (
     Ratio,
     Relative,
 )
-
-
-@memoize
-def _valid_bibliography_styles() -> set[str]:
-    return {
-        "annual-reviews",
-        "pensoft",
-        "annual-reviews-author-date",
-        "the-lancet",
-        "elsevier-with-titles",
-        "gb-7714-2015-author-date",
-        "royal-society-of-chemistry",
-        "american-anthropological-association",
-        "sage-vancouver",
-        "british-medical-journal",
-        "frontiers",
-        "elsevier-harvard",
-        "gb-7714-2005-numeric",
-        "angewandte-chemie",
-        "gb-7714-2015-note",
-        "springer-basic-author-date",
-        "trends",
-        "american-geophysical-union",
-        "american-political-science-association",
-        "american-psychological-association",
-        "cell",
-        "spie",
-        "harvard-cite-them-right",
-        "american-institute-of-aeronautics-and-astronautics",
-        "council-of-science-editors-author-date",
-        "copernicus",
-        "sist02",
-        "springer-socpsych-author-date",
-        "modern-language-association-8",
-        "nature",
-        "iso-690-numeric",
-        "springer-mathphys",
-        "springer-lecture-notes-in-computer-science",
-        "future-science",
-        "current-opinion",
-        "deutsche-gesellschaft-für-psychologie",
-        "american-meteorological-society",
-        "modern-humanities-research-association",
-        "american-society-of-civil-engineers",
-        "chicago-notes",
-        "institute-of-electrical-and-electronics-engineers",
-        "deutsche-sprache",
-        "gb-7714-2015-numeric",
-        "bristol-university-press",
-        "association-for-computing-machinery",
-        "associacao-brasileira-de-normas-tecnicas",
-        "american-medical-association",
-        "elsevier-vancouver",
-        "chicago-author-date",
-        "vancouver",
-        "chicago-fullnotes",
-        "turabian-author-date",
-        "springer-fachzeitschriften-medizin-psychologie",
-        "thieme",
-        "taylor-and-francis-national-library-of-medicine",
-        "american-chemical-society",
-        "american-institute-of-physics",
-        "taylor-and-francis-chicago-author-date",
-        "gost-r-705-2008-numeric",
-        "institute-of-physics-numeric",
-        "iso-690-author-date",
-        "the-institution-of-engineering-and-technology",
-        "american-society-for-microbiology",
-        "multidisciplinary-digital-publishing-institute",
-        "springer-basic",
-        "springer-humanities-author-date",
-        "turabian-fullnote-8",
-        "karger",
-        "springer-vancouver",
-        "vancouver-superscript",
-        "american-physics-society",
-        "mary-ann-liebert-vancouver",
-        "american-society-of-mechanical-engineers",
-        "council-of-science-editors",
-        "american-physiological-society",
-        "future-medicine",
-        "biomed-central",
-        "public-library-of-science",
-        "american-sociological-association",
-        "modern-language-association",
-        "alphanumeric",
-    }
-
-
-@memoize
-def _typst_func_name(func: Callable) -> str:
-    if hasattr(func, "_implement"):
-        return func._implement.original_name
-    return func.__name__
-
 
 # region model
 
@@ -148,8 +60,8 @@ def bibliography(
         >>> bibliography("bibliography.bib", full=True)
         '#bibliography("bibliography.bib", full: true)'
     """
-    _func_name = _typst_func_name(bibliography)
-    if style and style not in _valid_bibliography_styles():
+    _func_name = original_name(bibliography)
+    if style and style not in valid_styles():
         raise ValueError(
             f"Style {style} is not valid. See https://typst.app/docs/reference/model/bibliography/ for available styles."
         )
@@ -190,10 +102,10 @@ def cite(
         >>> cite(Label("Essay1"), style="annual-reviews")
         '#cite(<Essay1>, style: "annual-reviews")'
     """
-    _func_name = _typst_func_name(cite)
+    _func_name = original_name(cite)
     if form and form not in ("normal", "prose", "full", "author", "year"):
         raise ValueError("form must be one of 'normal','prose','full','author','year'.")
-    if style and style not in _valid_bibliography_styles():
+    if style and style not in valid_styles():
         raise ValueError(
             "See https://typst.app/docs/reference/model/cite/ for available styles."
         )
@@ -225,7 +137,7 @@ def emph(body: Block) -> Block:
         >>> emph(text("Hello, World!", font="Arial", fallback=True))
         '#emph[#text(font: "Arial", fallback: true)[Hello, World!]]'
     """
-    _func_name = _typst_func_name(emph)
+    _func_name = original_name(emph)
     return rf"#{_func_name}{Content(body)}"
 
 
@@ -261,7 +173,7 @@ def _figure_caption(
         >>> figure.caption("This is a caption.", position=Alignment.TOP, separator=Content("---"))
         Content(content='#figure.caption(position: top, separator: [---])[This is a caption.]')
     """
-    _func_name = _typst_func_name(_figure_caption)
+    _func_name = original_name(_figure_caption)
     if (
         position and not (Alignment.TOP | Alignment.BOTTOM) & position
     ):  # TODO: Solve problem: Alignment.TOP|Alignment.BOTTOM
@@ -323,7 +235,7 @@ def figure(
         >>> figure(image("image.png"), caption=figure.caption("This is a figure.", position=Alignment.TOP, separator=Content("---")))
         '#figure(image("image.png"), caption: figure.caption(position: top, separator: [---])[This is a figure.])'
     """
-    _func_name = _typst_func_name(figure)
+    _func_name = original_name(figure)
     _content = Content(body)
     params = (
         Pipe(
@@ -370,7 +282,7 @@ def footnote(body: Label | Content, *, numbering: Optional[str] = None) -> Block
         >>> footnote(Content(text("Hello, World!", font="Arial", fallback=True)))
         '#footnote(text(font: "Arial", fallback: true)[Hello, World!])'
     """
-    _func_name = _typst_func_name(footnote)
+    _func_name = original_name(footnote)
     params = (
         Pipe({"numbering": numbering}).map(valfilter(lambda x: x is not None)).flush()
     )
@@ -418,7 +330,7 @@ def heading(
         >>> heading("Hello, World!", level=2)
         '== Hello, World!'
     """
-    _func_name = _typst_func_name(heading)
+    _func_name = original_name(heading)
     params = (
         Pipe(
             {
@@ -460,7 +372,7 @@ def link(dest: str | Label) -> Block:
         >>> link(Label("chap:chapter"))
         '#link(<chap:chapter>)'
     """
-    _func_name = _typst_func_name(link)
+    _func_name = original_name(link)
     return rf"#{_func_name}({render(RenderType.VALUE)(dest)})"
 
 
@@ -500,7 +412,7 @@ def par(
         >>> par("Hello, World!")
         'Hello, World!'
     """
-    _func_name = _typst_func_name(par)
+    _func_name = original_name(par)
     if linebreaks and linebreaks not in ("simple", "optimized"):
         raise ValueError(f"Invalid value for linebreaks: {linebreaks}.")
     params = (
@@ -540,7 +452,7 @@ def ref(target: Label, *, supplement: Optional[Content] = None) -> Block:
         >>> ref(Label("chap:chapter"), supplement=Content("Hello, World!"))
         '#ref(<chap:chapter>, supplement: [Hello, World!])'
     """
-    _func_name = _typst_func_name(ref)
+    _func_name = original_name(ref)
     params = (
         Pipe({"supplement": supplement}).map(valfilter(lambda x: x is not None)).flush()
     )
@@ -573,7 +485,7 @@ def strong(body: Block, *, delta: Optional[int] = None) -> Block:
         '#strong(delta: 300)[#text(font: "Arial", fallback: true)[Hello, World!]]'
     """
     _content = Content(body)
-    _func_name = _typst_func_name(strong)
+    _func_name = original_name(strong)
     params = Pipe({"delta": delta}).map(valfilter(lambda x: x is not None)).flush()
     if not params:
         return rf"#{_func_name}{_content}"
@@ -602,7 +514,7 @@ def lorem(words: int) -> Block:
         >>> lorem(10)
         '#lorem(10)'
     """
-    _func_name = _typst_func_name(lorem)
+    _func_name = original_name(lorem)
     return rf"#{_func_name}({render(RenderType.VALUE)(words)})"
 
 
@@ -658,7 +570,7 @@ def text(
         >>> text("Hello, World!", stretch=Ratio(50))
         '#text(stretch: 50%)[Hello, World!]'
     """
-    _func_name = _typst_func_name(text)
+    _func_name = original_name(text)
     if style and style not in {"normal", "italic", "oblique"}:
         raise ValueError(
             "Parameter `style` must be one of 'normal', 'italic', and 'oblique'."
@@ -733,7 +645,7 @@ def pagebreak(*, weak: Optional[bool] = None, to: Optional[str] = None) -> Block
         >>> pagebreak(weak=True, to="odd")
         '#pagebreak(weak: true, to: "odd")'
     """
-    _func_name = _typst_func_name(pagebreak)
+    _func_name = original_name(pagebreak)
     if to and to not in ("even", "odd"):
         raise ValueError(f"Invalid value for to: {to}.")
     params = (
@@ -805,7 +717,7 @@ def rgb(*args):
         >>> rgb("#ffffff")
         Content(content='#rgb("#ffffff")')
     """
-    _func_name = _typst_func_name(rgb)
+    _func_name = original_name(rgb)
     if len(args) not in (1, 3, 4):
         raise ValueError(f"Invalid number of arguments: {len(args)}.")
     return Color(rf"#{_func_name}{render(RenderType.VALUE)(args)}")
@@ -832,7 +744,7 @@ def luma(lightness: int | Ratio, alpha: Optional[Ratio] = None) -> Color:
         >>> luma(50, 0.5)
         Content(content='#luma(50, 0.5)')
     """
-    _func_name = _typst_func_name(luma)
+    _func_name = original_name(luma)
     if alpha:
         return Color(rf"#{_func_name}{render(RenderType.VALUE)((lightness, alpha))}")
     return Color(rf"#{_func_name}({render(RenderType.VALUE)(lightness)})")
@@ -861,7 +773,7 @@ def cmyk(cyan: Ratio, magenta: Ratio, yellow: Ratio, key: Ratio) -> Color:
         >>> cmyk(0, 0, 0, 0.5)
         Content(content='#cmyk(0, 0, 0, 0.5)')
     """
-    _func_name = _typst_func_name(cmyk)
+    _func_name = original_name(cmyk)
     return Color(
         rf"#{_func_name}{render(RenderType.VALUE)((cyan, magenta, yellow, key))}"
     )
@@ -895,7 +807,7 @@ def _color_linear_rgb(
         >>> color.linear_rgb(255, 255, 255, 0.5)
         Content(content='#color.linear-rgb(255, 255, 255, 0.5)')
     """
-    _func_name = _typst_func_name(_color_linear_rgb)
+    _func_name = original_name(_color_linear_rgb)
     params = (red, green, blue)
     if alpha:
         params += (alpha,)  # type:ignore
@@ -932,7 +844,7 @@ def _color_hsl(
         >>> color.hsl(Ratio(30), Ratio(100), Ratio(50), 0.5)
         Content(content='#color.hsl(30%, 100%, 50%, 0.5)')
     """
-    _func_name = _typst_func_name(_color_hsl)
+    _func_name = original_name(_color_hsl)
     params = (hue, saturation, lightness)
     if alpha:
         params += (alpha,)  # type:ignore
@@ -1069,7 +981,7 @@ def image(
         >>> image("image.png", format="png")
         '#image("image.png", format: "png")'
     """
-    _func_name = _typst_func_name(image)
+    _func_name = original_name(image)
     if format and format not in ("png", "jpg", "gif", "svg"):
         raise ValueError(f"Invalid value for format: {format}.")
     if fit and fit not in ("cover", "contain", "stretch"):
