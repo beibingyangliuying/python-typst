@@ -21,17 +21,19 @@ pip install typstpy
 
 | Is Standard | Function Name | Original Name | Documentation |
 | --- | --- | --- | --- |
-| True | _caption | figure.caption | [figure.caption](https://typst.app/docs/reference/model/figure/#definitions-caption) |
-| True | _hsl | color.hsl | [color.hsl](https://typst.app/docs/reference/visualize/color/#definitions-hsl) |
-| True | _linear_rgb | color.linear_rgb | [color.linear_rgb](https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb) |
+| True | _color_hsl | color.hsl | [color.hsl](https://typst.app/docs/reference/visualize/color/#definitions-hsl) |
+| True | _color_linear_rgb | color.linear-rgb | [color.linear-rgb](https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb) |
+| True | _figure_caption | figure.caption | [figure.caption](https://typst.app/docs/reference/model/figure/#definitions-caption) |
 | True | bibliography | bibliography | [bibliography](https://typst.app/docs/reference/model/bibliography/) |
 | True | cite | cite | [cite](https://typst.app/docs/reference/model/cite/) |
 | True | cmyk | cmyk | [cmyk](https://typst.app/docs/reference/visualize/color/#definitions-cmyk) |
 | False | color | None | [None](None) |
 | True | emph | emph | [emph](https://typst.app/docs/reference/model/emph/) |
 | True | figure | figure | [figure](https://typst.app/docs/reference/model/figure/) |
+| True | footnote | footnote | [footnote](https://typst.app/docs/reference/model/footnote/) |
 | True | heading | heading | [heading](https://typst.app/docs/reference/model/heading/) |
 | True | image | image | [image](https://typst.app/docs/reference/visualize/image/) |
+| True | link | link | [link](https://typst.app/docs/reference/model/link/) |
 | True | lorem | lorem | [lorem](https://typst.app/docs/reference/text/lorem/) |
 | True | luma | luma | [luma](https://typst.app/docs/reference/visualize/color/#definitions-luma) |
 | True | pagebreak | pagebreak | [pagebreak](https://typst.app/docs/reference/layout/pagebreak/) |

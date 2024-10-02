@@ -46,6 +46,17 @@ def implement(
     original_name: Optional[str] = None,
     hyperlink: Optional[str] = None,
 ) -> Callable:
+    """Set attribute `_implement` to a function.
+
+    Args:
+        is_standard (bool): Whether the function is standard implemented.
+        original_name (Optional[str], optional): The original function name in typst. Defaults to None.
+        hyperlink (Optional[str], optional): The hyperlink of the documentation in typst. Defaults to None.
+
+    Returns:
+        Callable: The decorator function.
+    """
+
     def wrapper(_func: Callable) -> Callable:
         setattr(
             _func,

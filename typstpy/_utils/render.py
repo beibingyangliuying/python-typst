@@ -58,4 +58,19 @@ def _render(render_type: RenderType) -> Callable[[Any], str]:
 
 @curry
 def render(render_type: RenderType, target: Any) -> str:
+    """Render Python object to valid typst function parameter.
+
+    Args:
+        render_type (RenderType): The type of rendering.
+        target (Any): The python object to be rendered.
+
+    Returns:
+        str: Generated code.
+
+    Examples:
+        >>> render(RenderType.VALUE, list("hello"))
+        '("h", "e", "l", "l", "o")'
+        >>> render(RenderType.VALUE, (i + "Spam!" for i in list("hello")))
+        '("hSpam!", "eSpam!", "lSpam!", "lSpam!", "oSpam!")'
+    """
     return _render(render_type)(target)

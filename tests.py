@@ -3,12 +3,14 @@
 import doctest
 import unittest
 
-from typstpy import functions, param_types
-from typstpy.param_types import types
-
 
 def load_tests(loader, tests, ignore):
-    modules = [functions, param_types, types]
+    modules = [
+        "typstpy._utils.render",
+        "typstpy.functions",
+        "typstpy.param_types",
+        "typstpy.param_types.types",
+    ]
     for module in modules:
         tests.addTests(doctest.DocTestSuite(module))
     return tests
@@ -66,8 +68,10 @@ class DocumentTestCase(unittest.TestCase):
             color,
             emph,
             figure,
+            footnote,
             heading,
             image,
+            link,
             lorem,
             luma,
             pagebreak,
