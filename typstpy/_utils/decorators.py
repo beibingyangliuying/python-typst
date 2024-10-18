@@ -6,6 +6,16 @@ from attrs import field, frozen
 
 
 def attach_func(func: Callable, name: Optional[str] = None) -> Callable:
+    """Attach a function to another function.
+
+    Args:
+        func (Callable): The function to be attached.
+        name (Optional[str], optional): The attribute name to be set. When set to None, the function's name will be used. Defaults to None.
+
+    Returns:
+        Callable: The decorator function.
+    """
+
     def wrapper(_func: Callable) -> Callable:
         _name = name if name else _func.__name__
         if _name.startswith("_"):
@@ -38,6 +48,11 @@ class Implement:
             raise ValueError("Standard functions must have a hyperlink.")
 
     def to_markdown(self) -> str:
+        """Convert to a table's row in markdown format.
+
+        Returns:
+            str: The table's row in markdown format.
+        """
         return rf"| {self.is_standard} | {self.name} | {self.original_name} | [{self.original_name}]({self.hyperlink}) |"
 
 
@@ -46,7 +61,7 @@ def implement(
     original_name: Optional[str] = None,
     hyperlink: Optional[str] = None,
 ) -> Callable:
-    """Set attribute `_implement` to a function.
+    """Set `_implement` attribute to a function. The type of the attribute is `Implement`.
 
     Args:
         is_standard (bool): Whether the function is standard implemented.

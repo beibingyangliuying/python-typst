@@ -21,6 +21,8 @@ def _render(render_type: RenderType) -> Callable[[Any], str]:
 
     def render_value(value: Any) -> str:
         match value:
+            case None:
+                return "none"
             case bool():
                 return "true" if value else "false"
             case str():

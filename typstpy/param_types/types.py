@@ -1,7 +1,7 @@
 """Classes in this module should only be used as parameters' type in the `functions` module."""
 
 from enum import IntFlag, auto
-from typing import TypeAlias
+from typing import Any, Iterable, TypeAlias
 
 from attrs import field, frozen, validators
 
@@ -9,6 +9,16 @@ from ._base import _ValueUnit, _ValueUnits
 
 Block: TypeAlias = str
 """Executable typst block."""
+Array: TypeAlias = Iterable
+"""Represent the `array` type in typst."""
+
+
+@frozen
+class Auto:
+    """A value that indicates a smart default."""
+
+    def __str__(self) -> str:
+        return "auto"
 
 
 @frozen
@@ -19,11 +29,25 @@ class Content:
 
     @content.validator
     def _check_content(self, attribute, value):
+        if not isinstance(value, Block):
+            raise ValueError("Content must be a string.")
         # TODO: Check if the content is executable typst block.
-        pass
 
     def __str__(self) -> str:
-        return f"[{self.content}]"
+        return rf"[{self.content}]"
+
+
+Dictionary: TypeAlias = dict[str, Any]
+
+
+@frozen
+class Function:
+    """A mapping from argument values to a return value."""
+
+    func_body: str = field()
+
+    def __str__(self) -> str:
+        return self.func_body
 
 
 @frozen
@@ -39,6 +63,9 @@ class Label:
 
     def __str__(self) -> str:
         return f"<{self.label}>"
+
+
+Selector: TypeAlias = Function
 
 
 @frozen(slots=False)
@@ -189,7 +216,7 @@ class Ratio(_ValueUnit):
 
 Relative: TypeAlias = Length | Ratio | _ValueUnits
 """This type is a combination of a `Length` and a `Ratio`."""
-Color: TypeAlias = Content
+Color: TypeAlias = Block
 """A color in a specific color space."""
 
 

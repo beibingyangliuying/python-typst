@@ -22,13 +22,18 @@ from .functions import (
 from .param_types import (
     Alignment,
     Angle,
+    Array,
+    Auto,
     Block,
     Color,
     Content,
+    Dictionary,
+    Function,
     Label,
     Length,
     Ratio,
     Relative,
+    Selector,
 )
 
 __all__ = [
@@ -53,11 +58,16 @@ __all__ = [
     "text",
     "Alignment",
     "Angle",
+    "Array",
+    "Auto",
     "Block",
     "Color",
     "Content",
+    "Dictionary",
+    "Function",
     "Label",
     "Length",
     "Ratio",
     "Relative",
+    "Selector",
 ]

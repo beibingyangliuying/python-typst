@@ -89,7 +89,7 @@ class DocumentTestCase(unittest.TestCase):
         document.add_block(
             figure(
                 image("image.png", width=Ratio(70)),
-                caption=Content("This is a figure."),
+                caption="This is a figure.",
                 label=Label("fig:figure"),
             )
         )
@@ -98,7 +98,20 @@ class DocumentTestCase(unittest.TestCase):
         )
         document.add_block(par(lorem(100)))
 
-        print(document)
+        self.assertEqual(
+            str(document),
+            r"""
+== Hello, World!
+
+#par(justify: true)[Hello, World!]
+
+#figure(image("image.png", width: 70%), caption: [This is a figure.]) <fig:figure>
+
+Please see #ref(<fig:figure>) for more information.
+
+#lorem(100)
+""".strip(),
+        )
 
 
 if __name__ == "__main__":

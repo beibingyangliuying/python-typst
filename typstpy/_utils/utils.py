@@ -1,8 +1,9 @@
 from itertools import product
-from typing import Callable, Generator
+from typing import Any, Callable, Generator
 
 import pandas as pd
-from cytoolz.curried import memoize  # type:ignore
+from cytoolz.curried import keyfilter, memoize  # type:ignore
+from pymonad.reader import Pipe  # type:ignore
 
 from ..param_types import Content
 
@@ -96,11 +97,20 @@ def valid_styles() -> set[str]:
         "american-sociological-association",
         "modern-language-association",
         "alphanumeric",
+        "ieee",
     }
 
 
 @memoize
 def original_name(func: Callable) -> str:
+    """Get the `original name` of a function in typst.
+
+    Args:
+        func (Callable): The function to be retrieved.
+
+    Returns:
+        str: The `original name` of the function.
+    """
     if hasattr(func, "_implement"):
         return func._implement.original_name
     return func.__name__
@@ -121,5 +131,24 @@ def decompose_dataframe(df: pd.DataFrame) -> Generator[Content, None, None]:
         [Content(content='1'), Content(content='4'), Content(content='2'), Content(content='5'), Content(content='3'), Content(content='6')]
     """
     rows, columns = df.shape
-    for index in product(range(rows), range(columns)):
-        yield Content(str(df.iloc[*index]))
+    for row, column in product(range(rows), range(columns)):
+        yield Content(str(df.iloc[row, column]))
+
+
+def filter_default_params(func: Callable, params: dict[str, Any]) -> dict[str, Any]:
+    """Filter out the default parameters of a function.
+
+    Args:
+        func (Callable): The function to be filtered.
+        params (dict[str, Any]): The parameters to be filtered.
+
+    Raises:
+        ValueError: When the parameters which are not default given.
+
+    Returns:
+        dict[str, Any]: The filtered parameters.
+    """
+    defaults = func.__kwdefaults__
+    if not params.keys() <= defaults.keys():
+        raise ValueError("Parameters which are not default given.")
+    return Pipe(params).map(keyfilter(lambda x: params[x] != defaults[x])).flush()

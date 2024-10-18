@@ -2,13 +2,20 @@
 
 from .decorators import attach_func, implement
 from .render import RenderType, render
-from .utils import original_name, valid_styles
+from .utils import (
+    decompose_dataframe,
+    filter_default_params,
+    original_name,
+    valid_styles,
+)
 
 __all__ = [
     "attach_func",
     "implement",
-    "render",
     "RenderType",
+    "render",
+    "decompose_dataframe",
+    "filter_default_params",
     "original_name",
     "valid_styles",
 ]
