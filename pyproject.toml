@@ -10,7 +10,7 @@ disallow_incomplete_defs = true
 
 [tool.poetry]
 name = "typstpy"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python interface to generate Typst code."
 authors = ["chenjunhan <beibingyangliuying@foxmail.com>"]
 license = "MIT"
