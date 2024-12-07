@@ -28,24 +28,24 @@ def attach_func(func: Callable, name: Optional[str] = None) -> Callable:
 
 @frozen
 class Implement:
-    is_standard: bool = field()
-    name: str = field()
+    is_standard: bool
+    name: str
     original_name: str | None = field(default=None)
     hyperlink: str | None = field(default=None)
 
     @original_name.validator
     def _check_original_name(self, attribute, value):
         if not self.is_standard and value:
-            raise ValueError("Only standard functions can have an original name.")
+            raise ValueError(f"Only standard functions can have {attribute.name}.")
         elif self.is_standard and not value:
-            raise ValueError("Standard functions must have an original name.")
+            raise ValueError(f"Standard functions must have {attribute.name}.")
 
     @hyperlink.validator
     def _check_hyperlink(self, attribute, value):
         if not self.is_standard and value:
-            raise ValueError("Only standard functions can have a hyperlink.")
+            raise ValueError(f"Only standard functions can have {attribute.name}.")
         elif self.is_standard and not value:
-            raise ValueError("Standard functions must have a hyperlink.")
+            raise ValueError(f"Standard functions must have {attribute.name}.")
 
     def to_markdown(self) -> str:
         """Convert to a table's row in markdown format.

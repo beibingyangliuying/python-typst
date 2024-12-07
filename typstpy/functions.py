@@ -52,6 +52,8 @@ def rgb(
         '#rgb(255, 255, 255)'
         >>> rgb(255, 255, 255, 0.5)
         '#rgb(255, 255, 255, 0.5)'
+        >>> rgb(Ratio(50), Ratio(50), Ratio(50), Ratio(50))
+        '#rgb(50%, 50%, 50%, 50%)'
     """
 
 
@@ -83,6 +85,8 @@ def rgb(*args):
         '#rgb(255, 255, 255)'
         >>> rgb(255, 255, 255, 0.5)
         '#rgb(255, 255, 255, 0.5)'
+        >>> rgb(Ratio(50), Ratio(50), Ratio(50), Ratio(50))
+        '#rgb(50%, 50%, 50%, 50%)'
         >>> rgb("#ffffff")
         '#rgb("#ffffff")'
     """
@@ -112,6 +116,8 @@ def luma(lightness: int | Ratio, alpha: Optional[Ratio] = None) -> Color:
         '#luma(50)'
         >>> luma(50, 0.5)
         '#luma(50, 0.5)'
+        >>> luma(Ratio(50), Ratio(50))
+        '#luma(50%, 50%)'
     """
     _func_name = original_name(luma)
     if alpha:
@@ -137,10 +143,8 @@ def cmyk(cyan: Ratio, magenta: Ratio, yellow: Ratio, key: Ratio) -> Color:
         Color: The color in CMYK space.
 
     Examples:
-        >>> cmyk(0, 0, 0, 0)
-        '#cmyk(0, 0, 0, 0)'
-        >>> cmyk(0, 0, 0, 0.5)
-        '#cmyk(0, 0, 0, 0.5)'
+        >>> cmyk(Ratio(50), Ratio(50), Ratio(50), Ratio(50))
+        '#cmyk(50%, 50%, 50%, 50%)'
     """
     _func_name = original_name(cmyk)
     return rf"#{_func_name}{render(RenderType.VALUE)((cyan, magenta, yellow, key))}"
@@ -173,6 +177,8 @@ def _color_linear_rgb(
         '#color.linear-rgb(255, 255, 255)'
         >>> color.linear_rgb(255, 255, 255, 0.5)
         '#color.linear-rgb(255, 255, 255, 0.5)'
+        >>> color.linear_rgb(Ratio(50), Ratio(50), Ratio(50), Ratio(50))
+        '#color.linear-rgb(50%, 50%, 50%, 50%)'
     """
     _func_name = original_name(_color_linear_rgb)
     params = (red, green, blue)
@@ -204,12 +210,10 @@ def _color_hsl(
         Color: The color in HSL space.
 
     Examples:
-        >>> color.hsl(0, 0, 0)
-        '#color.hsl(0, 0, 0)'
-        >>> color.hsl(0, 0, 0, 0.5)
-        '#color.hsl(0, 0, 0, 0.5)'
-        >>> color.hsl(Ratio(30), Ratio(100), Ratio(50), 0.5)
-        '#color.hsl(30%, 100%, 50%, 0.5)'
+        >>> color.hsl(Angle.deg(30), Ratio(100), Ratio(50), Ratio(50))
+        '#color.hsl(30deg, 100%, 50%, 50%)'
+        >>> color.hsl(Angle.deg(30), 100, 50)
+        '#color.hsl(30deg, 100, 50)'
     """
     _func_name = original_name(_color_hsl)
     params = (hue, saturation, lightness)

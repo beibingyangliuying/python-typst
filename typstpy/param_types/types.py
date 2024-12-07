@@ -1,15 +1,16 @@
 """Classes in this module should only be used as parameters' type in the `functions` module."""
 
 from enum import IntFlag, auto
-from typing import Any, Iterable, TypeAlias
+from typing import Any, Iterable
 
 from attrs import field, frozen, validators
+from cytoolz.curried import memoize  # type:ignore
 
 from ._base import _ValueUnit, _ValueUnits
 
-Block: TypeAlias = str
+Block = str
 """Executable typst block."""
-Array: TypeAlias = Iterable
+Array = Iterable
 """Represent the `array` type in typst."""
 
 
@@ -25,26 +26,20 @@ class Auto:
 class Content:
     """A piece of document content."""
 
-    content: Block = field()
-
-    @content.validator
-    def _check_content(self, attribute, value):
-        if not isinstance(value, Block):
-            raise ValueError("Content must be a string.")
-        # TODO: Check if the content is executable typst block.
+    content: Block = field(validator=validators.instance_of(Block))
 
     def __str__(self) -> str:
-        return rf"[{self.content}]"
+        return f"[{self.content}]"
 
 
-Dictionary: TypeAlias = dict[str, Any]
+Dictionary = dict[str, Any]
 
 
 @frozen
-class Function:
+class Function:  # TODO: Consider a more suitable implementation of `Function`.
     """A mapping from argument values to a return value."""
 
-    func_body: str = field()
+    func_body: str
 
     def __str__(self) -> str:
         return self.func_body
@@ -54,18 +49,13 @@ class Function:
 class Label:
     """A label for an element."""
 
-    label: str = field()
-
-    @label.validator
-    def _check_label(self, attribute, value):
-        # TODO: Check for illegal characters in label.
-        pass
+    label: str
 
     def __str__(self) -> str:
         return f"<{self.label}>"
 
 
-Selector: TypeAlias = Function
+Selector = Function  # TODO: Consider a more suitable implementation of `Selector`.
 
 
 @frozen(slots=False)
@@ -155,6 +145,7 @@ class Length(_ValueUnit):
         return Length(value, "in")
 
     @staticmethod
+    @memoize
     def zihao(name: str) -> "Length":
         """Create a new `Length` object with a `pt` unit based on a Chinese zihao.
 
@@ -214,9 +205,9 @@ class Ratio(_ValueUnit):
     unit: str = field(init=False, default="%")
 
 
-Relative: TypeAlias = Length | Ratio | _ValueUnits
+Relative = Length | Ratio | _ValueUnits
 """This type is a combination of a `Length` and a `Ratio`."""
-Color: TypeAlias = Block
+Color = Block
 """A color in a specific color space."""
 
 
@@ -225,6 +216,38 @@ class Angle(_ValueUnit):
     """An angle describing a rotation."""
 
     unit: str = field(validator=validators.in_(("deg", "rad")))
+
+    @staticmethod
+    def deg(value: float) -> "Angle":
+        """Create a new `Angle` object with a `deg` unit.
+
+        Args:
+            value (float): The value of the `deg` unit.
+
+        Returns:
+            Angle: The created `Angle` object.
+
+        Examples:
+            >>> Angle.deg(90)
+            Angle(value=90, unit='deg')
+        """
+        return Angle(value, "deg")
+
+    @staticmethod
+    def rad(value: float) -> "Angle":
+        """Create a new `Angle` object with a `rad` unit.
+
+        Args:
+            value (float): The value of the `rad` unit.
+
+        Returns:
+            Angle: The created `Angle` object.
+
+        Examples:
+            >>> Angle.rad(3.14)
+            Angle(value=3.14, unit='rad')
+        """
+        return Angle(value, "rad")
 
 
 class Alignment(IntFlag):

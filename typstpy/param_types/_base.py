@@ -1,10 +1,11 @@
 from abc import ABC
 from enum import Enum
+from functools import cached_property
 from itertools import starmap
 from typing import Union, final
 
 from attrs import field, frozen, validators
-from cytoolz.curried import curry, map  # type:ignore
+from cytoolz.curried import curry, map, memoize  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
 from ._format import FormatType, format
@@ -17,6 +18,7 @@ class _Sign(Enum):
     MINUS = "-"
 
     @property
+    @memoize
     def inv(self) -> "_Sign":
         match self:
             case _Sign.PLUS:
@@ -33,7 +35,7 @@ class _ValueUnit(ABC):
     """Represent a field with a float value and a unit."""
 
     value: float = field(repr=format(FormatType.FLOAT))
-    unit: str = field()
+    unit: str
 
     @final
     def __pos__(self) -> "_ValueUnit":
@@ -105,7 +107,7 @@ class _ValueUnits:
         validator=validators.deep_iterable(validators.instance_of(_Sign))
     )
 
-    @property
+    @cached_property
     def inv_signs(self) -> tuple[_Sign, ...]:
         return Pipe(self.signs).map(map(lambda x: x.inv)).map(tuple).flush()
 

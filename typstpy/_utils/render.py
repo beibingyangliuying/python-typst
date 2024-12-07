@@ -31,8 +31,8 @@ def _render(render_type: RenderType) -> Callable[[Any], str]:
                 name = value.name
                 return (
                     Maybe(name, name)
-                    .map(str.lower)
-                    .map(lambda x: str.replace(x, "|", "+"))
+                    .map(lambda x: x.lower())
+                    .map(lambda x: x.replace("|", "+"))
                     .maybe(ValueError(), identity)
                 )
             case Content() if value.content.startswith("#"):
