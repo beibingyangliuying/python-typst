@@ -518,9 +518,9 @@ def emph(body: Block) -> Block:
         '#emph(text(font: "Arial")[Hello, World!])'
     """
     _func_name = original_name(emph)
-    content = Content(body)
+    _body = Content(body)
 
-    return rf"#{_func_name}({render(RenderType.VALUE)(content)})"
+    return rf"#{_func_name}({render(RenderType.VALUE)(_body)})"
 
 
 @implement(
@@ -550,8 +550,12 @@ def _figure_caption(
     Examples:
         >>> figure.caption("This is a caption.")
         'This is a caption.'
+        >>> figure.caption(strong("This is a caption."))
+        '#strong[This is a caption.]'
         >>> figure.caption("This is a caption.", position=Alignment.TOP)
         '#figure.caption(position: top, [This is a caption.])'
+        >>> figure.caption(strong("This is a caption."), position=Alignment.TOP)
+        '#figure.caption(position: top, strong[This is a caption.])'
         >>> figure.caption("This is a caption.", separator="---")
         '#figure.caption(separator: [---], [This is a caption.])'
         >>> figure.caption("This is a caption.", position=Alignment.TOP, separator="---")
@@ -649,12 +653,12 @@ def figure(
             "outlined": outlined,
         },
     )
-    content = Content(body)
+    _body = Content(body)
 
     if not params:
-        result = rf"#{_func_name}({render(RenderType.VALUE)(content)})"
+        result = rf"#{_func_name}({render(RenderType.VALUE)(_body)})"
     else:
-        result = rf"#{_func_name}({render(RenderType.VALUE)(content)}, {render(RenderType.DICT)(params)})"
+        result = rf"#{_func_name}({render(RenderType.VALUE)(_body)}, {render(RenderType.DICT)(params)})"
 
     if label:
         result += f" {label}"
@@ -685,11 +689,11 @@ def footnote(body: Label | Block, *, numbering: str | Function = "1") -> Block:
     """
     _func_name = original_name(footnote)
     params = filter_default_params(footnote, {"numbering": numbering})
-    content = Content(body) if isinstance(body, Block) else body
+    _body = Content(body) if isinstance(body, Block) else body
 
     if not params:
-        return rf"#{_func_name}({render(RenderType.VALUE)(content)})"
-    return rf"#{_func_name}({render(RenderType.VALUE)(content)}, {render(RenderType.DICT)(params)})"
+        return rf"#{_func_name}({render(RenderType.VALUE)(_body)})"
+    return rf"#{_func_name}({render(RenderType.VALUE)(_body)}, {render(RenderType.DICT)(params)})"
 
 
 @implement(
@@ -913,10 +917,10 @@ def strong(body: Block, *, delta: int = 300) -> Block:
     """
     _func_name = original_name(strong)
     params = filter_default_params(strong, {"delta": delta})
-    _content = Content(body)
+    _body = Content(body)
     if not params:
-        return rf"#{_func_name}{_content}"
-    return rf"#{_func_name}({render(RenderType.DICT)(params)}){_content}"
+        return rf"#{_func_name}{_body}"
+    return rf"#{_func_name}({render(RenderType.DICT)(params)}){_body}"
 
 
 # endregion
@@ -943,6 +947,146 @@ def lorem(words: int) -> Block:
     """
     _func_name = original_name(lorem)
     return rf"#{_func_name}({render(RenderType.VALUE)(words)})"
+
+
+@implement(
+    True,
+    original_name="lower",
+    hyperlink="https://typst.app/docs/reference/text/lower/",
+)
+def lower(text: Block) -> Block:
+    """Interface of `lower` function in typst. See [the documentation](https://typst.app/docs/reference/text/lower/) for more information.
+
+    Args:
+        text (Block): The text to convert to lowercase.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> lower("Hello, World!")
+        '#lower([Hello, World!])'
+        >>> lower(text("Hello, World!", font="Arial"))
+        '#lower(text(font: "Arial")[Hello, World!])'
+        >>> lower(emph("Hello, World!"))
+        '#lower(emph([Hello, World!]))'
+    """
+    _func_name = original_name(lower)
+    _body = Content(text)
+    return rf"#{_func_name}({render(RenderType.VALUE)(_body)})"
+
+
+@implement(
+    True,
+    original_name="smallcaps",
+    hyperlink="https://typst.app/docs/reference/text/smallcaps/",
+)
+def smallcaps(body: Block) -> Block:
+    """Interface of `smallcaps` function in typst. See [the documentation](https://typst.app/docs/reference/text/smallcaps/) for more information.
+
+    Args:
+        body (Block): The content to display in small capitals.
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> smallcaps("Hello, World!")
+        '#smallcaps([Hello, World!])'
+    """
+    _func_name = original_name(smallcaps)
+    _body = Content(body)
+    return rf"#{_func_name}({render(RenderType.VALUE)(_body)})"
+
+
+@implement(
+    True,
+    original_name="sub",
+    hyperlink="https://typst.app/docs/reference/text/sub/",
+)
+def sub(
+    body: Block,
+    *,
+    typographic: bool = True,
+    baseline: Length = Length.em(0.2),
+    size: Length = Length.em(0.6),
+) -> Block:
+    """Interface of `sub` function in typst. See [the documentation](https://typst.app/docs/reference/text/sub/) for more information.
+
+    Args:
+        body (Block): The text to display in subscript.
+        typographic (bool, optional): Whether to prefer the dedicated subscript characters of the font. Defaults to True.
+        baseline (Length, optional): The baseline shift for synthetic subscripts. Does not apply if typographic is true and the font has subscript codepoints for the given body. Defaults to Length.em(0.2).
+        size (Length, optional): The font size for synthetic subscripts. Does not apply if typographic is true and the font has subscript codepoints for the given body. Defaults to Length.em(0.6).
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> sub("Hello, World!")
+        '#sub[Hello, World!]'
+        >>> sub("Hello, World!", typographic=False)
+        '#sub(typographic: false)[Hello, World!]'
+        >>> sub("Hello, World!", baseline=Length.em(0.4))
+        '#sub(baseline: 0.4em)[Hello, World!]'
+        >>> sub("Hello, World!", size=Length.em(0.8))
+        '#sub(size: 0.8em)[Hello, World!]'
+        >>> sub("Hello, World!", typographic=False, baseline=Length.em(0.4), size=Length.em(0.8))
+        '#sub(typographic: false, baseline: 0.4em, size: 0.8em)[Hello, World!]'
+    """
+    _func_name = original_name(sub)
+    params = filter_default_params(
+        sub, {"typographic": typographic, "baseline": baseline, "size": size}
+    )
+    _body = Content(body)
+    if not params:
+        return rf"#{_func_name}{_body}"
+    return rf"#{_func_name}({render(RenderType.DICT)(params)}){_body}"
+
+
+@implement(
+    True,
+    original_name="super",
+    hyperlink="https://typst.app/docs/reference/text/super/",
+)
+def sup(
+    body: Block,
+    *,
+    typographic: bool = True,
+    baseline: Length = Length.em(-0.5),
+    size: Length = Length.em(0.6),
+) -> Block:
+    """Interface of `super` function in typst. See [the documentation](https://typst.app/docs/reference/text/super/) for more information.
+
+    Args:
+        body (Block): The text to display in superscript.
+        typographic (bool, optional): Whether to prefer the dedicated superscript characters of the font. Defaults to True.
+        baseline (Length, optional): The baseline shift for synthetic superscripts. Does not apply if typographic is true and the font has superscript codepoints for the given body. Defaults to -Length.em(0.5).
+        size (Length, optional): The font size for synthetic superscripts. Does not apply if typographic is true and the font has superscript codepoints for the given body. Defaults to Length.em(0.6).
+
+    Returns:
+        Block: Executable typst block.
+
+    Examples:
+        >>> sup("Hello, World!")
+        '#super[Hello, World!]'
+        >>> sup("Hello, World!", typographic=False)
+        '#super(typographic: false)[Hello, World!]'
+        >>> sup("Hello, World!", baseline=Length.em(0.4))
+        '#super(baseline: 0.4em)[Hello, World!]'
+        >>> sup("Hello, World!", size=Length.em(0.8))
+        '#super(size: 0.8em)[Hello, World!]'
+        >>> sup("Hello, World!", typographic=False, baseline=Length.em(0.4), size=Length.em(0.8))
+        '#super(typographic: false, baseline: 0.4em, size: 0.8em)[Hello, World!]'
+    """
+    _func_name = original_name(sup)
+    params = filter_default_params(
+        sup, {"typographic": typographic, "baseline": baseline, "size": size}
+    )
+    _body = Content(body)
+    if not params:
+        return rf"#{_func_name}{_body}"
+    return rf"#{_func_name}({render(RenderType.DICT)(params)}){_body}"
 
 
 @implement(

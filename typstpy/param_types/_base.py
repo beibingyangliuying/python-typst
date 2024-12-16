@@ -38,11 +38,11 @@ class _ValueUnit(ABC):
     unit: str
 
     @final
-    def __pos__(self) -> "_ValueUnit":
+    def __pos__(self):
         return self
 
     @final
-    def __neg__(self) -> "_ValueUnit":
+    def __neg__(self):
         return self.__class__(-self.value, self.unit)
 
     @final
