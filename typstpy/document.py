@@ -3,20 +3,20 @@ from typing import final
 
 from attrs import field, frozen
 
-from .param_types import Block
-
 
 @final
 @frozen
 class Document:
-    _blocks: deque[Block] = field(factory=deque, init=False, repr=False)
+    _blocks: deque[str] = field(factory=deque, converter=deque)
+    _set_rules: deque[str] = field(factory=deque, converter=deque)
+    _show_rules: deque[str] = field(factory=deque, converter=deque)
 
-    def add_block(self, block: Block) -> None:
+    def add_block(self, block: str):
         self._blocks.append(block)
 
-    def save(self, path: str) -> None:
-        with open(path, "w") as f:
+    def save(self, path: str):
+        with open(path, 'w') as f:
             f.write(str(self))
 
-    def __str__(self) -> Block:
-        return "\n\n".join(self._blocks)
+    def __str__(self):
+        return '\n\n'.join(self._blocks)

@@ -1,15 +1,15 @@
-# python-typst
+# typstpy
 
-`python-typst` is a library for generating executable typst code (See [typst repository](https://github.com/typst/typst) and [typst documentation](https://typst.app/docs/) for more information).
-It is written primarily in functional programming paradigm with some OOP content.
+`typstpy` is a library for generating executable [typst](https://typst.app/docs/) code.
+This package is written primarily in functional programming paradigm with some OOP contents.
 Each module has greater than 90% unit test coverage.
 
 This package provides the interfaces in a way that is as close as possible to typst's native functions.
-Through `python-typst` and other data processing packages, you can generate data reports quickly.
+Through `typstpy` and other data processing packages, you can generate data reports quickly.
 
 Repository on GitHub: [python-typst](https://github.com/beibingyangliuying/python-typst).
 Homepage on PyPI: [python-typst](https://pypi.org/project/typstpy/).
-Contributions are welcome.
+Any contributions are welcome.
 
 ## Installation
 
@@ -21,31 +21,84 @@ pip install typstpy
 
 | Is Standard | Function Name | Original Name | Documentation |
 | --- | --- | --- | --- |
-| True | _color_hsl | color.hsl | [color.hsl](https://typst.app/docs/reference/visualize/color/#definitions-hsl) |
-| True | _color_linear_rgb | color.linear-rgb | [color.linear-rgb](https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb) |
-| True | _figure_caption | figure.caption | [figure.caption](https://typst.app/docs/reference/model/figure/#definitions-caption) |
+| True | align | align | [align](https://typst.app/docs/reference/layout/align/) |
+| True | arguments | arguments | [arguments](https://typst.app/docs/reference/foundations/arguments/) |
 | True | bibliography | bibliography | [bibliography](https://typst.app/docs/reference/model/bibliography/) |
+| True | block | block | [block](https://typst.app/docs/reference/layout/block/) |
+| True | box | box | [box](https://typst.app/docs/reference/layout/box/) |
+| True | bullet_list | list | [list](https://typst.app/docs/reference/model/list/) |
+| True | circle | circle | [circle](https://typst.app/docs/reference/visualize/circle/) |
 | True | cite | cite | [cite](https://typst.app/docs/reference/model/cite/) |
 | True | cmyk | cmyk | [cmyk](https://typst.app/docs/reference/visualize/color/#definitions-cmyk) |
-| False | color | None | [None](None) |
+| True | colbreak | colbreak | [colbreak](https://typst.app/docs/reference/layout/colbreak/) |
+| True | color | color | [color](https://typst.app/docs/reference/visualize/color/) |
+| True | columns | columns | [columns](https://typst.app/docs/reference/layout/columns/) |
+| True | document | document | [document](https://typst.app/docs/reference/model/document/) |
+| True | ellipse | ellipse | [ellipse](https://typst.app/docs/reference/visualize/ellipse/) |
 | True | emph | emph | [emph](https://typst.app/docs/reference/model/emph/) |
 | True | figure | figure | [figure](https://typst.app/docs/reference/model/figure/) |
 | True | footnote | footnote | [footnote](https://typst.app/docs/reference/model/footnote/) |
+| True | gradient | gradient | [gradient](https://typst.app/docs/reference/visualize/gradient/) |
+| True | grid | grid | [grid](https://typst.app/docs/reference/layout/grid/) |
 | True | heading | heading | [heading](https://typst.app/docs/reference/model/heading/) |
+| True | hide | hide | [hide](https://typst.app/docs/reference/layout/hide/) |
+| True | highlight | highlight | [highlight](https://typst.app/docs/reference/text/highlight/) |
+| True | hspace | h | [h](https://typst.app/docs/reference/layout/h/) |
 | True | image | image | [image](https://typst.app/docs/reference/visualize/image/) |
+| True | layout | layout | [layout](https://typst.app/docs/reference/layout/layout/) |
+| True | line | line | [line](https://typst.app/docs/reference/visualize/line/) |
+| True | linebreak | linebreak | [linebreak](https://typst.app/docs/reference/text/linebreak/) |
 | True | link | link | [link](https://typst.app/docs/reference/model/link/) |
 | True | lorem | lorem | [lorem](https://typst.app/docs/reference/text/lorem/) |
 | True | lower | lower | [lower](https://typst.app/docs/reference/text/lower/) |
 | True | luma | luma | [luma](https://typst.app/docs/reference/visualize/color/#definitions-luma) |
+| True | measure | measure | [measure](https://typst.app/docs/reference/layout/measure/) |
+| True | move | move | [move](https://typst.app/docs/reference/layout/move/) |
+| True | numbered_list | enum | [enum](https://typst.app/docs/reference/model/enum/) |
+| True | numbering | numbering | [numbering](https://typst.app/docs/reference/model/numbering/) |
+| True | oklab | oklab | [oklab](https://typst.app/docs/reference/visualize/color/#definitions-oklab) |
+| True | oklch | oklch | [oklch](https://typst.app/docs/reference/visualize/color/#definitions-oklch) |
+| True | outline | outline | [outline](https://typst.app/docs/reference/model/outline/) |
+| True | overline | overline | [overline](https://typst.app/docs/reference/text/overline/) |
+| True | pad | pad | [pad](https://typst.app/docs/reference/layout/pad/) |
+| True | page | page | [page](https://typst.app/docs/reference/layout/page/) |
 | True | pagebreak | pagebreak | [pagebreak](https://typst.app/docs/reference/layout/pagebreak/) |
 | True | par | par | [par](https://typst.app/docs/reference/model/par/) |
+| True | parbreak | parbreak | [parbreak](https://typst.app/docs/reference/model/parbreak/) |
+| True | path | path | [path](https://typst.app/docs/reference/visualize/path/) |
+| True | pattern | pattern | [pattern](https://typst.app/docs/reference/visualize/pattern/) |
+| True | place | place | [place](https://typst.app/docs/reference/layout/place/) |
+| True | polygon | polygon | [polygon](https://typst.app/docs/reference/visualize/polygon/) |
+| True | quote | quote | [quote](https://typst.app/docs/reference/model/quote/) |
+| True | raw | raw | [raw](https://typst.app/docs/reference/text/raw/) |
+| True | rect | rect | [rect](https://typst.app/docs/reference/visualize/rect/) |
 | True | ref | ref | [ref](https://typst.app/docs/reference/model/ref/) |
+| True | repeat | repeat | [repeat](https://typst.app/docs/reference/layout/repeat/) |
 | True | rgb | rgb | [rgb](https://typst.app/docs/reference/visualize/color/#definitions-rgb) |
+| True | rotate | rotate | [rotate](https://typst.app/docs/reference/layout/rotate/) |
+| True | scale | scale | [scale](https://typst.app/docs/reference/layout/scale/) |
+| True | skew | skew | [skew](https://typst.app/docs/reference/layout/skew/) |
 | True | smallcaps | smallcaps | [smallcaps](https://typst.app/docs/reference/text/smallcaps/) |
+| True | smartquote | smartquote | [smartquote](https://typst.app/docs/reference/text/smartquote/) |
+| True | square | square | [square](https://typst.app/docs/reference/visualize/square/) |
+| True | stack | stack | [stack](https://typst.app/docs/reference/layout/stack/) |
+| True | strike | strike | [strike](https://typst.app/docs/reference/text/strike/) |
+| True | stroke | stroke | [stroke](https://typst.app/docs/reference/visualize/stroke/) |
 | True | strong | strong | [strong](https://typst.app/docs/reference/model/strong/) |
-| True | sub | sub | [sub](https://typst.app/docs/reference/text/sub/) |
-| True | sup | super | [super](https://typst.app/docs/reference/text/super/) |
+| True | subscript | sub | [sub](https://typst.app/docs/reference/text/sub/) |
+| True | superscript | super | [super](https://typst.app/docs/reference/text/super/) |
+| True | table | table | [table](https://typst.app/docs/reference/model/table/) |
+| True | terms | terms | [terms](https://typst.app/docs/reference/model/terms/) |
 | True | text | text | [text](https://typst.app/docs/reference/text/text/) |
+| True | underline | underline | [underline](https://typst.app/docs/reference/text/underline/) |
+| True | upper | upper | [upper](https://typst.app/docs/reference/text/upper/) |
+| True | vspace | v | [v](https://typst.app/docs/reference/layout/v/) |
+
+## Design philosophy
+
+## Change logs
+
+- _1.0.0-beta.1_: Completely reconstructed the underlying implementation.
 
 ## Examples
 
@@ -53,373 +106,383 @@ pip install typstpy
 from typstpy import *
 ```
 
-_color_hsl
+`bibliography`:
 
 ```python
->>> color.hsl(Angle.deg(30), Ratio(100), Ratio(50), Ratio(50))
-'#color.hsl(30deg, 100%, 50%, 50%)'
->>> color.hsl(Angle.deg(30), 100, 50)
-'#color.hsl(30deg, 100, 50)'
+>>> bibliography('"bibliography.bib"', style='"cell"')
+'#bibliography("bibliography.bib", style: "cell")'
 ```
 
-_color_linear_rgb
+`circle`:
 
 ```python
->>> color.linear_rgb(255, 255, 255)
-'#color.linear-rgb(255, 255, 255)'
->>> color.linear_rgb(255, 255, 255, 0.5)
-'#color.linear-rgb(255, 255, 255, 0.5)'
->>> color.linear_rgb(Ratio(50), Ratio(50), Ratio(50), Ratio(50))
-'#color.linear-rgb(50%, 50%, 50%, 50%)'
+>>> circle('[Hello, world!]')
+'#circle([Hello, world!])'
+>>> circle('[Hello, world!]', radius='10pt')
+'#circle([Hello, world!], radius: 10pt)'
+>>> circle('[Hello, world!]', width='100%', height='100%')
+'#circle([Hello, world!], width: 100%, height: 100%)'
 ```
 
-_figure_caption
+`cite`:
 
 ```python
->>> figure.caption("This is a caption.")
-'This is a caption.'
->>> figure.caption(strong("This is a caption."))
-'#strong[This is a caption.]'
->>> figure.caption("This is a caption.", position=Alignment.TOP)
-'#figure.caption(position: top, [This is a caption.])'
->>> figure.caption(strong("This is a caption."), position=Alignment.TOP)
-'#figure.caption(position: top, strong[This is a caption.])'
->>> figure.caption("This is a caption.", separator="---")
-'#figure.caption(separator: [---], [This is a caption.])'
->>> figure.caption("This is a caption.", position=Alignment.TOP, separator="---")
-'#figure.caption(position: top, separator: [---], [This is a caption.])'
+>>> cite('<label>')
+'#cite(<label>)'
+>>> cite('<label>', supplement='[Hello, World!]')
+'#cite(<label>, supplement: [Hello, World!])'
+>>> cite('<label>', form='"prose"')
+'#cite(<label>, form: "prose")'
+>>> cite('<label>', style='"annual-reviews"')
+'#cite(<label>, style: "annual-reviews")'
 ```
 
-bibliography
+`cmyk`:
 
 ```python
->>> bibliography("references.bib")
-'#bibliography("references.bib")'
->>> bibliography("references.bib", title="My Bib")
-'#bibliography("references.bib", title: [My Bib])'
->>> bibliography("references.bib", title=None)
-'#bibliography("references.bib", title: none)'
->>> bibliography("references.bib", full=True)
-'#bibliography("references.bib", full: true)'
->>> bibliography("references.bib", style="annual-reviews")
-'#bibliography("references.bib", style: "annual-reviews")'
->>> bibliography("references.bib", title="My Bib", full=True, style="annual-reviews")
-'#bibliography("references.bib", title: [My Bib], full: true, style: "annual-reviews")'
-```
-
-cite
-
-```python
->>> label = Label("Essay")
->>> cite(label)
-'#cite(<Essay>)'
->>> cite(label, supplement="1")
-'#cite(<Essay>, supplement: [1])'
->>> cite(label, form="prose")
-'#cite(<Essay>, form: "prose")'
->>> cite(label, style="ieee")
-'#cite(<Essay>, style: "ieee")'
->>> cite(label, supplement="1", form="prose", style="ieee")
-'#cite(<Essay>, supplement: [1], form: "prose", style: "ieee")'
-```
-
-cmyk
-
-```python
->>> cmyk(Ratio(50), Ratio(50), Ratio(50), Ratio(50))
+>>> cmyk('0%', '0%', '0%', '0%')
+'#cmyk(0%, 0%, 0%, 0%)'
+>>> cmyk('50%', '50%', '50%', '50%')
 '#cmyk(50%, 50%, 50%, 50%)'
 ```
 
-color
+`ellipse`:
 
 ```python
->>> color("black")
-'#luma(0)'
->>> color("gray")
-'#luma(170)'
->>> color("silver")
-'#luma(221)'
->>> color("white")
-'#luma(255)'
->>> color("navy")
-'#rgb("#001f3f")'
->>> color("blue")
-'#rgb("#0074d9")'
->>> color("aqua")
-'#rgb("#7fdbff")'
->>> color("teal")
-'#rgb("#39cccc")'
->>> color("eastern")
-'#rgb("#239dad")'
->>> color("purple")
-'#rgb("#b10dc9")'
->>> color("fuchsia")
-'#rgb("#f012be")'
->>> color("maroon")
-'#rgb("#85144b")'
->>> color("red")
-'#rgb("#ff4136")'
->>> color("orange")
-'#rgb("#ff851b")'
->>> color("yellow")
-'#rgb("#ffdc00")'
->>> color("olive")
-'#rgb("#3d9970")'
->>> color("green")
-'#rgb("#2ecc40")'
->>> color("lime")
-'#rgb("#01ff70")'
+>>> ellipse('[Hello, World!]')
+'#ellipse([Hello, World!])'
+>>> ellipse('[Hello, World!]', width='100%')
+'#ellipse([Hello, World!], width: 100%)'
 ```
 
-emph
+`emph`:
 
 ```python
->>> emph("Hello, World!")
+>>> emph('"Hello, World!"')
+'#emph("Hello, World!")'
+>>> emph('[Hello, World!]')
 '#emph([Hello, World!])'
->>> emph(text("Hello, World!", font="Arial", fallback=True))
-'#emph(text(font: "Arial")[Hello, World!])'
 ```
 
-figure
+`figure`:
 
 ```python
->>> figure(image("image.png"))
+>>> figure(image('"image.png"'))
 '#figure(image("image.png"))'
->>> figure(image("image.png"), Label("fig:Figure"))
-'#figure(image("image.png")) <fig:Figure>'
->>> figure(image("image.png"), placement=Alignment.TOP)
-'#figure(image("image.png"), placement: top)'
->>> figure(image("image.png"), caption="This is a caption.")
-'#figure(image("image.png"), caption: [This is a caption.])'
->>> figure(image("image.png"), caption=figure.caption("This is a caption.", position=Alignment.TOP, separator="---"))
-'#figure(image("image.png"), caption: figure.caption(position: top, separator: [---], [This is a caption.]))'
->>> figure(image("image.png"), kind="figure")
-'#figure(image("image.png"), kind: "figure")'
->>> figure(image("image.png"), supplement="Bar")
-'#figure(image("image.png"), supplement: [Bar])'
->>> figure(image("image.png"), numbering="1.")
-'#figure(image("image.png"), numbering: "1.")'
->>> figure(image("image.png"), gap=Length.em(0.5))
-'#figure(image("image.png"), gap: 0.5em)'
->>> figure(image("image.png"), outlined=False)
-'#figure(image("image.png"), outlined: false)'
+>>> figure(image('"image.png"'), caption='[Hello, World!]')
+'#figure(image("image.png"), caption: [Hello, World!])'
 ```
 
-footnote
+`footnote`:
 
 ```python
->>> footnote("Hello, World!")
+>>> footnote('[Hello, World!]')
 '#footnote([Hello, World!])'
->>> footnote(text("Hello, World!", font="Arial"))
-'#footnote(text(font: "Arial")[Hello, World!])'
+>>> footnote('[Hello, World!]', numbering='"a"')
+'#footnote([Hello, World!], numbering: "a")'
 ```
 
-heading
+`highlight`:
 
 ```python
->>> heading("Hello, World!")
-'= Hello, World!'
->>> heading("Hello, World!", level=2)
-'== Hello, World!'
->>> heading("Hello, World!", depth=2)
-'== Hello, World!'
->>> heading("Hello, World!", offset=1)
-'== Hello, World!'
->>> heading("Hello, World!", level=4, depth=2, offset=1)
-'==== Hello, World!'
->>> heading("Hello, World!", numbering="a.")
-'#heading(numbering: "a.", level: 1)[Hello, World!]'
->>> heading("Hello, World!", supplement="Chapter")
-'#heading(supplement: [Chapter], level: 1)[Hello, World!]'
->>> heading("Hello, World!", outlined=False)
-'#heading(outlined: false, level: 1)[Hello, World!]'
->>> heading("Hello, World!", bookmarked=False)
-'#heading(bookmarked: false, level: 1)[Hello, World!]'
+>>> highlight('"Hello, world!"', fill=rgb('"#ffffff"'))
+'#highlight("Hello, world!", fill: rgb("#ffffff"))'
+>>> highlight('"Hello, world!"', fill=rgb('"#ffffff"'), stroke=rgb('"#000000"'))
+'#highlight("Hello, world!", fill: rgb("#ffffff"), stroke: rgb("#000000"))'
+>>> highlight(
+...     '"Hello, world!"',
+...     fill=rgb('"#ffffff"'),
+...     stroke=rgb('"#000000"'),
+...     top_edge='"bounds"',
+...     bottom_edge='"bounds"',
+... )
+'#highlight("Hello, world!", fill: rgb("#ffffff"), stroke: rgb("#000000"), top-edge: "bounds", bottom-edge: "bounds")'
 ```
 
-image
+`hspace`:
 
 ```python
->>> image("image.png")
+>>> hspace('1em')
+'#h(1em)'
+>>> hspace('1em', weak=True)
+'#h(1em, weak: true)'
+```
+
+`image`:
+
+```python
+>>> image('"image.png"')
 '#image("image.png")'
->>> image("image.png", format="png")
-'#image("image.png", format: "png")'
->>> image("image.png", width=Ratio(50))
-'#image("image.png", width: 50%)'
->>> image("image.png", height=Ratio(50))
-'#image("image.png", height: 50%)'
->>> image("image.png", alt="An image")
-'#image("image.png", alt: "An image")'
+>>> image('"image.png"', fit='"contain"')
+'#image("image.png", fit: "contain")'
 ```
 
-link
+`linebreak`:
 
 ```python
->>> link("https://typst.app/docs/")
-'#link("https://typst.app/docs/")'
->>> link(Label("chap:chapter"))
-'#link(<chap:chapter>)'
+>>> linebreak()
+'#linebreak()'
+>>> linebreak(justify=True)
+'#linebreak(justify: true)'
 ```
 
-lorem
+`link`:
+
+```python
+>>> link('"https://typst.app"')
+'#link("https://typst.app")'
+>>> link('"https://typst.app"', '"Typst"')
+'#link("https://typst.app", "Typst")'
+```
+
+`lorem`:
 
 ```python
 >>> lorem(10)
 '#lorem(10)'
 ```
 
-lower
+`lower`:
 
 ```python
->>> lower("Hello, World!")
+>>> lower('"Hello, World!"')
+'#lower("Hello, World!")'
+>>> lower('[Hello, World!]')
 '#lower([Hello, World!])'
->>> lower(text("Hello, World!", font="Arial"))
-'#lower(text(font: "Arial")[Hello, World!])'
->>> lower(emph("Hello, World!"))
-'#lower(emph([Hello, World!]))'
+>>> lower(upper('"Hello, World!"'))
+'#lower(upper("Hello, World!"))'
 ```
 
-luma
+`luma`:
 
 ```python
->>> luma(50)
-'#luma(50)'
->>> luma(50, 0.5)
-'#luma(50, 0.5)'
->>> luma(Ratio(50), Ratio(50))
+>>> luma('50%')
+'#luma(50%)'
+>>> luma('50%', '50%')
 '#luma(50%, 50%)'
 ```
 
-pagebreak
+`oklab`:
 
 ```python
->>> pagebreak()
-'#pagebreak()'
->>> pagebreak(weak=True)
-'#pagebreak(weak: true)'
->>> pagebreak(to="even")
-'#pagebreak(to: "even")'
->>> pagebreak(to="odd")
-'#pagebreak(to: "odd")'
->>> pagebreak(weak=True, to="even")
-'#pagebreak(weak: true, to: "even")'
->>> pagebreak(weak=True, to="odd")
-'#pagebreak(weak: true, to: "odd")'
+>>> oklab('50%', '0%', '0%')
+'#oklab(50%, 0%, 0%)'
+>>> oklab('50%', '0%', '0%', '50%')
+'#oklab(50%, 0%, 0%, 50%)'
 ```
 
-par
+`oklch`:
 
 ```python
->>> par("Hello, World!")
-'Hello, World!'
->>> par("Hello, World!", leading=Length.em(1.5))
-'#par(leading: 1.5em)[Hello, World!]'
->>> par("Hello, World!", justify=True)
-'#par(justify: true)[Hello, World!]'
->>> par("Hello, World!", linebreaks="optimized")
-'#par(linebreaks: "optimized")[Hello, World!]'
->>> par("Hello, World!", first_line_indent=Length.em(1.5))
-'#par(first-line-indent: 1.5em)[Hello, World!]'
->>> par("Hello, World!", hanging_indent=Length.em(1.5))
-'#par(hanging-indent: 1.5em)[Hello, World!]'
->>> par("Hello, World!", leading=Length.em(1.5), justify=True, linebreaks="optimized", first_line_indent=Length.em(1.5), hanging_indent=Length.em(1.5))     
-'#par(leading: 1.5em, justify: true, linebreaks: "optimized", first-line-indent: 1.5em, hanging-indent: 1.5em)[Hello, World!]'
+>>> oklch('50%', '0%', '0deg')
+'#oklch(50%, 0%, 0deg)'
+>>> oklch('50%', '0%', '0deg', '50%')
+'#oklch(50%, 0%, 0deg, 50%)'
 ```
 
-ref
+`overline`:
 
 ```python
->>> label = Label("chap:chapter")
->>> ref(label)
-'#ref(<chap:chapter>)'
->>> ref(Label("chap:chapter"), supplement="Spam!")
-'#ref(<chap:chapter>, supplement: [Spam!])'
->>> ref(Label("chap:chapter"), supplement=None)
-'#ref(<chap:chapter>, supplement: none)'
+>>> overline('"Hello, World!"')
+'#overline("Hello, World!")'
+>>> overline('[Hello, World!]')
+'#overline([Hello, World!])'
+>>> overline(
+...     upper('"Hello, World!"'),
+...     stroke='red',
+...     offset='0pt',
+...     extent='0pt',
+...     evade=False,
+...     background=True,
+... )
+'#overline(upper("Hello, World!"), stroke: red, offset: 0pt, evade: false, background: true)'
 ```
 
-rgb
+`par`:
+
+```python
+>>> par('"Hello, World!"')
+'#par("Hello, World!")'
+>>> par('[Hello, World!]')
+'#par([Hello, World!])'
+>>> par(
+...     '[Hello, World!]',
+...     leading='0.1em',
+...     spacing='0.5em',
+...     justify=True,
+...     linebreaks='"simple"',
+...     first_line_indent='0.2em',
+...     hanging_indent='0.3em',
+... )
+'#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'
+```
+
+`parbreak`:
+
+```python
+>>> parbreak()
+'#parbreak()'
+```
+
+`quote`:
+
+```python
+>>> quote('"Hello, World!"')
+'#quote("Hello, World!")'
+>>> quote('"Hello, World!"', block=True)
+'#quote("Hello, World!", block: true)'
+>>> quote('"Hello, World!"', quotes=False)
+'#quote("Hello, World!", quotes: false)'
+>>> quote('"Hello, World!"', attribution='"John Doe"')
+'#quote("Hello, World!", attribution: "John Doe")'
+```
+
+`raw`:
+
+```python
+>>> raw('"Hello, World!"')
+'#raw("Hello, World!")'
+>>> raw('"Hello, World!"', block=True, align='center')
+'#raw("Hello, World!", block: true, align: center)'
+>>> raw('"Hello, World!"', lang='"rust"')
+'#raw("Hello, World!", lang: "rust")'
+>>> raw('"Hello, World!"', tab_size=4)
+'#raw("Hello, World!", tab-size: 4)'
+```
+
+`ref`:
+
+```python
+>>> ref('<label>')
+'#ref(<label>)'
+>>> ref('<label>', supplement='[Hello, World!]')
+'#ref(<label>, supplement: [Hello, World!])'
+```
+
+`rgb`:
 
 ```python
 >>> rgb(255, 255, 255)
 '#rgb(255, 255, 255)'
->>> rgb(255, 255, 255, 0.5)
-'#rgb(255, 255, 255, 0.5)'
->>> rgb(Ratio(50), Ratio(50), Ratio(50), Ratio(50))
+>>> rgb('50%', '50%', '50%', '50%')
 '#rgb(50%, 50%, 50%, 50%)'
->>> rgb("#ffffff")
+>>> rgb('"#ffffff"')
 '#rgb("#ffffff")'
 ```
 
-smallcaps
+`smallcaps`:
 
 ```python
->>> smallcaps("Hello, World!")
+>>> smallcaps('"Hello, World!"')
+'#smallcaps("Hello, World!")'
+>>> smallcaps('[Hello, World!]')
 '#smallcaps([Hello, World!])'
 ```
 
-strong
+`smartquote`:
 
 ```python
->>> strong("Hello, World!")
-'#strong[Hello, World!]'
->>> strong("Hello, World!", delta=400)
-'#strong(delta: 400)[Hello, World!]'
->>> strong(text("Hello, World!", font="Arial"), delta=400)
-'#strong(delta: 400)[#text(font: "Arial")[Hello, World!]]'
+>>> smartquote(double=False, enabled=False, alternative=True, quotes='"()"')
+'#smartquote(double: false, enabled: false, alternative: true, quotes: "()")'
+>>> smartquote(quotes=('"()"', '"{}"'))
+'#smartquote(quotes: ("()", "{}"))'
 ```
 
-sub
+`strike`:
 
 ```python
->>> sub("Hello, World!")
-'#sub[Hello, World!]'
->>> sub("Hello, World!", typographic=False)
-'#sub(typographic: false)[Hello, World!]'
->>> sub("Hello, World!", baseline=Length.em(0.4))
-'#sub(baseline: 0.4em)[Hello, World!]'
->>> sub("Hello, World!", size=Length.em(0.8))
-'#sub(size: 0.8em)[Hello, World!]'
->>> sub("Hello, World!", typographic=False, baseline=Length.em(0.4), size=Length.em(0.8))
-'#sub(typographic: false, baseline: 0.4em, size: 0.8em)[Hello, World!]'
+>>> strike('"Hello, World!"')
+'#strike("Hello, World!")'
+>>> strike('[Hello, World!]')
+'#strike([Hello, World!])'
+>>> strike(
+...     upper('"Hello, World!"'),
+...     stroke='red',
+...     offset='0.1em',
+...     extent='0.2em',
+...     background=True,
+... )
+'#strike(upper("Hello, World!"), stroke: red, offset: 0.1em, extent: 0.2em, background: true)'
 ```
 
-sup
+`strong`:
 
 ```python
->>> sup("Hello, World!")
-'#super[Hello, World!]'
->>> sup("Hello, World!", typographic=False)
-'#super(typographic: false)[Hello, World!]'
->>> sup("Hello, World!", baseline=Length.em(0.4))
-'#super(baseline: 0.4em)[Hello, World!]'
->>> sup("Hello, World!", size=Length.em(0.8))
-'#super(size: 0.8em)[Hello, World!]'
->>> sup("Hello, World!", typographic=False, baseline=Length.em(0.4), size=Length.em(0.8))
-'#super(typographic: false, baseline: 0.4em, size: 0.8em)[Hello, World!]'
+>>> strong('"Hello, World!"')
+'#strong("Hello, World!")'
+>>> strong('[Hello, World!]', delta=400)
+'#strong([Hello, World!], delta: 400)'
 ```
 
-text
+`subscript`:
 
 ```python
->>> text("Hello, World!")
-'Hello, World!'
->>> text("Hello, World!", font="Arial")
-'#text(font: "Arial")[Hello, World!]'
->>> text("Hello, World!", font=("Arial", "Times New Roman"))
-'#text(font: ("Arial", "Times New Roman"))[Hello, World!]'
->>> text("Hello, World!", fallback=False)
-'#text(fallback: false)[Hello, World!]'
->>> text("Hello, World!", style="italic")
-'#text(style: "italic")[Hello, World!]'
->>> text("Hello, World!", weight="bold")
-'#text(weight: "bold")[Hello, World!]'
->>> text("Hello, World!", weight=300)
-'#text(weight: 300)[Hello, World!]'
->>> text("Hello, World!", stretch=Ratio(50))
-'#text(stretch: 50%)[Hello, World!]'
->>> text("Hello, World!", size=Length(12, "pt"))
-'#text(size: 12pt)[Hello, World!]'
->>> text("Hello, World!", fill=color("red"))
-'#text(fill: rgb("#ff4136"))[Hello, World!]'
+>>> subscript('"Hello, World!"')
+'#sub("Hello, World!")'
+>>> subscript('[Hello, World!]')
+'#sub([Hello, World!])'
+>>> subscript('[Hello, World!]', typographic=False, baseline='0.3em', size='0.7em')
+'#sub([Hello, World!], typographic: false, baseline: 0.3em, size: 0.7em)'
+```
+
+`superscript`:
+
+```python
+>>> superscript('"Hello, World!"')
+'#super("Hello, World!")'
+>>> superscript('[Hello, World!]')
+'#super([Hello, World!])'
+>>> superscript(
+...     '[Hello, World!]', typographic=False, baseline='-0.4em', size='0.7em'
+... )
+'#super([Hello, World!], typographic: false, baseline: -0.4em, size: 0.7em)'
+```
+
+`text`:
+
+```python
+>>> text('"Hello, World!"')
+'#text("Hello, World!")'
+>>> text('[Hello, World!]')
+'#text([Hello, World!])'
+>>> text('[Hello, World!]', font='"Times New Roman"')
+'#text([Hello, World!], font: "Times New Roman")'
+```
+
+`underline`:
+
+```python
+>>> underline('"Hello, World!"')
+'#underline("Hello, World!")'
+>>> underline('[Hello, World!]')
+'#underline([Hello, World!])'
+>>> underline(
+...     '[Hello, World!]',
+...     stroke='1pt + red',
+...     offset='0pt',
+...     extent='1pt',
+...     evade=False,
+...     background=True,
+... )
+'#underline([Hello, World!], stroke: 1pt + red, offset: 0pt, extent: 1pt, evade: false, background: true)'
+```
+
+`upper`:
+
+```python
+>>> upper('"Hello, World!"')
+'#upper("Hello, World!")'
+>>> upper('[Hello, World!]')
+'#upper([Hello, World!])'
+>>> upper(lower('"Hello, World!"'))
+'#upper(lower("Hello, World!"))'
+```
+
+`vspace`:
+
+```python
+>>> vspace('1em')
+'#v(1em)'
+>>> vspace('1em', weak=True)
+'#v(1em, weak: true)'
 ```

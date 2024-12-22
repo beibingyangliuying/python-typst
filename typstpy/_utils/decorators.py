@@ -1,25 +1,31 @@
-"""Function decorators."""
-
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 from attrs import field, frozen
+from cytoolz.curried import map  # type:ignore
+
+from ..typings import TypstFunc
 
 
-def attach_func(func: Callable, name: Optional[str] = None) -> Callable:
-    """Attach a function to another function.
+def attach_func(
+    func: TypstFunc, name: Optional[str] = None, /
+) -> Callable[[TypstFunc], TypstFunc]:
+    """Attach a typst function to another typst function.
 
     Args:
-        func (Callable): The function to be attached.
+        func (TypstFunc): The function to attach.
         name (Optional[str], optional): The attribute name to be set. When set to None, the function's name will be used. Defaults to None.
 
+    Raises:
+        ValueError: Invalid name.
+
     Returns:
-        Callable: The decorator function.
+        Callable[[TypstFunc], TypstFunc]: The decorator function.
     """
 
-    def wrapper(_func: Callable) -> Callable:
+    def wrapper(_func: TypstFunc) -> TypstFunc:
         _name = name if name else _func.__name__
-        if _name.startswith("_"):
-            raise ValueError(f"Invalid name: {_name}.")
+        if _name.startswith('_'):
+            raise ValueError(f'Invalid name: {_name}.')
         setattr(_func, _name, func)
         return _func
 
@@ -27,7 +33,7 @@ def attach_func(func: Callable, name: Optional[str] = None) -> Callable:
 
 
 @frozen
-class Implement:
+class _Implement:
     is_standard: bool
     name: str
     original_name: str | None = field(default=None)
@@ -36,32 +42,48 @@ class Implement:
     @original_name.validator
     def _check_original_name(self, attribute, value):
         if not self.is_standard and value:
-            raise ValueError(f"Only standard functions can have {attribute.name}.")
+            raise ValueError(f'Only standard functions can have {attribute.name}.')
         elif self.is_standard and not value:
-            raise ValueError(f"Standard functions must have {attribute.name}.")
+            raise ValueError(f'Standard functions must have {attribute.name}.')
 
     @hyperlink.validator
     def _check_hyperlink(self, attribute, value):
         if not self.is_standard and value:
-            raise ValueError(f"Only standard functions can have {attribute.name}.")
+            raise ValueError(f'Only standard functions can have {attribute.name}.')
         elif self.is_standard and not value:
-            raise ValueError(f"Standard functions must have {attribute.name}.")
+            raise ValueError(f'Standard functions must have {attribute.name}.')
 
-    def to_markdown(self) -> str:
-        """Convert to a table's row in markdown format.
+    def __str__(self) -> str:
+        def format(s: Any) -> str:
+            if not s:
+                return ''
+            return str(s)
 
-        Returns:
-            str: The table's row in markdown format.
-        """
-        return rf"| {self.is_standard} | {self.name} | {self.original_name} | [{self.original_name}]({self.hyperlink}) |"
+        return (
+            '| '
+            + ' | '.join(
+                map(
+                    format,
+                    [
+                        self.is_standard,
+                        self.name,
+                        self.original_name,
+                        f'[{self.original_name}]({self.hyperlink})',
+                    ],
+                )
+            )
+            + ' |'
+        )
 
 
 def implement(
     is_standard: bool,
+    /,
+    *,
     original_name: Optional[str] = None,
     hyperlink: Optional[str] = None,
-) -> Callable:
-    """Set `_implement` attribute to a function. The type of the attribute is `Implement`.
+) -> Callable[[TypstFunc], TypstFunc]:
+    """Set `_implement` attribute of a typst function.
 
     Args:
         is_standard (bool): Whether the function is standard implemented.
@@ -69,14 +91,14 @@ def implement(
         hyperlink (Optional[str], optional): The hyperlink of the documentation in typst. Defaults to None.
 
     Returns:
-        Callable: The decorator function.
+        Callable[[TypstFunc], TypstFunc]: The decorator function.
     """
 
-    def wrapper(_func: Callable) -> Callable:
+    def wrapper(_func: TypstFunc) -> TypstFunc:
         setattr(
             _func,
-            "_implement",
-            Implement(is_standard, _func.__name__, original_name, hyperlink),
+            '_implement',
+            _Implement(is_standard, _func.__name__, original_name, hyperlink),
         )
         return _func
 
