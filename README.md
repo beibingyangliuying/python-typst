@@ -60,7 +60,7 @@ pip install typstpy
 | True | oklch | oklch | [oklch](https://typst.app/docs/reference/visualize/color/#definitions-oklch) |
 | True | outline | outline | [outline](https://typst.app/docs/reference/model/outline/) |
 | True | overline | overline | [overline](https://typst.app/docs/reference/text/overline/) |
-| True | pad | pad | [pad](https://typst.app/docs/reference/layout/pad/) |
+| True | padding | pad | [pad](https://typst.app/docs/reference/layout/pad/) |
 | True | page | page | [page](https://typst.app/docs/reference/layout/page/) |
 | True | pagebreak | pagebreak | [pagebreak](https://typst.app/docs/reference/layout/pagebreak/) |
 | True | par | par | [par](https://typst.app/docs/reference/model/par/) |
@@ -98,12 +98,24 @@ pip install typstpy
 
 ## Change logs
 
+- _1.0.0-beta.2_: Improved the implementation and documentation of functions in the `layout` module.
 - _1.0.0-beta.1_: Completely reconstructed the underlying implementation.
 
 ## Examples
 
 ```python
-from typstpy import *
+from typstpy.std import *
+```
+
+`align`:
+
+```python
+>>> align('"Hello, World!"', 'center')
+'#align("Hello, World!", center)'
+>>> align('[Hello, World!]', 'center')
+'#align([Hello, World!], center)'
+>>> align(lorem(20), 'center')
+'#align(lorem(20), center)'
 ```
 
 `bibliography`:
@@ -111,6 +123,32 @@ from typstpy import *
 ```python
 >>> bibliography('"bibliography.bib"', style='"cell"')
 '#bibliography("bibliography.bib", style: "cell")'
+```
+
+`block`:
+
+```python
+>>> block('"Hello, World!"')
+'#block("Hello, World!")'
+>>> block('[Hello, World!]')
+'#block([Hello, World!])'
+>>> block(lorem(20))
+'#block(lorem(20))'
+>>> block(lorem(20), width='100%')
+'#block(lorem(20), width: 100%)'
+```
+
+`box`:
+
+```python
+>>> box('"Hello, World!"')
+'#box("Hello, World!")'
+>>> box('[Hello, World!]')
+'#box([Hello, World!])'
+>>> box(lorem(20))
+'#box(lorem(20))'
+>>> box(lorem(20), width='100%')
+'#box(lorem(20), width: 100%)'
 ```
 
 `circle`:
@@ -144,6 +182,26 @@ from typstpy import *
 '#cmyk(0%, 0%, 0%, 0%)'
 >>> cmyk('50%', '50%', '50%', '50%')
 '#cmyk(50%, 50%, 50%, 50%)'
+```
+
+`colbreak`:
+
+```python
+>>> colbreak()
+'#colbreak()'
+>>> colbreak(weak=True)
+'#colbreak(weak: true)'
+```
+
+`columns`:
+
+```python
+>>> columns(lorem(20))
+'#columns(lorem(20))'
+>>> columns(lorem(20), 3)
+'#columns(lorem(20), 3)'
+>>> columns(lorem(20), 3, gutter='8% + 0pt')
+'#columns(lorem(20), 3, gutter: 8% + 0pt)'
 ```
 
 `ellipse`:
@@ -180,6 +238,20 @@ from typstpy import *
 '#footnote([Hello, World!])'
 >>> footnote('[Hello, World!]', numbering='"a"')
 '#footnote([Hello, World!], numbering: "a")'
+```
+
+`grid`:
+
+```python
+>>> grid(lorem(20), lorem(20), lorem(20), align=('center',) * 3)
+'#grid(align: (center, center, center), lorem(20), lorem(20), lorem(20))'
+```
+
+`hide`:
+
+```python
+>>> hide(lorem(20))
+'#hide(lorem(20))'
 ```
 
 `highlight`:
@@ -262,6 +334,13 @@ from typstpy import *
 '#luma(50%, 50%)'
 ```
 
+`move`:
+
+```python
+>>> move(lorem(20), dx='50% + 10pt', dy='10% + 5pt')
+'#move(lorem(20), dx: 50% + 10pt, dy: 10% + 5pt)'
+```
+
 `oklab`:
 
 ```python
@@ -298,6 +377,39 @@ from typstpy import *
 '#overline(upper("Hello, World!"), stroke: red, offset: 0pt, evade: false, background: true)'
 ```
 
+`padding`:
+
+```python
+>>> padding(
+...     lorem(20),
+...     left='4% + 0pt',
+...     top='4% + 0pt',
+...     right='4% + 0pt',
+...     bottom='4% + 0pt',
+... )
+'#pad(lorem(20), left: 4% + 0pt, top: 4% + 0pt, right: 4% + 0pt, bottom: 4% + 0pt)'
+```
+
+`page`:
+
+```python
+>>> page(lorem(20))
+'#page(lorem(20))'
+>>> page(lorem(20), paper='"a0"', width='8.5in', height='11in')
+'#page(lorem(20), paper: "a0", width: 8.5in, height: 11in)'
+```
+
+`pagebreak`:
+
+```python
+>>> pagebreak()
+'#pagebreak()'
+>>> pagebreak(weak=True)
+'#pagebreak(weak: true)'
+>>> pagebreak(to='"even"')
+'#pagebreak(to: "even")'
+```
+
 `par`:
 
 ```python
@@ -314,7 +426,7 @@ from typstpy import *
 ...     first_line_indent='0.2em',
 ...     hanging_indent='0.3em',
 ... )
-'#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'
+'#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'   
 ```
 
 `parbreak`:
@@ -322,6 +434,15 @@ from typstpy import *
 ```python
 >>> parbreak()
 '#parbreak()'
+```
+
+`place`:
+
+```python
+>>> place(lorem(20))
+'#place(lorem(20))'
+>>> place(lorem(20), 'top')
+'#place(lorem(20), top)'
 ```
 
 `quote`:
@@ -359,6 +480,15 @@ from typstpy import *
 '#ref(<label>, supplement: [Hello, World!])'
 ```
 
+`repeat`:
+
+```python
+>>> repeat(lorem(20), gap='0.5em')
+'#repeat(lorem(20), gap: 0.5em)'
+>>> repeat(lorem(20), gap='0.5em', justify=False)
+'#repeat(lorem(20), gap: 0.5em, justify: false)'
+```
+
 `rgb`:
 
 ```python
@@ -368,6 +498,33 @@ from typstpy import *
 '#rgb(50%, 50%, 50%, 50%)'
 >>> rgb('"#ffffff"')
 '#rgb("#ffffff")'
+```
+
+`rotate`:
+
+```python
+>>> rotate(lorem(20), '20deg')
+'#rotate(lorem(20), 20deg)'
+>>> rotate(lorem(20), '20deg', origin='left + horizon')
+'#rotate(lorem(20), 20deg, origin: left + horizon)'
+```
+
+`scale`:
+
+```python
+>>> scale(lorem(20), '50%')
+'#scale(lorem(20), 50%)'
+>>> scale(lorem(20), x='50%', y='50%')
+'#scale(lorem(20), x: 50%, y: 50%)'
+>>> scale(lorem(20), '50%', x='50%', y='50%')
+'#scale(lorem(20), 50%, x: 50%, y: 50%)'
+```
+
+`skew`:
+
+```python
+>>> skew(lorem(20), ax='10deg', ay='20deg')
+'#skew(lorem(20), ax: 10deg, ay: 20deg)'
 ```
 
 `smallcaps`:
@@ -386,6 +543,15 @@ from typstpy import *
 '#smartquote(double: false, enabled: false, alternative: true, quotes: "()")'
 >>> smartquote(quotes=('"()"', '"{}"'))
 '#smartquote(quotes: ("()", "{}"))'
+```
+
+`stack`:
+
+```python
+>>> stack(rect(width='40pt'), rect(width='120pt'), rect(width='90pt'), dir='btt')
+'#stack(dir: btt, rect(width: 40pt), rect(width: 120pt), rect(width: 90pt))'
+>>> stack((rect(width='40pt'), rect(width='120pt'), rect(width='90pt')), dir='btt')
+'#stack(dir: btt, ..(rect(width: 40pt), rect(width: 120pt), rect(width: 90pt)))'
 ```
 
 `strike`:

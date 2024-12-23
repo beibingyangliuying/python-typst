@@ -13,7 +13,7 @@ show_column_numbers = true
 
 [tool.poetry]
 name = "typstpy"
-version = "1.0.0-beta.1"
+version = "1.0.0-beta.2"
 description = "Python interface to generate executable Typst code."
 authors = ["chenjunhan <beibingyangliuying@foxmail.com>"]
 license = "MIT"

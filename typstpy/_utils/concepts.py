@@ -246,7 +246,7 @@ def pre_series(func: Series, *elements: Any, **keyword_only_args: Any) -> Block:
             lambda x: x
             + [
                 Maybe(elements, len(elements) == 1)
-                .map(_render_value)
+                .map(lambda x: _render_value(x[0]))
                 .map(lambda x: f'..{x}')
                 .maybe(_strip(_render_value(elements)), identity)
             ]
@@ -284,7 +284,7 @@ def post_series(func: Series, *elements: Any, **keyword_only_args: Any) -> Block
             lambda x: x
             + [
                 Maybe(elements, len(elements) == 1)
-                .map(_render_value)
+                .map(lambda x: _render_value(x[0]))
                 .map(lambda x: f'..{x}')
                 .maybe(_strip(_render_value(elements)), identity)
             ]
