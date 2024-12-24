@@ -1,15 +1,16 @@
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
 from attrs import field, frozen
-from cytoolz.curried import map  # type:ignore
+from pymonad.reader import Pipe  # type:ignore
 
 from ..typings import TypstFunc
+from cytoolz.curried import map  # type:ignore
 
 
 def attach_func(
     func: TypstFunc, name: Optional[str] = None, /
-) -> Callable[[TypstFunc], TypstFunc]:
-    """Attach a typst function to another typst function.
+) -> Callable[[Callable], Callable]:
+    """Attach a typst function to another function.
 
     Args:
         func (TypstFunc): The function to attach.
@@ -19,10 +20,10 @@ def attach_func(
         ValueError: Invalid name.
 
     Returns:
-        Callable[[TypstFunc], TypstFunc]: The decorator function.
+        Callable[[Callable], Callable]: The decorator function.
     """
 
-    def wrapper(_func: TypstFunc) -> TypstFunc:
+    def wrapper(_func: Callable) -> Callable:
         _name = name if name else _func.__name__
         if _name.startswith('_'):
             raise ValueError(f'Invalid name: {_name}.')
@@ -54,23 +55,21 @@ class _Implement:
             raise ValueError(f'Standard functions must have {attribute.name}.')
 
     def __str__(self) -> str:
-        def format(s: Any) -> str:
-            if not s:
-                return ''
-            return str(s)
-
         return (
             '| '
             + ' | '.join(
-                map(
-                    format,
-                    [
-                        self.is_standard,
-                        self.name,
+                Pipe([self.is_standard, self.name])
+                .map(
+                    lambda x: x
+                    + [
                         self.original_name,
                         f'[{self.original_name}]({self.hyperlink})',
-                    ],
+                    ]
+                    if self.is_standard
+                    else x + ['', '']
                 )
+                .map(map(str))
+                .flush()
             )
             + ' |'
         )
@@ -82,8 +81,8 @@ def implement(
     *,
     original_name: Optional[str] = None,
     hyperlink: Optional[str] = None,
-) -> Callable[[TypstFunc], TypstFunc]:
-    """Set `_implement` attribute of a typst function.
+) -> Callable[[Callable], Callable]:
+    """Set `_implement` attribute of a function. The attribute type is `_Implement`.
 
     Args:
         is_standard (bool): Whether the function is standard implemented.
@@ -91,10 +90,10 @@ def implement(
         hyperlink (Optional[str], optional): The hyperlink of the documentation in typst. Defaults to None.
 
     Returns:
-        Callable[[TypstFunc], TypstFunc]: The decorator function.
+        Callable[[Callable], Callable]: The decorator function.
     """
 
-    def wrapper(_func: TypstFunc) -> TypstFunc:
+    def wrapper(_func: Callable) -> Callable:
         setattr(
             _func,
             '_implement',

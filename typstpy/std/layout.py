@@ -1,7 +1,7 @@
 from typing import Any, Iterable
 
-from cytoolz.curried import identity, map  # type:ignore
-from pymonad.maybe import Maybe  # type:ignore
+from cytoolz.curried import map  # type:ignore
+from pymonad.reader import Pipe  # type:ignore
 
 from .._utils import (
     attach_func,
@@ -155,13 +155,12 @@ def align(body: Block, alignment: str = 'start + top', /) -> Block:
         >>> align(lorem(20), 'center')
         '#align(lorem(20), center)'
     """
-    args = [body]
-    args = (
-        Maybe(args, alignment != 'start + top')
-        .map(lambda x: x + [alignment])
-        .maybe(args, identity)
+    return positional(
+        align,
+        *Pipe([body])
+        .map(lambda x: x + [alignment] if alignment != 'start + top' else x)
+        .flush(),
     )
-    return positional(align, *args)
 
 
 @implement(
@@ -345,9 +344,11 @@ def columns(body: str, count: int = 2, /, *, gutter: str = '4% + 0pt') -> Block:
         >>> columns(lorem(20), 3, gutter='8% + 0pt')
         '#columns(lorem(20), 3, gutter: 8% + 0pt)'
     """
-    args = [body]
-    args = Maybe(args, count != 2).map(lambda x: x + [count]).maybe(args, identity)
-    return normal(columns, *args, gutter=gutter)
+    return normal(
+        columns,
+        *Pipe([body]).map(lambda x: x + [count] if count != 2 else x).flush(),
+        gutter=gutter,
+    )
 
 
 @implement(
@@ -850,15 +851,11 @@ def place(
         >>> place(lorem(20), 'top')
         '#place(lorem(20), top)'
     """
-    args = [body]
-    args = (
-        Maybe(args, alignment != 'start')
-        .map(lambda x: x + [alignment])
-        .maybe(args, identity)
-    )
     return normal(
         place,
-        *args,
+        *Pipe([body])
+        .map(lambda x: x + [alignment] if alignment != 'start' else x)
+        .flush(),
         scope=scope,
         float=float,
         clearance=clearance,
@@ -922,9 +919,12 @@ def rotate(
         >>> rotate(lorem(20), '20deg', origin='left + horizon')
         '#rotate(lorem(20), 20deg, origin: left + horizon)'
     """
-    args = [body]
-    args = Maybe(args, angle != '0deg').map(lambda x: x + [angle]).maybe(args, identity)
-    return normal(rotate, *args, origin=origin, reflow=reflow)
+    return normal(
+        rotate,
+        *Pipe([body]).map(lambda x: x + [angle] if angle != '0deg' else x).flush(),
+        origin=origin,
+        reflow=reflow,
+    )
 
 
 @implement(
@@ -963,11 +963,14 @@ def scale(
         >>> scale(lorem(20), '50%', x='50%', y='50%')
         '#scale(lorem(20), 50%, x: 50%, y: 50%)'
     """
-    args = [body]
-    args = (
-        Maybe(args, factor != '100%').map(lambda x: x + [factor]).maybe(args, identity)
+    return normal(
+        scale,
+        *Pipe([body]).map(lambda x: x + [factor] if factor != '100%' else x).flush(),
+        x=x,
+        y=y,
+        origin=origin,
+        reflow=reflow,
     )
-    return normal(scale, *args, x=x, y=y, origin=origin, reflow=reflow)
 
 
 @implement(

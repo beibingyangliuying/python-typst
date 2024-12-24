@@ -18,7 +18,7 @@ def pad(s: str, /) -> str:
 
 
 def is_valid(*predicates: Predicate) -> NoReturn | None:
-    """Check if all predicates are satisfied.
+    """Check if all predicates are satisfied and throw `ValueError` if not.
 
     Raises:
         ValueError: If any predicate is not satisfied.
@@ -29,7 +29,12 @@ def is_valid(*predicates: Predicate) -> NoReturn | None:
     for predicate in predicates:
         if not predicate():
             freevars = predicate.__code__.co_freevars
-            raise ValueError(f'Invalid parameters: {', '.join(freevars)}.')
+            closure = (
+                predicate.__closure__
+            )  # Closure exists if and only if freevars is not empty
+            raise ValueError(
+                f'Invalid parameters: {', '.join(f'{i} = {j.cell_contents}' for i, j in zip(freevars, closure))}'  # type:ignore
+            )
     return None
 
 
