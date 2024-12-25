@@ -1,12 +1,10 @@
 from typing import Any, Iterable, Optional, overload
 
-from cytoolz.curried import (  # type:ignore
-    identity,
-    map,
-)
-from pymonad.maybe import Maybe  # type:ignore
+from cytoolz.curried import map  # type:ignore
+from pymonad.reader import Pipe  # type:ignore
 
-from .._utils import (
+from ..typings import Block
+from ..utils import (
     attach_func,
     implement,
     instance,
@@ -17,14 +15,9 @@ from .._utils import (
     post_series,
     pre_series,
 )
-from ..typings import Block
 
 
-@implement(
-    True,
-    original_name='circle',
-    hyperlink='https://typst.app/docs/reference/visualize/circle/',
-)
+@implement('circle', 'https://typst.app/docs/reference/visualize/circle/')
 def circle(
     body: str | None = '',
     *,
@@ -47,6 +40,9 @@ def circle(
         stroke (str | dict[str, Any] | None, optional): How to stroke the circle. Defaults to 'auto'.
         inset (str | dict[str, Any], optional): How much to pad the circle's content. Defaults to '0% + 5pt'.
         outset (str | dict[str, Any], optional): How much to expand the circle's size without affecting the layout. Defaults to dict().
+
+    Raises:
+        ValueError: If `radius` is not '0pt' and either `width` or `height` is not 'auto'.
 
     Returns:
         Block: Executable typst code.
@@ -75,7 +71,10 @@ def circle(
     )
 
 
-@implement(False)
+@implement(
+    'color.map',
+    'https://typst.app/docs/reference/visualize/color/#predefined-color-maps',
+)
 def _color_map(name: str, /) -> Block:
     """Interface of `color.map` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#predefined-color-maps) for more information.
 
@@ -114,11 +113,7 @@ def _color_map(name: str, /) -> Block:
     return f'#color.map.{name}'
 
 
-@implement(
-    True,
-    original_name='luma',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-luma',
-)
+@implement('luma', 'https://typst.app/docs/reference/visualize/color/#definitions-luma')
 def luma(lightness: str | int, alpha: Optional[str] = None, /) -> Block:
     """Interface of `luma` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-luma) for more information.
 
@@ -135,18 +130,13 @@ def luma(lightness: str | int, alpha: Optional[str] = None, /) -> Block:
         >>> luma('50%', '50%')
         '#luma(50%, 50%)'
     """
-    args = (
-        Maybe([lightness], alpha)
-        .map(lambda x: x + [alpha])
-        .maybe([lightness], identity)
+    return positional(
+        luma, *Pipe([lightness]).map(lambda x: x + [alpha] if alpha else x).flush()
     )
-    return positional(luma, *args)
 
 
 @implement(
-    True,
-    original_name='oklab',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-oklab',
+    'oklab', 'https://typst.app/docs/reference/visualize/color/#definitions-oklab'
 )
 def oklab(
     lightness: str, a: str | float, b: str | float, alpha: Optional[str] = None, /
@@ -168,18 +158,14 @@ def oklab(
         >>> oklab('50%', '0%', '0%', '50%')
         '#oklab(50%, 0%, 0%, 50%)'
     """
-    args = (
-        Maybe([lightness, a, b], alpha)
-        .map(lambda x: x + [alpha])
-        .maybe([lightness, a, b], identity)
+    return positional(
+        oklab,
+        *Pipe([lightness, a, b]).map(lambda x: x + [alpha] if alpha else x).flush(),
     )
-    return positional(oklab, *args)
 
 
 @implement(
-    True,
-    original_name='oklch',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-oklch',
+    'oklch', 'https://typst.app/docs/reference/visualize/color/#definitions-oklch'
 )
 def oklch(
     lightness: str, chroma: str | float, hue: str, alpha: Optional[str] = None, /
@@ -201,18 +187,17 @@ def oklch(
         >>> oklch('50%', '0%', '0deg', '50%')
         '#oklch(50%, 0%, 0deg, 50%)'
     """
-    args = (
-        Maybe([lightness, chroma, hue], alpha)
-        .map(lambda x: x + [alpha])
-        .maybe([lightness, chroma, hue], identity)
+    return positional(
+        oklch,
+        *Pipe([lightness, chroma, hue])
+        .map(lambda x: x + [alpha] if alpha else x)
+        .flush(),
     )
-    return positional(oklch, *args)
 
 
 @implement(
-    True,
-    original_name='color.linear-rgb',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb',
+    'color.linear-rgb',
+    'https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb',
 )
 def _color_linear_rgb(
     red: str | int,
@@ -238,12 +223,10 @@ def _color_linear_rgb(
         >>> color.linear_rgb('50%', '50%', '50%', '50%')
         '#color.linear-rgb(50%, 50%, 50%, 50%)'
     """
-    args = (
-        Maybe([red, green, blue], alpha)
-        .map(lambda x: x + [alpha])
-        .maybe([red, green, blue], identity)
+    return positional(
+        _color_linear_rgb,
+        *Pipe([red, green, blue]).map(lambda x: x + [alpha] if alpha else x).flush(),
     )
-    return positional(_color_linear_rgb, *args)
 
 
 @overload
@@ -257,15 +240,11 @@ def rgb(
 
 
 @overload
-def rgb(hex: str) -> Block: ...
+def rgb(hex: str, /) -> Block: ...
 
 
-@implement(
-    True,
-    original_name='rgb',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-rgb',
-)
-def rgb(*args) -> Block:
+@implement('rgb', 'https://typst.app/docs/reference/visualize/color/#definitions-rgb')
+def rgb(*args: str | int) -> Block:
     """Interface of `rgb` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-rgb) for more information.
 
     Raises:
@@ -286,11 +265,7 @@ def rgb(*args) -> Block:
     return positional(rgb, *args)  # type: ignore
 
 
-@implement(
-    True,
-    original_name='cmyk',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-cmyk',
-)
+@implement('cmyk', 'https://typst.app/docs/reference/visualize/color/#definitions-cmyk')
 def cmyk(cyan: str, magenta: str, yellow: str, key: str, /) -> Block:
     """Interface of `cmyk` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-cmyk) for more information.
 
@@ -313,9 +288,7 @@ def cmyk(cyan: str, magenta: str, yellow: str, key: str, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='color.hsl',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-hsl',
+    'color.hsl', 'https://typst.app/docs/reference/visualize/color/#definitions-hsl'
 )
 def _color_hsl(
     hue: str,
@@ -341,18 +314,16 @@ def _color_hsl(
         >>> color.hsl('0deg', '50%', '50%')
         '#color.hsl(0deg, 50%, 50%)'
     """
-    args = (
-        Maybe([hue, saturation, lightness], alpha)
-        .map(lambda x: x + [alpha])
-        .maybe([hue, saturation, lightness], identity)
+    return positional(
+        _color_hsl,
+        *Pipe([hue, saturation, lightness])
+        .map(lambda x: x + [alpha] if alpha else x)
+        .flush(),
     )
-    return positional(_color_hsl, *args)
 
 
 @implement(
-    True,
-    original_name='color.hsv',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-hsv',
+    'color.hsv', 'https://typst.app/docs/reference/visualize/color/#definitions-hsv'
 )
 def _color_hsv(
     hue: str,
@@ -378,18 +349,17 @@ def _color_hsv(
         >>> color.hsv('0deg', '50%', '50%')
         '#color.hsv(0deg, 50%, 50%)'
     """
-    args = (
-        Maybe([hue, saturation, value], alpha)
-        .map(lambda x: x + [alpha])
-        .maybe([hue, saturation, value], identity)
+    return positional(
+        _color_hsv,
+        *Pipe([hue, saturation, value])
+        .map(lambda x: x + [alpha] if alpha else x)
+        .flush(),
     )
-    return positional(_color_hsv, *args)
 
 
 @implement(
-    True,
-    original_name='components',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-components',
+    'components',
+    'https://typst.app/docs/reference/visualize/color/#definitions-components',
 )
 def _color_components(self: Block, /, *, alpha: bool = True) -> Block:
     """Interface of `color.components` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-components) for more information.
@@ -409,9 +379,7 @@ def _color_components(self: Block, /, *, alpha: bool = True) -> Block:
 
 
 @implement(
-    True,
-    original_name='space',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-space',
+    'space', 'https://typst.app/docs/reference/visualize/color/#definitions-space'
 )
 def _color_space(self: Block, /) -> Block:
     """Interface of `color.space` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-space) for more information.
@@ -430,9 +398,7 @@ def _color_space(self: Block, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='to-hex',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-to-hex',
+    'to-hex', 'https://typst.app/docs/reference/visualize/color/#definitions-to-hex'
 )
 def _color_to_hex(self: Block, /) -> Block:
     """Interface of `color.to-hex` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-to-hex) for more information.
@@ -451,9 +417,7 @@ def _color_to_hex(self: Block, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='lighten',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-lighten',
+    'lighten', 'https://typst.app/docs/reference/visualize/color/#definitions-lighten'
 )
 def _color_lighten(self: Block, factor: str, /) -> Block:
     """Interface of `color.lighten` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-lighten) for more information.
@@ -473,9 +437,7 @@ def _color_lighten(self: Block, factor: str, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='darken',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-darken',
+    'darken', 'https://typst.app/docs/reference/visualize/color/#definitions-darken'
 )
 def _color_darken(self: Block, factor: str, /) -> Block:
     """Interface of `color.darken` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-darken) for more information.
@@ -495,9 +457,7 @@ def _color_darken(self: Block, factor: str, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='saturate',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-saturate',
+    'saturate', 'https://typst.app/docs/reference/visualize/color/#definitions-saturate'
 )
 def _color_saturate(self: Block, factor: str, /) -> Block:
     """Interface of `color.saturate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-saturate) for more information.
@@ -517,9 +477,8 @@ def _color_saturate(self: Block, factor: str, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='desaturate',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-desaturate',
+    'desaturate',
+    'https://typst.app/docs/reference/visualize/color/#definitions-desaturate',
 )
 def _color_desaturate(self: Block, factor: str, /) -> Block:
     """Interface of `color.desaturate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-desaturate) for more information.
@@ -539,9 +498,7 @@ def _color_desaturate(self: Block, factor: str, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='negate',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-negate',
+    'negate', 'https://typst.app/docs/reference/visualize/color/#definitions-negate'
 )
 def _color_negate(self: Block, /, *, space: str = 'oklab') -> Block:
     """Interface of `color.negate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-negate) for more information.
@@ -563,9 +520,7 @@ def _color_negate(self: Block, /, *, space: str = 'oklab') -> Block:
 
 
 @implement(
-    True,
-    original_name='rotate',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-rotate',
+    'rotate', 'https://typst.app/docs/reference/visualize/color/#definitions-rotate'
 )
 def _color_rotate(self: Block, angle: str, /, *, space: str = 'oklch') -> Block:
     """Interface of `color.rotate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-rotate) for more information.
@@ -586,9 +541,7 @@ def _color_rotate(self: Block, angle: str, /, *, space: str = 'oklch') -> Block:
 
 
 @implement(
-    True,
-    original_name='color.mix',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-mix',
+    'color.mix', 'https://typst.app/docs/reference/visualize/color/#definitions-mix'
 )
 def _color_mix(*colors: str, space: str = 'oklab') -> Block:
     """Interface of `color.mix` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-mix) for more information.
@@ -607,9 +560,8 @@ def _color_mix(*colors: str, space: str = 'oklab') -> Block:
 
 
 @implement(
-    True,
-    original_name='transparentize',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-transparentize',
+    'transparentize',
+    'https://typst.app/docs/reference/visualize/color/#definitions-transparentize',
 )
 def _color_transparentize(self: Block, scale: str, /) -> Block:
     """Interface of `color.transparentize` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-transparentize) for more information.
@@ -629,9 +581,7 @@ def _color_transparentize(self: Block, scale: str, /) -> Block:
 
 
 @implement(
-    True,
-    original_name='opacify',
-    hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-opacify',
+    'opacify', 'https://typst.app/docs/reference/visualize/color/#definitions-opacify'
 )
 def _color_opacify(self: Block, scale: str, /) -> Block:
     """Interface of `color.opacity` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-opacify) for more information.
@@ -650,7 +600,7 @@ def _color_opacify(self: Block, scale: str, /) -> Block:
     return instance(_color_opacify, self, scale)
 
 
-@attach_func(_color_map, 'map')  # type:ignore
+@attach_func(_color_map, 'map')
 @attach_func(luma)
 @attach_func(oklab)
 @attach_func(oklch)
@@ -672,19 +622,23 @@ def _color_opacify(self: Block, scale: str, /) -> Block:
 @attach_func(_color_transparentize, 'transparentize')
 @attach_func(_color_opacify, 'opacify')
 @implement(
-    True,
-    original_name='color',
-    hyperlink='https://typst.app/docs/reference/visualize/color/',
+    'color',
+    'https://typst.app/docs/reference/visualize/color/',
 )
-def color() -> None:
-    pass
+def color() -> Block:
+    """Interface of `color` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/) for more information.
+
+    Returns:
+        Block: Executable typst code.
+
+    Examples:
+        >>> color()
+        '#color'
+    """
+    return '#color'
 
 
-@implement(
-    True,
-    original_name='ellipse',
-    hyperlink='https://typst.app/docs/reference/visualize/ellipse/',
-)
+@implement('ellipse', 'https://typst.app/docs/reference/visualize/ellipse/')
 def ellipse(
     body: str | None = '',
     /,
@@ -729,9 +683,8 @@ def ellipse(
 
 
 @implement(
-    True,
-    original_name='gradient.linear',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-linear',
+    'gradient.linear',
+    'https://typst.app/docs/reference/visualize/gradient/#definitions-linear',
 )
 def _gradient_linear(
     *stops: str,
@@ -755,9 +708,8 @@ def _gradient_linear(
 
 
 @implement(
-    True,
-    original_name='gradient.radial',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-radial',
+    'gradient.radial',
+    'https://typst.app/docs/reference/visualize/gradient/#definitions-radial',
 )
 def _gradient_radial(
     *stops: str,
@@ -768,6 +720,20 @@ def _gradient_radial(
     focal_center: str | tuple[str, str] = 'auto',
     focal_radius: str = '0%',
 ) -> Block:
+    """Interface of `gradient.radial` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-radial) for more information.
+
+    Args:
+        space (str, optional): The color space in which to interpolate the gradient. Defaults to 'oklab'.
+        relative (str, optional): The relative placement of the gradient. Defaults to 'auto'.
+        center (tuple[str, str], optional): The center of the end circle of the gradient. Defaults to ('50%', '50%').
+        radius (str, optional): The radius of the end circle of the gradient. Defaults to '50%'.
+        focal_center (str | tuple[str, str], optional): The center of the focal circle of the gradient. Defaults to 'auto'.
+        focal_radius (str, optional): The radius of the focal circle of the gradient. Defaults to '0%'.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    is_valid(lambda: relative in map(pad, ('auto', 'self', 'parent')))
     return pre_series(
         _gradient_radial,
         *stops,
@@ -781,9 +747,8 @@ def _gradient_radial(
 
 
 @implement(
-    True,
-    original_name='gradient.conic',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-conic',
+    'gradient.conic',
+    'https://typst.app/docs/reference/visualize/gradient/#definitions-conic',
 )
 def _gradient_conic(
     *stops: str,
@@ -792,6 +757,18 @@ def _gradient_conic(
     relative: str = 'auto',
     center: tuple[str, str] = ('50%', '50%'),
 ) -> Block:
+    """Interface of `gradient.conic` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-conic) for more information.
+
+    Args:
+        angle (str, optional): The angle of the gradient. Defaults to '0deg'.
+        space (str, optional): The color space in which to interpolate the gradient. Defaults to 'oklab'.
+        relative (str, optional): The relative placement of the gradient. Defaults to 'auto'.
+        center (tuple[str, str], optional): The center of the last circle of the gradient. Defaults to ('50%', '50%').
+
+    Returns:
+        Block: Executable typst code.
+    """
+    is_valid(lambda: relative in map(pad, ('auto', 'self', 'parent')))
     return pre_series(
         _gradient_conic,
         *stops,
@@ -803,89 +780,150 @@ def _gradient_conic(
 
 
 @implement(
-    True,
-    original_name='sharp',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-sharp',
+    'sharp', 'https://typst.app/docs/reference/visualize/gradient/#definitions-sharp'
 )
 def _gradient_sharp(self: Block, steps: int, /, *, smoothness: str = '0%') -> Block:
+    """Interface of `gradient.sharp` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-sharp) for more information.
+
+    Args:
+        self (Block): The instance.
+        steps (int): The number of stops in the gradient.
+        smoothness (str, optional): How much to smooth the gradient. Defaults to '0%'.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_sharp, self, steps, smoothness=smoothness)
 
 
 @implement(
-    True,
-    original_name='repeat',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-repeat',
+    'repeat', 'https://typst.app/docs/reference/visualize/gradient/#definitions-repeat'
 )
 def _gradient_repeat(
     self: Block, repetitions: int, /, *, mirror: bool = False
 ) -> Block:
+    """Interface of `gradient.repeat` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-repeat) for more information.
+
+    Args:
+        self (Block): The instance.
+        repetitions (int): The number of times to repeat the gradient.
+        mirror (bool, optional): Whether to mirror the gradient at each repetition. Defaults to False.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_repeat, self, repetitions, mirror=mirror)
 
 
 @implement(
-    True,
-    original_name='kind',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-kind',
+    'kind', 'https://typst.app/docs/reference/visualize/gradient/#definitions-kind'
 )
 def _gradient_kind(self: Block, /) -> Block:
+    """Interface of `gradient.kind` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-kind) for more information.
+
+    Args:
+        self (Block): The instance.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_kind, self)
 
 
 @implement(
-    True,
-    original_name='stops',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-stops',
+    'stops', 'https://typst.app/docs/reference/visualize/gradient/#definitions-stops'
 )
 def _gradient_stops(self: Block, /) -> Block:
+    """Interface of `gradient.stops` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-stops) for more information.
+
+    Args:
+        self (Block): The instance.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_stops, self)
 
 
 @implement(
-    True,
-    original_name='space',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-space',
+    'space', 'https://typst.app/docs/reference/visualize/gradient/#definitions-space'
 )
 def _gradient_space(self: Block, /) -> Block:
+    """Interface of `gradient.space` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-space) for more information.
+
+    Args:
+        self (Block): The instance.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_space, self)
 
 
 @implement(
-    True,
-    original_name='relative',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-relative',
+    'relative',
+    'https://typst.app/docs/reference/visualize/gradient/#definitions-relative',
 )
 def _gradient_relative(self: Block, /) -> Block:
+    """Interface of `gradient.relative` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-relative) for more information.
+
+    Args:
+        self (Block): The instance.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_relative, self)
 
 
 @implement(
-    True,
-    original_name='angle',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-angle',
+    'angle', 'https://typst.app/docs/reference/visualize/gradient/#definitions-angle'
 )
 def _gradient_angle(self: Block, /) -> Block:
+    """Interface of `gradient.angle` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-angle) for more information.
+
+    Args:
+        self (Block): The instance.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_angle, self)
 
 
 @implement(
-    True,
-    original_name='sample',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-sample',
+    'sample', 'https://typst.app/docs/reference/visualize/gradient/#definitions-sample'
 )
 def _gradient_sample(self: Block, t: str, /) -> Block:
+    """Interface of `gradient.sample` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-sample) for more information.
+
+    Args:
+        self (Block): The instance.
+        t (str): The position at which to sample the gradient.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_sample, self, t)
 
 
 @implement(
-    True,
-    original_name='samples',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-samples',
+    'samples',
+    'https://typst.app/docs/reference/visualize/gradient/#definitions-samples',
 )
 def _gradient_samples(self: Block, /, *ts: str) -> Block:
+    """Interface of `gradient.samples` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-samples) for more information.
+
+    Args:
+        self (Block): The instance.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return instance(_gradient_samples, self, *ts)
 
 
-@attach_func(_gradient_linear, 'linear')  # type: ignore
+@attach_func(_gradient_linear, 'linear')
 @attach_func(_gradient_radial, 'radial')
 @attach_func(_gradient_conic, 'conic')
 @attach_func(_gradient_sharp, 'sharp')
@@ -897,19 +935,23 @@ def _gradient_samples(self: Block, /, *ts: str) -> Block:
 @attach_func(_gradient_angle, 'angle')
 @attach_func(_gradient_sample, 'sample')
 @attach_func(_gradient_samples, 'samples')
-@implement(
-    True,
-    original_name='gradient',
-    hyperlink='https://typst.app/docs/reference/visualize/gradient/',
-)
-def gradient() -> None:
-    pass
+@implement('gradient', 'https://typst.app/docs/reference/visualize/gradient/')
+def gradient() -> Block:
+    """Interface of `gradient` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/) for more information.
+
+    Returns:
+        Block: Executable typst code.
+
+    Examples:
+        >>> gradient()
+        '#gradient'
+    """
+    return '#gradient'
 
 
 @implement(
-    True,
-    original_name='image.decode',
-    hyperlink='https://typst.app/docs/reference/visualize/image/#definitions-decode',
+    'image.decode',
+    'https://typst.app/docs/reference/visualize/image/#definitions-decode',
 )
 def _image_decode(
     data: str,
@@ -921,17 +963,33 @@ def _image_decode(
     alt: str | None = None,
     fit: str = '"cover"',
 ) -> Block:
+    """Interface of `image.decode` in typst. See [the documentation](https://typst.app/docs/reference/visualize/image/#definitions-decode) for more information.
+
+    Args:
+        data (str): The data to decode as an image. Can be a string for SVGs.
+        format (str, optional): The image's format. Defaults to 'auto'.
+        width (str, optional): The width of the image. Defaults to 'auto'.
+        height (str, optional): The height of the image. Defaults to 'auto'.
+        alt (str | None, optional): A text describing the image. Defaults to None.
+        fit (str, optional): How the image should adjust itself to a given area. Defaults to '"cover"'.
+
+    Raises:
+        ValueError: If `format` or `fit` is invalid.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    is_valid(
+        lambda: format == 'auto' or format in map(pad, ('png', 'jpg', 'gif', 'svg')),
+        lambda: fit in map(pad, ('cover', 'contain', 'stretch')),
+    )
     return normal(
         _image_decode, data, format=format, width=width, height=height, alt=alt, fit=fit
     )
 
 
 @attach_func(_image_decode, 'decode')
-@implement(
-    True,
-    original_name='image',
-    hyperlink='https://typst.app/docs/reference/visualize/image/',
-)
+@implement('image', 'https://typst.app/docs/reference/visualize/image/')
 def image(
     path: str,
     /,
@@ -976,11 +1034,7 @@ def image(
     )
 
 
-@implement(
-    True,
-    original_name='line',
-    hyperlink='https://typst.app/docs/reference/visualize/line/',
-)
+@implement('line', 'https://typst.app/docs/reference/visualize/line/')
 def line(
     *,
     start: tuple[str, str] = ('0% + 0pt', '0% + 0pt'),
@@ -989,14 +1043,32 @@ def line(
     angle: str = '0deg',
     stroke: str | dict[str, Any] = '1pt + black',
 ) -> Block:
+    """Interface of `line` in typst. See [the documentation](https://typst.app/docs/reference/visualize/line/) for more information.
+
+    Args:
+        start (tuple[str, str], optional): The start point of the line. Defaults to ('0% + 0pt', '0% + 0pt').
+        end (tuple[str, str] | None, optional): The offset from start where the line ends. Defaults to None.
+        length (str, optional): The line's length. Defaults to '0% + 30pt'.
+        angle (str, optional): The angle at which the line points away from the origin. Defaults to '0deg'.
+        stroke (str | dict[str, Any], optional): How to stroke the line. Defaults to '1pt + black'.
+
+    Returns:
+        Block: Executable typst code.
+
+    Examples:
+        >>> line()
+        '#line()'
+        >>> line(end=('100% + 0pt', '100% + 0pt'))
+        '#line(end: (100% + 0pt, 100% + 0pt))'
+        >>> line(angle='90deg')
+        '#line(angle: 90deg)'
+        >>> line(stroke='1pt + red')
+        '#line(stroke: 1pt + red)'
+    """
     return normal(line, start=start, end=end, length=length, angle=angle, stroke=stroke)
 
 
-@implement(
-    True,
-    original_name='path',
-    hyperlink='https://typst.app/docs/reference/visualize/path/',
-)
+@implement('path', 'https://typst.app/docs/reference/visualize/path/')
 def path(
     *vertices: tuple[str, str] | tuple[tuple[str, str], ...],
     fill: str | None = None,
@@ -1004,16 +1076,42 @@ def path(
     stroke: str | dict[str, Any] | None = 'auto',
     closed: bool = False,
 ) -> Block:
+    """Interface of `path` in typst. See [the documentation](https://typst.app/docs/reference/visualize/path/) for more information.
+
+    Args:
+        fill (str | None, optional): How to fill the path. Defaults to None.
+        fill_rule (str, optional): The drawing rule used to fill the path. Defaults to '"non-zero"'.
+        stroke (str | dict[str, Any] | None, optional): How to stroke the path. Defaults to 'auto'.
+        closed (bool, optional): Whether to close this path with one last bezier curve. Defaults to False.
+
+    Raises:
+        ValueError: If `fill_rule` is invalid.
+
+    Returns:
+        Block: Executable typst code.
+
+    Examples:
+        >>> path(('0%', '0%'), ('100%', '0%'), ('100%', '100%'), ('0%', '100%'))
+        '#path((0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
+        >>> path(('0%', '0%'), ('100%', '0%'), ('100%', '100%'), ('0%', '100%'), fill='red')
+        '#path(fill: red, (0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
+        >>> path(
+        ...     ('0%', '0%'),
+        ...     ('100%', '0%'),
+        ...     ('100%', '100%'),
+        ...     ('0%', '100%'),
+        ...     fill='red',
+        ...     stroke='blue',
+        ... )
+        '#path(fill: red, stroke: blue, (0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
+    """
+    is_valid(lambda: fill_rule in map(pad, ('non-zero', 'evenodd')))
     return post_series(
         path, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke, closed=closed
     )
 
 
-@implement(
-    True,
-    original_name='pattern',
-    hyperlink='https://typst.app/docs/reference/visualize/pattern/',
-)
+@implement('pattern', 'https://typst.app/docs/reference/visualize/pattern/')
 def pattern(
     body: str,
     /,
@@ -1022,13 +1120,24 @@ def pattern(
     spacing: tuple[str, str] = ('0pt', '0pt'),
     relative: str = 'auto',
 ) -> Block:
+    """Interface of `pattern` in typst. See [the documentation](https://typst.app/docs/reference/visualize/pattern/) for more information.
+
+    Args:
+        body (str): The content of each cell of the pattern.
+        size (str | Iterable[str], optional): The bounding box of each cell of the pattern. Defaults to 'auto'.
+        spacing (tuple[str, str], optional): The spacing between cells of the pattern. Defaults to ('0pt', '0pt').
+        relative (str, optional): The relative placement of the pattern. Defaults to 'auto'.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    is_valid(lambda: relative in map(pad, ('auto', 'self', 'parent')))
     return normal(pattern, body, size=size, spacing=spacing, relative=relative)
 
 
 @implement(
-    True,
-    original_name='polygon.regular',
-    hyperlink='https://typst.app/docs/reference/visualize/polygon/#definitions-regular',
+    'polygon.regular',
+    'https://typst.app/docs/reference/visualize/polygon/#definitions-regular',
 )
 def _polygon_regular(
     *,
@@ -1037,33 +1146,47 @@ def _polygon_regular(
     size: str = '1em',
     vertices: int = 3,
 ) -> Block:
+    """Interface of `polygon.regular` in typst. See [the documentation](https://typst.app/docs/reference/visualize/polygon/#definitions-regular) for more information.
+
+    Args:
+        fill (str | None, optional): How to fill the polygon. Defaults to None.
+        stroke (str | dict[str, Any] | None, optional): How to stroke the polygon. Defaults to None.
+        size (str, optional): The diameter of the circumcircle of the regular polygon. Defaults to '1em'.
+        vertices (int, optional): The number of vertices in the polygon. Defaults to 3.
+
+    Returns:
+        Block: Executable typst code.
+    """
     return normal(
         _polygon_regular, fill=fill, stroke=stroke, size=size, vertices=vertices
     )
 
 
 @attach_func(_polygon_regular, 'regular')
-@implement(
-    True,
-    original_name='polygon',
-    hyperlink='https://typst.app/docs/reference/visualize/polygon/',
-)
+@implement('polygon', 'https://typst.app/docs/reference/visualize/polygon/')
 def polygon(
     *vertices: tuple[str, str] | tuple[tuple[str, str], ...],
     fill: str | None = None,
     fill_rule: str = '"non-zero"',
     stroke: str | dict[str, Any] | None = 'auto',
 ) -> Block:
+    """Interface of `polygon` in typst. See [the documentation](https://typst.app/docs/reference/visualize/polygon/) for more information.
+
+    Args:
+        fill (str | None, optional): How to fill the polygon. Defaults to None.
+        fill_rule (str, optional): The drawing rule used to fill the polygon. Defaults to '"non-zero"'.
+        stroke (str | dict[str, Any] | None, optional): How to stroke the polygon. Defaults to 'auto'.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    is_valid(lambda: fill_rule in map(pad, ('non-zero', 'evenodd')))
     return post_series(
         polygon, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke
     )
 
 
-@implement(
-    True,
-    original_name='rect',
-    hyperlink='https://typst.app/docs/reference/visualize/rect/',
-)
+@implement('rect', 'https://typst.app/docs/reference/visualize/rect/')
 def rect(
     body: str = '',
     /,
@@ -1076,6 +1199,21 @@ def rect(
     inset: str | dict[str, Any] = '0% + 5pt',
     outset: str | dict[str, Any] = dict(),
 ) -> Block:
+    """Interface of `rect` in typst. See [the documentation](https://typst.app/docs/reference/visualize/rect/) for more information.
+
+    Args:
+        body (str, optional): The content to place into the rectangle. Defaults to ''.
+        width (str, optional): The rectangle's width, relative to its parent container. Defaults to 'auto'.
+        height (str, optional): The rectangle's height, relative to its parent container. Defaults to 'auto'.
+        fill (str | None, optional): How to fill the rectangle. Defaults to None.
+        stroke (str | dict[str, Any] | None, optional): How to stroke the rectangle. Defaults to 'auto'.
+        radius (str | dict[str, Any], optional): How much to round the rectangle's corners, relative to the minimum of the width and height divided by two. Defaults to dict().
+        inset (str | dict[str, Any], optional): How much to pad the rectangle's content. Defaults to '0% + 5pt'.
+        outset (str | dict[str, Any], optional): How much to expand the rectangle's size without affecting the layout. Defaults to dict().
+
+    Returns:
+        Block: Executable typst code.
+    """
     return normal(
         rect,
         body,
@@ -1089,11 +1227,7 @@ def rect(
     )
 
 
-@implement(
-    True,
-    original_name='square',
-    hyperlink='https://typst.app/docs/reference/visualize/square/',
-)
+@implement('square', 'https://typst.app/docs/reference/visualize/square/')
 def square(
     body: str = '',
     /,
@@ -1107,6 +1241,26 @@ def square(
     inset: str | dict[str, Any] = '0% + 5pt',
     outset: str | dict[str, Any] = dict(),
 ) -> Block:
+    """Interface of `square` in typst. See [the documentation](https://typst.app/docs/reference/visualize/square/) for more information.
+
+    Args:
+        body (str, optional): The content to place into the square. Defaults to ''.
+        size (str, optional): The square's side length. Defaults to 'auto'.
+        width (str, optional): The square's width. Defaults to 'auto'.
+        height (str, optional): The square's height. Defaults to 'auto'.
+        fill (str | None, optional): How to fill the square. Defaults to None.
+        stroke (str | dict[str, Any] | None, optional): How to stroke the square. Defaults to 'auto'.
+        radius (str | dict[str, Any], optional): How much to round the square's corners. Defaults to dict().
+        inset (str | dict[str, Any], optional): How much to pad the square's content. Defaults to '0% + 5pt'.
+        outset (str | dict[str, Any], optional): How much to expand the square's size without affecting the layout. Defaults to dict().
+
+    Raises:
+        ValueError: If `size` is not 'auto' when either `width` or `height` is not 'auto'.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    is_valid(lambda: (width == 'auto' and height == 'auto') if size != 'auto' else True)
     return normal(
         square,
         body,
@@ -1121,18 +1275,23 @@ def square(
     )
 
 
-@implement(
-    True,
-    original_name='stroke',
-    hyperlink='https://typst.app/docs/reference/visualize/stroke/',
-)
-def stroke(
-    paint: Optional[str] = None,
-    thickness: Optional[str] = None,
-    cap: Optional[str] = None,
-    join: Optional[str] = None,
-    dash: Optional[str] = None,
-    miter_limit: Optional[str] = None,
-    /,
-) -> Block:
-    return positional(stroke, paint, thickness, cap, join, dash, miter_limit)
+# TODO: Implement `stroke` when necessary.
+
+__all__ = [
+    'circle',
+    'luma',
+    'oklab',
+    'oklch',
+    'rgb',
+    'cmyk',
+    'color',
+    'ellipse',
+    'gradient',
+    'image',
+    'line',
+    'path',
+    'pattern',
+    'polygon',
+    'rect',
+    'square',
+]

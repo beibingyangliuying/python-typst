@@ -19,85 +19,84 @@ pip install typstpy
 
 ## Current Support
 
-| Is Standard | Function Name | Original Name | Documentation |
-| --- | --- | --- | --- |
-| True | align | align | [align](https://typst.app/docs/reference/layout/align/) |
-| True | arguments | arguments | [arguments](https://typst.app/docs/reference/foundations/arguments/) |
-| True | bibliography | bibliography | [bibliography](https://typst.app/docs/reference/model/bibliography/) |
-| True | block | block | [block](https://typst.app/docs/reference/layout/block/) |
-| True | box | box | [box](https://typst.app/docs/reference/layout/box/) |
-| True | bullet_list | list | [list](https://typst.app/docs/reference/model/list/) |
-| True | circle | circle | [circle](https://typst.app/docs/reference/visualize/circle/) |
-| True | cite | cite | [cite](https://typst.app/docs/reference/model/cite/) |
-| True | cmyk | cmyk | [cmyk](https://typst.app/docs/reference/visualize/color/#definitions-cmyk) |
-| True | colbreak | colbreak | [colbreak](https://typst.app/docs/reference/layout/colbreak/) |
-| True | color | color | [color](https://typst.app/docs/reference/visualize/color/) |
-| True | columns | columns | [columns](https://typst.app/docs/reference/layout/columns/) |
-| True | document | document | [document](https://typst.app/docs/reference/model/document/) |
-| True | ellipse | ellipse | [ellipse](https://typst.app/docs/reference/visualize/ellipse/) |
-| True | emph | emph | [emph](https://typst.app/docs/reference/model/emph/) |
-| True | figure | figure | [figure](https://typst.app/docs/reference/model/figure/) |
-| True | footnote | footnote | [footnote](https://typst.app/docs/reference/model/footnote/) |
-| True | gradient | gradient | [gradient](https://typst.app/docs/reference/visualize/gradient/) |
-| True | grid | grid | [grid](https://typst.app/docs/reference/layout/grid/) |
-| True | heading | heading | [heading](https://typst.app/docs/reference/model/heading/) |
-| True | hide | hide | [hide](https://typst.app/docs/reference/layout/hide/) |
-| True | highlight | highlight | [highlight](https://typst.app/docs/reference/text/highlight/) |
-| True | hspace | h | [h](https://typst.app/docs/reference/layout/h/) |
-| True | image | image | [image](https://typst.app/docs/reference/visualize/image/) |
-| True | layout | layout | [layout](https://typst.app/docs/reference/layout/layout/) |
-| True | line | line | [line](https://typst.app/docs/reference/visualize/line/) |
-| True | linebreak | linebreak | [linebreak](https://typst.app/docs/reference/text/linebreak/) |
-| True | link | link | [link](https://typst.app/docs/reference/model/link/) |
-| True | lorem | lorem | [lorem](https://typst.app/docs/reference/text/lorem/) |
-| True | lower | lower | [lower](https://typst.app/docs/reference/text/lower/) |
-| True | luma | luma | [luma](https://typst.app/docs/reference/visualize/color/#definitions-luma) |
-| True | measure | measure | [measure](https://typst.app/docs/reference/layout/measure/) |
-| True | move | move | [move](https://typst.app/docs/reference/layout/move/) |
-| True | numbered_list | enum | [enum](https://typst.app/docs/reference/model/enum/) |
-| True | numbering | numbering | [numbering](https://typst.app/docs/reference/model/numbering/) |
-| True | oklab | oklab | [oklab](https://typst.app/docs/reference/visualize/color/#definitions-oklab) |
-| True | oklch | oklch | [oklch](https://typst.app/docs/reference/visualize/color/#definitions-oklch) |
-| True | outline | outline | [outline](https://typst.app/docs/reference/model/outline/) |
-| True | overline | overline | [overline](https://typst.app/docs/reference/text/overline/) |
-| True | padding | pad | [pad](https://typst.app/docs/reference/layout/pad/) |
-| True | page | page | [page](https://typst.app/docs/reference/layout/page/) |
-| True | pagebreak | pagebreak | [pagebreak](https://typst.app/docs/reference/layout/pagebreak/) |
-| True | par | par | [par](https://typst.app/docs/reference/model/par/) |
-| True | parbreak | parbreak | [parbreak](https://typst.app/docs/reference/model/parbreak/) |
-| True | path | path | [path](https://typst.app/docs/reference/visualize/path/) |
-| True | pattern | pattern | [pattern](https://typst.app/docs/reference/visualize/pattern/) |
-| True | place | place | [place](https://typst.app/docs/reference/layout/place/) |
-| True | polygon | polygon | [polygon](https://typst.app/docs/reference/visualize/polygon/) |
-| True | quote | quote | [quote](https://typst.app/docs/reference/model/quote/) |
-| True | raw | raw | [raw](https://typst.app/docs/reference/text/raw/) |
-| True | rect | rect | [rect](https://typst.app/docs/reference/visualize/rect/) |
-| True | ref | ref | [ref](https://typst.app/docs/reference/model/ref/) |
-| True | repeat | repeat | [repeat](https://typst.app/docs/reference/layout/repeat/) |
-| True | rgb | rgb | [rgb](https://typst.app/docs/reference/visualize/color/#definitions-rgb) |
-| True | rotate | rotate | [rotate](https://typst.app/docs/reference/layout/rotate/) |
-| True | scale | scale | [scale](https://typst.app/docs/reference/layout/scale/) |
-| True | skew | skew | [skew](https://typst.app/docs/reference/layout/skew/) |
-| True | smallcaps | smallcaps | [smallcaps](https://typst.app/docs/reference/text/smallcaps/) |
-| True | smartquote | smartquote | [smartquote](https://typst.app/docs/reference/text/smartquote/) |
-| True | square | square | [square](https://typst.app/docs/reference/visualize/square/) |
-| True | stack | stack | [stack](https://typst.app/docs/reference/layout/stack/) |
-| True | strike | strike | [strike](https://typst.app/docs/reference/text/strike/) |
-| True | stroke | stroke | [stroke](https://typst.app/docs/reference/visualize/stroke/) |
-| True | strong | strong | [strong](https://typst.app/docs/reference/model/strong/) |
-| True | subscript | sub | [sub](https://typst.app/docs/reference/text/sub/) |
-| True | superscript | super | [super](https://typst.app/docs/reference/text/super/) |
-| True | table | table | [table](https://typst.app/docs/reference/model/table/) |
-| True | terms | terms | [terms](https://typst.app/docs/reference/model/terms/) |
-| True | text | text | [text](https://typst.app/docs/reference/text/text/) |
-| True | underline | underline | [underline](https://typst.app/docs/reference/text/underline/) |
-| True | upper | upper | [upper](https://typst.app/docs/reference/text/upper/) |
-| True | vspace | v | [v](https://typst.app/docs/reference/layout/v/) |
+| Function Name | Original Name | Documentation |
+| --- | --- | --- |
+| align | align | [https://typst.app/docs/reference/layout/align/](https://typst.app/docs/reference/layout/align/) |
+| bibliography | bibliography | [https://typst.app/docs/reference/model/bibliography/](https://typst.app/docs/reference/model/bibliography/) |
+| block | block | [https://typst.app/docs/reference/layout/block/](https://typst.app/docs/reference/layout/block/) |
+| box | box | [https://typst.app/docs/reference/layout/box/](https://typst.app/docs/reference/layout/box/) |
+| bullet_list | list | [https://typst.app/docs/reference/model/list/](https://typst.app/docs/reference/model/list/) |
+| circle | circle | [https://typst.app/docs/reference/visualize/circle/](https://typst.app/docs/reference/visualize/circle/) |
+| cite | cite | [https://typst.app/docs/reference/model/cite/](https://typst.app/docs/reference/model/cite/) |
+| cmyk | cmyk | [https://typst.app/docs/reference/visualize/color/#definitions-cmyk](https://typst.app/docs/reference/visualize/color/#definitions-cmyk) |
+| colbreak | colbreak | [https://typst.app/docs/reference/layout/colbreak/](https://typst.app/docs/reference/layout/colbreak/) |
+| color | color | [https://typst.app/docs/reference/visualize/color/](https://typst.app/docs/reference/visualize/color/) |
+| columns | columns | [https://typst.app/docs/reference/layout/columns/](https://typst.app/docs/reference/layout/columns/) |
+| document | document | [https://typst.app/docs/reference/model/document/](https://typst.app/docs/reference/model/document/) |
+| ellipse | ellipse | [https://typst.app/docs/reference/visualize/ellipse/](https://typst.app/docs/reference/visualize/ellipse/) |
+| emph | emph | [https://typst.app/docs/reference/model/emph/](https://typst.app/docs/reference/model/emph/) |
+| figure | figure | [https://typst.app/docs/reference/model/figure/](https://typst.app/docs/reference/model/figure/) |
+| footnote | footnote | [https://typst.app/docs/reference/model/footnote/](https://typst.app/docs/reference/model/footnote/) |
+| gradient | gradient | [https://typst.app/docs/reference/visualize/gradient/](https://typst.app/docs/reference/visualize/gradient/) |
+| grid | grid | [https://typst.app/docs/reference/layout/grid/](https://typst.app/docs/reference/layout/grid/) |
+| heading | heading | [https://typst.app/docs/reference/model/heading/](https://typst.app/docs/reference/model/heading/) |
+| hide | hide | [https://typst.app/docs/reference/layout/hide/](https://typst.app/docs/reference/layout/hide/) |
+| highlight | highlight | [https://typst.app/docs/reference/text/highlight/](https://typst.app/docs/reference/text/highlight/) |
+| hspace | h | [https://typst.app/docs/reference/layout/h/](https://typst.app/docs/reference/layout/h/) |
+| image | image | [https://typst.app/docs/reference/visualize/image/](https://typst.app/docs/reference/visualize/image/) |
+| layout | layout | [https://typst.app/docs/reference/layout/layout/](https://typst.app/docs/reference/layout/layout/) |
+| line | line | [https://typst.app/docs/reference/visualize/line/](https://typst.app/docs/reference/visualize/line/) |
+| linebreak | linebreak | [https://typst.app/docs/reference/text/linebreak/](https://typst.app/docs/reference/text/linebreak/) |
+| link | link | [https://typst.app/docs/reference/model/link/](https://typst.app/docs/reference/model/link/) |
+| lorem | lorem | [https://typst.app/docs/reference/text/lorem/](https://typst.app/docs/reference/text/lorem/) |
+| lower | lower | [https://typst.app/docs/reference/text/lower/](https://typst.app/docs/reference/text/lower/) |
+| luma | luma | [https://typst.app/docs/reference/visualize/color/#definitions-luma](https://typst.app/docs/reference/visualize/color/#definitions-luma) |  
+| measure | measure | [https://typst.app/docs/reference/layout/measure/](https://typst.app/docs/reference/layout/measure/) |
+| move | move | [https://typst.app/docs/reference/layout/move/](https://typst.app/docs/reference/layout/move/) |
+| numbered_list | enum | [https://typst.app/docs/reference/model/enum/](https://typst.app/docs/reference/model/enum/) |
+| numbering | numbering | [https://typst.app/docs/reference/model/numbering/](https://typst.app/docs/reference/model/numbering/) |
+| oklab | oklab | [https://typst.app/docs/reference/visualize/color/#definitions-oklab](https://typst.app/docs/reference/visualize/color/#definitions-oklab) |
+| oklch | oklch | [https://typst.app/docs/reference/visualize/color/#definitions-oklch](https://typst.app/docs/reference/visualize/color/#definitions-oklch) |
+| outline | outline | [https://typst.app/docs/reference/model/outline/](https://typst.app/docs/reference/model/outline/) |
+| overline | overline | [https://typst.app/docs/reference/text/overline/](https://typst.app/docs/reference/text/overline/) |
+| padding | pad | [https://typst.app/docs/reference/layout/pad/](https://typst.app/docs/reference/layout/pad/) |
+| page | page | [https://typst.app/docs/reference/layout/page/](https://typst.app/docs/reference/layout/page/) |
+| pagebreak | pagebreak | [https://typst.app/docs/reference/layout/pagebreak/](https://typst.app/docs/reference/layout/pagebreak/) |
+| par | par | [https://typst.app/docs/reference/model/par/](https://typst.app/docs/reference/model/par/) |
+| parbreak | parbreak | [https://typst.app/docs/reference/model/parbreak/](https://typst.app/docs/reference/model/parbreak/) |
+| path | path | [https://typst.app/docs/reference/visualize/path/](https://typst.app/docs/reference/visualize/path/) |
+| pattern | pattern | [https://typst.app/docs/reference/visualize/pattern/](https://typst.app/docs/reference/visualize/pattern/) |
+| place | place | [https://typst.app/docs/reference/layout/place/](https://typst.app/docs/reference/layout/place/) |
+| polygon | polygon | [https://typst.app/docs/reference/visualize/polygon/](https://typst.app/docs/reference/visualize/polygon/) |
+| quote | quote | [https://typst.app/docs/reference/model/quote/](https://typst.app/docs/reference/model/quote/) |
+| raw | raw | [https://typst.app/docs/reference/text/raw/](https://typst.app/docs/reference/text/raw/) |
+| rect | rect | [https://typst.app/docs/reference/visualize/rect/](https://typst.app/docs/reference/visualize/rect/) |
+| ref | ref | [https://typst.app/docs/reference/model/ref/](https://typst.app/docs/reference/model/ref/) |
+| repeat | repeat | [https://typst.app/docs/reference/layout/repeat/](https://typst.app/docs/reference/layout/repeat/) |
+| rgb | rgb | [https://typst.app/docs/reference/visualize/color/#definitions-rgb](https://typst.app/docs/reference/visualize/color/#definitions-rgb) |
+| rotate | rotate | [https://typst.app/docs/reference/layout/rotate/](https://typst.app/docs/reference/layout/rotate/) |
+| scale | scale | [https://typst.app/docs/reference/layout/scale/](https://typst.app/docs/reference/layout/scale/) |
+| skew | skew | [https://typst.app/docs/reference/layout/skew/](https://typst.app/docs/reference/layout/skew/) |
+| smallcaps | smallcaps | [https://typst.app/docs/reference/text/smallcaps/](https://typst.app/docs/reference/text/smallcaps/) |
+| smartquote | smartquote | [https://typst.app/docs/reference/text/smartquote/](https://typst.app/docs/reference/text/smartquote/) |
+| square | square | [https://typst.app/docs/reference/visualize/square/](https://typst.app/docs/reference/visualize/square/) |
+| stack | stack | [https://typst.app/docs/reference/layout/stack/](https://typst.app/docs/reference/layout/stack/) |
+| strike | strike | [https://typst.app/docs/reference/text/strike/](https://typst.app/docs/reference/text/strike/) |
+| strong | strong | [https://typst.app/docs/reference/model/strong/](https://typst.app/docs/reference/model/strong/) |
+| subscript | sub | [https://typst.app/docs/reference/text/sub/](https://typst.app/docs/reference/text/sub/) |
+| superscript | super | [https://typst.app/docs/reference/text/super/](https://typst.app/docs/reference/text/super/) |
+| table | table | [https://typst.app/docs/reference/model/table/](https://typst.app/docs/reference/model/table/) |
+| terms | terms | [https://typst.app/docs/reference/model/terms/](https://typst.app/docs/reference/model/terms/) |
+| text | text | [https://typst.app/docs/reference/text/text/](https://typst.app/docs/reference/text/text/) |
+| underline | underline | [https://typst.app/docs/reference/text/underline/](https://typst.app/docs/reference/text/underline/) |
+| upper | upper | [https://typst.app/docs/reference/text/upper/](https://typst.app/docs/reference/text/upper/) |
+| vspace | v | [https://typst.app/docs/reference/layout/v/](https://typst.app/docs/reference/layout/v/) |
 
 ## Design philosophy
 
 ## Change logs
 
+- _1.0.0_: Completed documentation and test cases in `layout`, `model`, `text` and `visualize` modules. Improved functionality.
 - _1.0.0-beta.2_: Improved the implementation and documentation of functions in the `layout` module.
 - _1.0.0-beta.1_: Completely reconstructed the underlying implementation.
 
@@ -151,6 +150,15 @@ from typstpy.std import *
 '#box(lorem(20), width: 100%)'
 ```
 
+`bullet_list`:
+
+```python
+>>> bullet_list(lorem(20), lorem(20), lorem(20))
+'#list(lorem(20), lorem(20), lorem(20))'
+>>> bullet_list(lorem(20), lorem(20), lorem(20), tight=False)
+'#list(tight: false, lorem(20), lorem(20), lorem(20))'
+```
+
 `circle`:
 
 ```python
@@ -191,6 +199,13 @@ from typstpy.std import *
 '#colbreak()'
 >>> colbreak(weak=True)
 '#colbreak(weak: true)'
+```
+
+`color`:
+
+```python
+>>> color()
+'#color'
 ```
 
 `columns`:
@@ -240,11 +255,42 @@ from typstpy.std import *
 '#footnote([Hello, World!], numbering: "a")'
 ```
 
+`gradient`:
+
+```python
+>>> gradient()
+'#gradient'
+```
+
 `grid`:
 
 ```python
 >>> grid(lorem(20), lorem(20), lorem(20), align=('center',) * 3)
 '#grid(align: (center, center, center), lorem(20), lorem(20), lorem(20))'
+```
+
+`heading`:
+
+```python
+>>> heading('[Hello, World!]')
+'#heading([Hello, World!])'
+>>> heading('[Hello, World!]', level=1)
+'#heading([Hello, World!], level: 1)'
+>>> heading('[Hello, World!]', level=1, depth=2)
+'#heading([Hello, World!], level: 1, depth: 2)'
+>>> heading('[Hello, World!]', level=1, depth=2, offset=10)
+'#heading([Hello, World!], level: 1, depth: 2, offset: 10)'
+>>> heading('[Hello, World!]', level=1, depth=2, offset=10, numbering='"a"')
+'#heading([Hello, World!], level: 1, depth: 2, offset: 10, numbering: "a")'
+>>> heading(
+...     '[Hello, World!]',
+...     level=1,
+...     depth=2,
+...     offset=10,
+...     numbering='"a"',
+...     supplement='"Supplement"',
+... )
+'#heading([Hello, World!], level: 1, depth: 2, offset: 10, numbering: "a", supplement: "Supplement")'
 ```
 
 `hide`:
@@ -287,6 +333,19 @@ from typstpy.std import *
 '#image("image.png")'
 >>> image('"image.png"', fit='"contain"')
 '#image("image.png", fit: "contain")'
+```
+
+`line`:
+
+```python
+>>> line()
+'#line()'
+>>> line(end=('100% + 0pt', '100% + 0pt'))
+'#line(end: (100% + 0pt, 100% + 0pt))'
+>>> line(angle='90deg')
+'#line(angle: 90deg)'
+>>> line(stroke='1pt + red')
+'#line(stroke: 1pt + red)'
 ```
 
 `linebreak`:
@@ -341,6 +400,22 @@ from typstpy.std import *
 '#move(lorem(20), dx: 50% + 10pt, dy: 10% + 5pt)'
 ```
 
+`numbered_list`:
+
+```python
+>>> numbered_list(lorem(20), lorem(20), lorem(20))
+'#enum(lorem(20), lorem(20), lorem(20))'
+>>> numbered_list(lorem(20), lorem(20), lorem(20), tight=False)
+'#enum(tight: false, lorem(20), lorem(20), lorem(20))'
+```
+
+`numbering`:
+
+```python
+>>> numbering('"1.1)"', 1, 2)
+'#numbering("1.1)", 1, 2)'
+```
+
 `oklab`:
 
 ```python
@@ -357,6 +432,15 @@ from typstpy.std import *
 '#oklch(50%, 0%, 0deg)'
 >>> oklch('50%', '0%', '0deg', '50%')
 '#oklch(50%, 0%, 0deg, 50%)'
+```
+
+`outline`:
+
+```python
+>>> outline()
+'#outline()'
+>>> outline(title='"Hello, World!"', target=heading.where(outlined=False))
+'#outline(title: "Hello, World!", target: heading.where(outlined: false))'
 ```
 
 `overline`:
@@ -426,7 +510,7 @@ from typstpy.std import *
 ...     first_line_indent='0.2em',
 ...     hanging_indent='0.3em',
 ... )
-'#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'   
+'#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'
 ```
 
 `parbreak`:
@@ -434,6 +518,24 @@ from typstpy.std import *
 ```python
 >>> parbreak()
 '#parbreak()'
+```
+
+`path`:
+
+```python
+>>> path(('0%', '0%'), ('100%', '0%'), ('100%', '100%'), ('0%', '100%'))
+'#path((0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
+>>> path(('0%', '0%'), ('100%', '0%'), ('100%', '100%'), ('0%', '100%'), fill='red')
+'#path(fill: red, (0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
+>>> path(
+...     ('0%', '0%'),
+...     ('100%', '0%'),
+...     ('100%', '100%'),
+...     ('0%', '100%'),
+...     fill='red',
+...     stroke='blue',
+... )
+'#path(fill: red, stroke: blue, (0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
 ```
 
 `place`:
@@ -602,6 +704,37 @@ from typstpy.std import *
 ...     '[Hello, World!]', typographic=False, baseline='-0.4em', size='0.7em'
 ... )
 '#super([Hello, World!], typographic: false, baseline: -0.4em, size: 0.7em)'
+```
+
+`table`:
+
+```python
+>>> table('[1]', '[2]', '[3]')
+'#table([1], [2], [3])'
+>>> table(
+...     '[1]',
+...     '[2]',
+...     '[3]',
+...     columns=['1fr', '2fr', '3fr'],
+...     rows=['1fr', '2fr', '3fr'],
+...     gutter=['1fr', '2fr', '3fr'],
+...     column_gutter=['1fr', '2fr', '3fr'],
+...     row_gutter=['1fr', '2fr', '3fr'],
+...     fill='red',
+...     align=['center', 'center', 'center'],
+... )
+'#table(columns: (1fr, 2fr, 3fr), rows: (1fr, 2fr, 3fr), gutter: (1fr, 2fr, 3fr), column-gutter: (1fr, 2fr, 3fr), row-gutter: (1fr, 2fr, 3fr), fill: red, align: (center, center, center), [1], [2], [3])'
+```
+
+`terms`:
+
+```python
+>>> terms(('[1]', lorem(20)), ('[1]', lorem(20)))
+'#terms(([1], lorem(20)), ([1], lorem(20)))'
+>>> terms(('[1]', lorem(20)), ('[1]', lorem(20)), tight=False)
+'#terms(tight: false, ([1], lorem(20)), ([1], lorem(20)))'
+>>> terms(terms.item('[1]', lorem(20)), terms.item('[1]', lorem(20)))
+'#terms(terms.item([1], lorem(20)), terms.item([1], lorem(20)))'
 ```
 
 `text`:

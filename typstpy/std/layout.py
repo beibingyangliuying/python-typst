@@ -3,7 +3,8 @@ from typing import Any, Iterable
 from cytoolz.curried import map  # type:ignore
 from pymonad.reader import Pipe  # type:ignore
 
-from .._utils import (
+from ..typings import Block
+from ..utils import (
     attach_func,
     implement,
     is_valid,
@@ -12,7 +13,6 @@ from .._utils import (
     positional,
     post_series,
 )
-from ..typings import Block
 from .text import lorem  # noqa
 from .visualize import rect  # noqa
 
@@ -132,11 +132,7 @@ _VALID_PAPER_SIZES = set(
 )
 
 
-@implement(
-    True,
-    original_name='align',
-    hyperlink='https://typst.app/docs/reference/layout/align/',
-)
+@implement('align', 'https://typst.app/docs/reference/layout/align/')
 def align(body: Block, alignment: str = 'start + top', /) -> Block:
     """Interface of `align` in typst. See [the documentation](https://typst.app/docs/reference/layout/align/) for more information.
 
@@ -163,11 +159,7 @@ def align(body: Block, alignment: str = 'start + top', /) -> Block:
     )
 
 
-@implement(
-    True,
-    original_name='block',
-    hyperlink='https://typst.app/docs/reference/layout/block/',
-)
+@implement('block', 'https://typst.app/docs/reference/layout/block/')
 def block(
     body: str | None = '',
     /,
@@ -236,11 +228,7 @@ def block(
     )
 
 
-@implement(
-    True,
-    original_name='box',
-    hyperlink='https://typst.app/docs/reference/layout/box/',
-)
+@implement('box', 'https://typst.app/docs/reference/layout/box/')
 def box(
     body: str | None = '',
     /,
@@ -297,11 +285,7 @@ def box(
     )
 
 
-@implement(
-    True,
-    original_name='colbreak',
-    hyperlink='https://typst.app/docs/reference/layout/colbreak/',
-)
+@implement('colbreak', 'https://typst.app/docs/reference/layout/colbreak/')
 def colbreak(*, weak: bool = False) -> Block:
     """Interface of `colbreak` in typst. See [the documentation](https://typst.app/docs/reference/layout/colbreak/) for more information.
 
@@ -320,11 +304,7 @@ def colbreak(*, weak: bool = False) -> Block:
     return normal(colbreak, weak=weak)
 
 
-@implement(
-    True,
-    original_name='columns',
-    hyperlink='https://typst.app/docs/reference/layout/columns/',
-)
+@implement('columns', 'https://typst.app/docs/reference/layout/columns/')
 def columns(body: str, count: int = 2, /, *, gutter: str = '4% + 0pt') -> Block:
     """Interface of `columns` in typst. See [the documentation](https://typst.app/docs/reference/layout/columns/) for more information.
 
@@ -352,9 +332,7 @@ def columns(body: str, count: int = 2, /, *, gutter: str = '4% + 0pt') -> Block:
 
 
 @implement(
-    True,
-    original_name='grid.cell',
-    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-cell',
+    'grid.cell', 'https://typst.app/docs/reference/layout/grid/#definitions-cell'
 )
 def _grid_cell(
     body: str,
@@ -403,9 +381,7 @@ def _grid_cell(
 
 
 @implement(
-    True,
-    original_name='grid.hline',
-    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-hline',
+    'grid.hline', 'https://typst.app/docs/reference/layout/grid/#definitions-hline'
 )
 def _grid_hline(
     *,
@@ -433,9 +409,7 @@ def _grid_hline(
 
 
 @implement(
-    True,
-    original_name='grid.vline',
-    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-vline',
+    'grid.vline', 'https://typst.app/docs/reference/layout/grid/#definitions-vline'
 )
 def _grid_vline(
     *,
@@ -463,9 +437,7 @@ def _grid_vline(
 
 
 @implement(
-    True,
-    original_name='grid.header',
-    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-header',
+    'grid.header', 'https://typst.app/docs/reference/layout/grid/#definitions-header'
 )
 def _grid_header(*children: str, repeat: bool = True) -> Block:
     """Interface of `grid.header` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-header) for more information.
@@ -480,9 +452,7 @@ def _grid_header(*children: str, repeat: bool = True) -> Block:
 
 
 @implement(
-    True,
-    original_name='grid.footer',
-    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-footer',
+    'grid.footer', 'https://typst.app/docs/reference/layout/grid/#definitions-footer'
 )
 def _grid_footer(*children: str, repeat: bool = True) -> Block:
     """Interface of `grid.footer` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-footer) for more information.
@@ -501,13 +471,9 @@ def _grid_footer(*children: str, repeat: bool = True) -> Block:
 @attach_func(_grid_vline, 'vline')
 @attach_func(_grid_header, 'header')
 @attach_func(_grid_footer, 'footer')
-@implement(
-    True,
-    original_name='grid',
-    hyperlink='https://typst.app/docs/reference/layout/grid/',
-)
+@implement('grid', 'https://typst.app/docs/reference/layout/grid/')
 def grid(
-    *children,
+    *children: Block,
     columns: str | int | Iterable[str] = tuple(),
     rows: str | int | Iterable[str] = tuple(),
     gutter: str | int | Iterable[str] = tuple(),
@@ -553,11 +519,7 @@ def grid(
     )
 
 
-@implement(
-    True,
-    original_name='hide',
-    hyperlink='https://typst.app/docs/reference/layout/hide/',
-)
+@implement('hide', 'https://typst.app/docs/reference/layout/hide/')
 def hide(body: str, /) -> Block:
     """Interface of `hide` in typst. See [the documentation](https://typst.app/docs/reference/layout/hide/) for more information.
 
@@ -574,11 +536,7 @@ def hide(body: str, /) -> Block:
     return normal(hide, body)
 
 
-@implement(
-    True,
-    original_name='layout',
-    hyperlink='https://typst.app/docs/reference/layout/layout/',
-)
+@implement('layout', 'https://typst.app/docs/reference/layout/layout/')
 def layout(func: str, /) -> Block:
     """Interface of `layout` in typst. See [the documentation](https://typst.app/docs/reference/layout/layout/) for more information.
 
@@ -591,11 +549,7 @@ def layout(func: str, /) -> Block:
     return normal(layout, func)
 
 
-@implement(
-    True,
-    original_name='measure',
-    hyperlink='https://typst.app/docs/reference/layout/measure/',
-)
+@implement('measure', 'https://typst.app/docs/reference/layout/measure/')
 def measure(body: str, /, *, width: str = 'auto', height: str = 'auto') -> Block:
     """Interface of `measure` in typst. See [the documentation](https://typst.app/docs/reference/layout/measure/) for more information.
 
@@ -610,11 +564,7 @@ def measure(body: str, /, *, width: str = 'auto', height: str = 'auto') -> Block
     return normal(measure, body, width=width, height=height)
 
 
-@implement(
-    True,
-    original_name='move',
-    hyperlink='https://typst.app/docs/reference/layout/move/',
-)
+@implement('move', 'https://typst.app/docs/reference/layout/move/')
 def move(body: str, /, *, dx: str = '0% + 0pt', dy: str = '0% + 0pt') -> Block:
     """Interface of `move` in typst. See [the documentation](https://typst.app/docs/reference/layout/move/) for more information.
 
@@ -633,11 +583,7 @@ def move(body: str, /, *, dx: str = '0% + 0pt', dy: str = '0% + 0pt') -> Block:
     return normal(move, body, dx=dx, dy=dy)
 
 
-@implement(
-    True,
-    original_name='pad',
-    hyperlink='https://typst.app/docs/reference/layout/pad/',
-)
+@implement('pad', 'https://typst.app/docs/reference/layout/pad/')
 def padding(
     body: str,
     /,
@@ -688,11 +634,7 @@ def padding(
     )
 
 
-@implement(
-    True,
-    original_name='page',
-    hyperlink='https://typst.app/docs/reference/layout/page/',
-)
+@implement('page', 'https://typst.app/docs/reference/layout/page/')
 def page(
     body: str,
     /,
@@ -706,7 +648,7 @@ def page(
     columns: int = 1,
     fill: str | None = 'auto',
     numbering: str | None = None,
-    number_align='center + bottom',
+    number_align: str = 'center + bottom',
     header: str | None = 'auto',
     header_ascent: str = '30% + 0pt',
     footer: str | None = 'auto',
@@ -770,11 +712,7 @@ def page(
     )
 
 
-@implement(
-    True,
-    original_name='pagebreak',
-    hyperlink='https://typst.app/docs/reference/layout/pagebreak/',
-)
+@implement('pagebreak', 'https://typst.app/docs/reference/layout/pagebreak/')
 def pagebreak(*, weak: bool = False, to: str | None = None) -> Block:
     """Interface of `pagebreak` in typst. See [the documentation](https://typst.app/docs/reference/layout/pagebreak/) for more information.
 
@@ -797,9 +735,7 @@ def pagebreak(*, weak: bool = False, to: str | None = None) -> Block:
 
 
 @implement(
-    True,
-    original_name='place.flush',
-    hyperlink='https://typst.app/docs/reference/layout/place/#definitions-flush',
+    'place.flush', 'https://typst.app/docs/reference/layout/place/#definitions-flush'
 )
 def _place_flush() -> Block:
     """Interface of `place.flush` in typst. See [the documentation](https://typst.app/docs/reference/layout/place/#definitions-flush) for more information.
@@ -815,11 +751,7 @@ def _place_flush() -> Block:
 
 
 @attach_func(_place_flush, 'flush')
-@implement(
-    True,
-    original_name='place',
-    hyperlink='https://typst.app/docs/reference/layout/place/',
-)
+@implement('place', 'https://typst.app/docs/reference/layout/place/')
 def place(
     body: str,
     alignment: str = 'start',
@@ -864,11 +796,7 @@ def place(
     )
 
 
-@implement(
-    True,
-    original_name='repeat',
-    hyperlink='https://typst.app/docs/reference/layout/repeat/',
-)
+@implement('repeat', 'https://typst.app/docs/reference/layout/repeat/')
 def repeat(body: str, /, *, gap: str = '0pt', justify: bool = True) -> Block:
     """Interface of `repeat` in typst. See [the documentation](https://typst.app/docs/reference/layout/repeat/) for more information.
 
@@ -889,11 +817,7 @@ def repeat(body: str, /, *, gap: str = '0pt', justify: bool = True) -> Block:
     return normal(repeat, body, gap=gap, justify=justify)
 
 
-@implement(
-    True,
-    original_name='rotate',
-    hyperlink='https://typst.app/docs/reference/layout/rotate/',
-)
+@implement('rotate', 'https://typst.app/docs/reference/layout/rotate/')
 def rotate(
     body: str,
     angle: str = '0deg',
@@ -927,11 +851,7 @@ def rotate(
     )
 
 
-@implement(
-    True,
-    original_name='scale',
-    hyperlink='https://typst.app/docs/reference/layout/scale/',
-)
+@implement('scale', 'https://typst.app/docs/reference/layout/scale/')
 def scale(
     body: str,
     factor: str = '100%',
@@ -973,11 +893,7 @@ def scale(
     )
 
 
-@implement(
-    True,
-    original_name='skew',
-    hyperlink='https://typst.app/docs/reference/layout/skew/',
-)
+@implement('skew', 'https://typst.app/docs/reference/layout/skew/')
 def skew(
     body: str,
     /,
@@ -1006,11 +922,7 @@ def skew(
     return normal(skew, body, ax=ax, ay=ay, origin=origin, reflow=reflow)
 
 
-@implement(
-    True,
-    original_name='h',
-    hyperlink='https://typst.app/docs/reference/layout/h/',
-)
+@implement('h', 'https://typst.app/docs/reference/layout/h/')
 def hspace(amount: str, /, *, weak: bool = False) -> Block:
     """Interface of `h` in typst. See [the documentation](https://typst.app/docs/reference/layout/h/) for more information.
 
@@ -1030,11 +942,7 @@ def hspace(amount: str, /, *, weak: bool = False) -> Block:
     return normal(hspace, amount, weak=weak)
 
 
-@implement(
-    True,
-    original_name='v',
-    hyperlink='https://typst.app/docs/reference/layout/v/',
-)
+@implement('v', 'https://typst.app/docs/reference/layout/v/')
 def vspace(amount: str, /, *, weak: bool = False) -> Block:
     """Interface of `v` in typst. See [the documentation](https://typst.app/docs/reference/layout/v/) for more information.
 
@@ -1054,11 +962,7 @@ def vspace(amount: str, /, *, weak: bool = False) -> Block:
     return normal(vspace, amount, weak=weak)
 
 
-@implement(
-    True,
-    original_name='stack',
-    hyperlink='https://typst.app/docs/reference/layout/stack/',
-)
+@implement('stack', 'https://typst.app/docs/reference/layout/stack/')
 def stack(*children: str, dir: str = 'ttb', spacing: str | None = None) -> Block:
     """Interface of `stack` in typst. See [the documentation](https://typst.app/docs/reference/layout/stack/) for more information.
 
@@ -1076,3 +980,28 @@ def stack(*children: str, dir: str = 'ttb', spacing: str | None = None) -> Block
         '#stack(dir: btt, ..(rect(width: 40pt), rect(width: 120pt), rect(width: 90pt)))'
     """
     return post_series(stack, *children, dir=dir, spacing=spacing)
+
+
+__all__ = [
+    'align',
+    'block',
+    'box',
+    'colbreak',
+    'columns',
+    'grid',
+    'hide',
+    'layout',
+    'measure',
+    'move',
+    'padding',
+    'page',
+    'pagebreak',
+    'place',
+    'repeat',
+    'rotate',
+    'scale',
+    'skew',
+    'hspace',
+    'vspace',
+    'stack',
+]

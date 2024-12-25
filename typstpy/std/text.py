@@ -2,16 +2,12 @@ from typing import Any, Iterable
 
 from cytoolz.curried import map  # type:ignore
 
-from .._utils import attach_func, implement, is_valid, normal, pad, positional
 from ..typings import Block
+from ..utils import attach_func, implement, is_valid, normal, pad, positional
 from .visualize import luma, rgb
 
 
-@implement(
-    True,
-    original_name='highlight',
-    hyperlink='https://typst.app/docs/reference/text/highlight/',
-)
+@implement('highlight', 'https://typst.app/docs/reference/text/highlight/')
 def highlight(
     body: str,
     /,
@@ -71,11 +67,7 @@ def highlight(
     )
 
 
-@implement(
-    True,
-    original_name='linebreak',
-    hyperlink='https://typst.app/docs/reference/text/linebreak/',
-)
+@implement('linebreak', 'https://typst.app/docs/reference/text/linebreak/')
 def linebreak(*, justify: bool = False) -> Block:
     """Interface of `linebreak` in typst. See [the documentation](https://typst.app/docs/reference/text/linebreak/) for more information.
 
@@ -94,11 +86,7 @@ def linebreak(*, justify: bool = False) -> Block:
     return normal(linebreak, justify=justify)
 
 
-@implement(
-    True,
-    original_name='lorem',
-    hyperlink='https://typst.app/docs/reference/text/lorem/',
-)
+@implement('lorem', 'https://typst.app/docs/reference/text/lorem/')
 def lorem(words: int, /) -> Block:
     """Interface of `lorem` in typst. See [the documentation](https://typst.app/docs/reference/text/lorem/) for more information.
 
@@ -115,11 +103,7 @@ def lorem(words: int, /) -> Block:
     return normal(lorem, words)
 
 
-@implement(
-    True,
-    original_name='lower',
-    hyperlink='https://typst.app/docs/reference/text/lower/',
-)
+@implement('lower', 'https://typst.app/docs/reference/text/lower/')
 def lower(text: str, /) -> Block:
     """Interface of `lower` in typst. See [the documentation](https://typst.app/docs/reference/text/lower/) for more information.
 
@@ -140,11 +124,7 @@ def lower(text: str, /) -> Block:
     return normal(lower, text)
 
 
-@implement(
-    True,
-    original_name='overline',
-    hyperlink='https://typst.app/docs/reference/text/overline/',
-)
+@implement('overline', 'https://typst.app/docs/reference/text/overline/')
 def overline(
     body: str,
     /,
@@ -194,11 +174,7 @@ def overline(
     )
 
 
-@implement(
-    True,
-    original_name='raw.line',
-    hyperlink='https://typst.app/docs/reference/text/raw/#definitions-line',
-)
+@implement('raw.line', 'https://typst.app/docs/reference/text/raw/#definitions-line')
 def _raw_line(number: int, count: int, text: str, body: str, /) -> Block:
     """Interface of `raw.line` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/#definitions-line) for more information.
 
@@ -219,11 +195,7 @@ def _raw_line(number: int, count: int, text: str, body: str, /) -> Block:
 
 
 @attach_func(_raw_line, 'line')
-@implement(
-    True,
-    original_name='raw',
-    hyperlink='https://typst.app/docs/reference/text/raw/',
-)
+@implement('raw', 'https://typst.app/docs/reference/text/raw/')
 def raw(
     text: str,
     /,
@@ -271,11 +243,7 @@ def raw(
     )
 
 
-@implement(
-    True,
-    original_name='smallcaps',
-    hyperlink='https://typst.app/docs/reference/text/smallcaps/',
-)
+@implement('smallcaps', 'https://typst.app/docs/reference/text/smallcaps/')
 def smallcaps(body: str, /) -> Block:
     """Interface of `smallcaps` in typst. See [the documentation](https://typst.app/docs/reference/text/smallcaps/) for more information.
 
@@ -294,11 +262,7 @@ def smallcaps(body: str, /) -> Block:
     return normal(smallcaps, body)
 
 
-@implement(
-    True,
-    original_name='smartquote',
-    hyperlink='https://typst.app/docs/reference/text/smartquote/',
-)
+@implement('smartquote', 'https://typst.app/docs/reference/text/smartquote/')
 def smartquote(
     *,
     double: bool = True,
@@ -332,11 +296,7 @@ def smartquote(
     )
 
 
-@implement(
-    True,
-    original_name='strike',
-    hyperlink='https://typst.app/docs/reference/text/strike/',
-)
+@implement('strike', 'https://typst.app/docs/reference/text/strike/')
 def strike(
     body: str,
     /,
@@ -382,11 +342,7 @@ def strike(
     )
 
 
-@implement(
-    True,
-    original_name='sub',
-    hyperlink='https://typst.app/docs/reference/text/sub/',
-)
+@implement('sub', 'https://typst.app/docs/reference/text/sub/')
 def subscript(
     body: str,
     /,
@@ -423,11 +379,7 @@ def subscript(
     )
 
 
-@implement(
-    True,
-    original_name='super',
-    hyperlink='https://typst.app/docs/reference/text/super/',
-)
+@implement('super', 'https://typst.app/docs/reference/text/super/')
 def superscript(
     body: str,
     /,
@@ -466,11 +418,7 @@ def superscript(
     )
 
 
-@implement(
-    True,
-    original_name='text',
-    hyperlink='https://typst.app/docs/reference/text/text/',
-)
+@implement('text', 'https://typst.app/docs/reference/text/text/')
 def text(
     body: str,
     /,
@@ -622,11 +570,7 @@ def text(
     )
 
 
-@implement(
-    True,
-    original_name='underline',
-    hyperlink='https://typst.app/docs/reference/text/underline/',
-)
+@implement('underline', 'https://typst.app/docs/reference/text/underline/')
 def underline(
     body: str,
     /,
@@ -676,11 +620,7 @@ def underline(
     )
 
 
-@implement(
-    True,
-    original_name='upper',
-    hyperlink='https://typst.app/docs/reference/text/upper/',
-)
+@implement('upper', 'https://typst.app/docs/reference/text/upper/')
 def upper(text: str, /) -> Block:
     """Interface of `upper` in typst. See [the documentation](https://typst.app/docs/reference/text/upper/) for more information.
 
@@ -699,3 +639,21 @@ def upper(text: str, /) -> Block:
         '#upper(lower("Hello, World!"))'
     """
     return normal(upper, text)
+
+
+__all__ = [
+    'highlight',
+    'linebreak',
+    'lorem',
+    'lower',
+    'overline',
+    'raw',
+    'smallcaps',
+    'smartquote',
+    'strike',
+    'subscript',
+    'superscript',
+    'text',
+    'underline',
+    'upper',
+]

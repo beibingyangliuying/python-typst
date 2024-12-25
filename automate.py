@@ -1,10 +1,8 @@
 import inspect
-import warnings
 from typing import Callable
 
 from typstpy.std import (
     align,
-    arguments,
     bibliography,
     block,
     box,
@@ -65,7 +63,6 @@ from typstpy.std import (
     square,
     stack,
     strike,
-    stroke,
     strong,
     subscript,
     superscript,
@@ -79,7 +76,6 @@ from typstpy.std import (
 
 funcs = (
     align,
-    arguments,
     bibliography,
     block,
     box,
@@ -140,7 +136,6 @@ funcs = (
     square,
     stack,
     strike,
-    stroke,
     strong,
     subscript,
     superscript,
@@ -161,14 +156,18 @@ def extract_examples(func: Callable) -> str | None:
     if not docstring:
         return None
 
-    sign = 'Examples:'
-    if sign not in docstring:
-        warnings.warn(f"Function {func} doesn't have examples.")
+    sign_start = 'Examples:'
+    if sign_start not in docstring:
         return None
-    start = docstring.index(sign) + len(sign) + 1
+    index_start = docstring.index(sign_start) + len(sign_start) + 1
 
-    result = docstring[start:]
-    return '\n'.join(i.lstrip() for i in result.splitlines())
+    sign_end = 'See also:'
+    index_end = docstring.index(sign_end) if sign_end in docstring else None
+
+    examples = (
+        docstring[index_start:index_end] if index_end else docstring[index_start:]
+    )
+    return '\n'.join(i.lstrip() for i in examples.splitlines())
 
 
 with open('test.typ', 'w', encoding='utf-8') as f:
@@ -177,11 +176,7 @@ with open('test.typ', 'w', encoding='utf-8') as f:
         if examples is None:
             continue
 
-        print(f'`{func.__name__}`:')
-        print('\n```python')
-        print(examples)
-        print('```\n')
-
+        print(f'`{func.__name__}`:', '\n```python', examples, '```\n', sep='\n')
         f.write(
             '\n'.join(
                 i.strip("'")
