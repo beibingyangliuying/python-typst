@@ -67,6 +67,57 @@ def is_keywords_valid(func: TypstFunc, /, **kwargs: Any) -> NoReturn | None:
     return None
 
 
+def set_(func: TypstFunc, /, **kwargs: Any) -> Block:
+    """Represent `set` rule in typst.
+
+    Args:
+        func (TypstFunc): The typst function.
+
+    Raises:
+        ValueError: If there are invalid keyword-only parameters.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    is_keywords_valid(func, **kwargs)
+    return f'#set {_original_name(func)}({_strip(_render_value(kwargs))})'
+
+
+def show_(
+    block: Block,
+    target: Block | TypstFunc | None = None,
+    /,
+) -> Block:
+    """Represent `show` rule in typst.
+
+    Args:
+        block (Block): Executable typst code.
+        target (Block | TypstFunc | None, optional): The typst function or `block`. When set to None, this means `show everything` rule. Defaults to None.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    if target is None:
+        _target = ''
+    elif isinstance(target, Block):
+        _target = _render_value(target)
+    else:
+        _target = _original_name(target)
+    return f'#show {_target}: {_render_value(block)}'
+
+
+def import_(path: str, /, *names: str) -> Block:
+    """Represent `import` operation in typst.
+
+    Args:
+        path (str): The path of the file to be imported.
+
+    Returns:
+        Block: Executable typst code.
+    """
+    return f'#import {path}: {_strip(_render_value(names))}'
+
+
 def _extract_func(func: Callable, /) -> TypstFunc:
     """Extract the original function from the function decorated by `@curry`.
 
@@ -442,6 +493,9 @@ __all__ = [
     'pad',
     'is_valid',
     'is_keywords_valid',
+    'set_',
+    'show_',
+    'import_',
     'attach_func',
     'implement',
     'normal',

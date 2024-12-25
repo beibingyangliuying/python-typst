@@ -19,6 +19,27 @@ class MainTestCase(unittest.TestCase):
         self.assertRaises(ValueError, heading.with_, outline=True)  # type: ignore
         self.assertFalse(heading.where is outline.where)  # type: ignore
 
+    def test_document(self):
+        from typstpy import Document
+        from typstpy.std import heading, lorem, par, set_, show_, text
+
+        doc = Document()
+        doc.add_set_rule(set_(heading, outlined=True))
+        doc.add_show_rule(show_(set_(text, fill='red'), heading))
+        doc.add_block(heading(lorem(20)))
+        doc.add_block(par(lorem(20)))
+
+        self.assertEqual(
+            str(doc),
+            """
+#set heading(outlined: true)
+#show heading: set text(fill: red)
+#heading(lorem(20))
+
+#par(lorem(20))
+""".strip(),
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
