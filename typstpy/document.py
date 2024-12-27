@@ -66,16 +66,21 @@ class Document:
             f.write(str(self))
 
     def __str__(self) -> str:
+        """Incorporate imports, set rules, show rules and blocks into a single string.
+
+        Returns:
+            str: The content of the document.
+        """
         with StringIO() as stream:
             if self._imports:
                 stream.write('\n'.join(self._imports))
-                stream.write('\n')
+                stream.write('\n\n')
             if self._set_rules:
                 stream.write('\n'.join(self._set_rules))
-                stream.write('\n')
+                stream.write('\n\n')
             if self._show_rules:
                 stream.write('\n'.join(self._show_rules))
-                stream.write('\n')
+                stream.write('\n\n')
             stream.write('\n\n'.join(self._blocks))
             return stream.getvalue()
 

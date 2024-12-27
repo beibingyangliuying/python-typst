@@ -1,11 +1,13 @@
 # typstpy
 
-`typstpy` is a library for generating executable [typst](https://typst.app/docs/) code.
-This package is written primarily in functional programming paradigm with some OOP contents.
-Each module has greater than 90% unit test coverage.
+## Introduction
 
-This package provides the interfaces in a way that is as close as possible to typst's native functions.
-Through `typstpy` and other data processing packages, you can generate data reports quickly.
+typstpy is a python package for generating executable [typst](https://typst.app/docs/) codes.
+This package is written primarily in functional programming paradigm with some OOP contents.
+Each module in this package has greater than 90% unit test coverage.
+
+This package provides interfaces which are as close as possible to typst's native functions.
+Through typstpy and other data processing packages, you can generate data report instantly.
 
 Repository on GitHub: [python-typst](https://github.com/beibingyangliuying/python-typst).
 Homepage on PyPI: [python-typst](https://pypi.org/project/typstpy/).
@@ -17,9 +19,9 @@ Any contributions are welcome.
 pip install typstpy
 ```
 
-## Current Support
+## Current Supports
 
-| Function Name | Original Name | Documentation |
+| Package's function name | Typst's function name | Documentation on typst |
 | --- | --- | --- |
 | align | align | [https://typst.app/docs/reference/layout/align/](https://typst.app/docs/reference/layout/align/) |
 | bibliography | bibliography | [https://typst.app/docs/reference/model/bibliography/](https://typst.app/docs/reference/model/bibliography/) |
@@ -96,6 +98,7 @@ pip install typstpy
 
 ## Change logs
 
+- _1.0.1_: Implement `set`, `show`, and `import`.
 - _1.0.0_: Completed documentation and test cases in `layout`, `model`, `text` and `visualize` modules. Improved functionality.
 - _1.0.0-beta.2_: Improved the implementation and documentation of functions in the `layout` module.
 - _1.0.0-beta.1_: Completely reconstructed the underlying implementation.

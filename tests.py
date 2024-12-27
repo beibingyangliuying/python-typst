@@ -4,7 +4,8 @@ import unittest
 
 def load_tests(loader, tests, ignore):
     modules = [f'typstpy.std.{i}' for i in ['layout', 'model', 'text', 'visualize']] + [
-        'typstpy.utils'
+        'typstpy.utils',
+        'typstpy.document',
     ]
     for module in modules:
         tests.addTests(doctest.DocTestSuite(module))
@@ -21,9 +22,10 @@ class MainTestCase(unittest.TestCase):
 
     def test_document(self):
         from typstpy import Document
-        from typstpy.std import heading, lorem, par, set_, show_, text
+        from typstpy.std import heading, import_, lorem, par, set_, show_, text
 
         doc = Document()
+        doc.add_import(import_('"@preview/cetz:0.3.1"'))
         doc.add_set_rule(set_(heading, outlined=True))
         doc.add_show_rule(show_(set_(text, fill='red'), heading))
         doc.add_block(heading(lorem(20)))
@@ -32,8 +34,12 @@ class MainTestCase(unittest.TestCase):
         self.assertEqual(
             str(doc),
             """
+#import "@preview/cetz:0.3.1": 
+
 #set heading(outlined: true)
+
 #show heading: set text(fill: red)
+
 #heading(lorem(20))
 
 #par(lorem(20))
