@@ -52,7 +52,7 @@ pip install typstpy
 | link | link | [https://typst.app/docs/reference/model/link/](https://typst.app/docs/reference/model/link/) |
 | lorem | lorem | [https://typst.app/docs/reference/text/lorem/](https://typst.app/docs/reference/text/lorem/) |
 | lower | lower | [https://typst.app/docs/reference/text/lower/](https://typst.app/docs/reference/text/lower/) |
-| luma | luma | [https://typst.app/docs/reference/visualize/color/#definitions-luma](https://typst.app/docs/reference/visualize/color/#definitions-luma) |  
+| luma | luma | [https://typst.app/docs/reference/visualize/color/#definitions-luma](https://typst.app/docs/reference/visualize/color/#definitions-luma) |
 | measure | measure | [https://typst.app/docs/reference/layout/measure/](https://typst.app/docs/reference/layout/measure/) |
 | move | move | [https://typst.app/docs/reference/layout/move/](https://typst.app/docs/reference/layout/move/) |
 | numbered_list | enum | [https://typst.app/docs/reference/model/enum/](https://typst.app/docs/reference/model/enum/) |
@@ -94,10 +94,9 @@ pip install typstpy
 | upper | upper | [https://typst.app/docs/reference/text/upper/](https://typst.app/docs/reference/text/upper/) |
 | vspace | v | [https://typst.app/docs/reference/layout/v/](https://typst.app/docs/reference/layout/v/) |
 
-## Design philosophy
-
 ## Change logs
 
+- _1.0.2_: Improved type annotations.
 - _1.0.1_: Implement `set`, `show`, and `import`.
 - _1.0.0_: Completed documentation and test cases in `layout`, `model`, `text` and `visualize` modules. Improved functionality.
 - _1.0.0-beta.2_: Improved the implementation and documentation of functions in the `layout` module.

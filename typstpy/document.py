@@ -3,58 +3,71 @@ from io import StringIO
 from typing import final
 
 from attrs import field, frozen
+from deprecated.sphinx import deprecated  # type: ignore
 
-from .typings import Block
+from .typings import Content
 
 
 @final
 @frozen
 class Document:
-    _blocks: deque[Block] = field(factory=deque, converter=deque)
-    _imports: deque[Block] = field(factory=deque, converter=deque)
-    _set_rules: deque[Block] = field(factory=deque, converter=deque)
-    _show_rules: deque[Block] = field(factory=deque, converter=deque)
+    _contents: deque[Content] = field(factory=deque, init=False)
+    _imports: deque[Content] = field(factory=deque, init=False)
+    _set_rules: deque[Content] = field(factory=deque, init=False)
+    _show_rules: deque[Content] = field(factory=deque, init=False)
 
-    def add_block(self, block: Block, /) -> None:
+    @deprecated(
+        version='1.0.2',
+        reason='The method will be removed since version 1.1.x. Use `add_content` instead.',
+    )
+    def add_block(self, block: Content, /) -> None:
         """Add a block to the document.
 
         Args:
-            block (Block): The block to be added.
+            block (Content): The block to be added.
         """
-        self._blocks.append(block)
+        self._contents.append(block)
 
-    def add_import(self, block: Block) -> None:
+    def add_content(self, content: Content, /) -> None:
+        """Add a content to the document.
+
+        Args:
+            content (Content): The block to be added.
+        """
+        self._contents.append(content)
+
+    def add_import(self, _import: Content, /) -> None:
         """Import names to the document.
 
         Args:
-            block (Block): The block to be imported. Use `std.import_` to generate standard code.
+            _import (Content): The import statement. Use `std.import_` to generate standard code.
 
         See also:
             `std.import_`
         """
-        self._imports.append(block)
+        self._imports.append(_import)
 
-    def add_set_rule(self, block: Block) -> None:
+    def add_set_rule(self, set_rule: Content, /) -> None:
         """Add a set rule to the document.
 
         Args:
-            block (Block): The block to be added. Use `std.set_` to generate standard code.
+            set_rule (Content): The set rule to be added. Use `std.set_` to generate standard code.
 
         See also:
             `std.set_`
         """
-        self._set_rules.append(block)
+        self._set_rules.append(set_rule)
 
-    def add_show_rule(self, block: Block) -> None:
+    def add_show_rule(self, show_rule: Content, /) -> None:
         """Add a show rule to the document.
 
         Args:
-            block (Block): The block to be added. Use `std.show_` to generate standard code.
+            show_rule (Content): The show rule to be added. Use `std.show_` to generate standard code.
 
         See also:
             `std.show_`
         """
-        self._show_rules.append(block)
+        self._show_rules.append(show_rule)
 
     def save(self, path: str, /) -> None:
         """Save the document to a file.
@@ -66,7 +79,7 @@ class Document:
             f.write(str(self))
 
     def __str__(self) -> str:
-        """Incorporate imports, set rules, show rules and blocks into a single string.
+        """Incorporate import statements, set rules, show rules and blocks into a single string.
 
         Returns:
             str: The content of the document.
@@ -81,7 +94,7 @@ class Document:
             if self._show_rules:
                 stream.write('\n'.join(self._show_rules))
                 stream.write('\n\n')
-            stream.write('\n\n'.join(self._blocks))
+            stream.write('\n\n'.join(self._contents))
             return stream.getvalue()
 
 

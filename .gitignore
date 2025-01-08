@@ -1,5 +1,7 @@
+.vscode/
 dist/
-cov.xml
+.coverage
+coverage.xml
 *.pyc
 *.typ
 *.png

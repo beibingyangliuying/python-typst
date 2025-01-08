@@ -1,35 +1,22 @@
-from typing import Any, Callable, NoReturn, Optional
+from typing import Any, Callable, NoReturn, Optional, Union
 
 from attrs import frozen
-from cytoolz.curried import (  # type:ignore
+from cytoolz.curried import (  # type: ignore
     curry,
     isiterable,
     keyfilter,
     map,
     memoize,
+    pipe,
 )
-from pymonad.maybe import Maybe  # type:ignore
-from pymonad.reader import Pipe  # type:ignore
 
-from .typings import Block, Instance, Normal, Positional, Predicate, Series, TypstFunc
+from .typings import Content, Instance, Normal, Positional, Predicate, Series, TypstFunc
 
 # region utils
 
 
-def pad(s: str, /) -> str:
-    """Pad a string with double quotes.
-
-    Args:
-        s (str): The string to be padded.
-
-    Returns:
-        str: The padded string.
-    """
-    return f'"{s}"'
-
-
-def is_valid(*predicates: Predicate) -> NoReturn | None:
-    """Check if all predicates are satisfied and throw `ValueError` if not.
+def all_predicates_satisfied(*predicates: Predicate) -> NoReturn | None:
+    """Check if all predicates are satisfied and raise `ValueError` exception if not.
 
     Raises:
         ValueError: If any predicate is not satisfied.
@@ -44,12 +31,12 @@ def is_valid(*predicates: Predicate) -> NoReturn | None:
                 predicate.__closure__
             )  # Closure exists if and only if freevars is not empty
             raise ValueError(
-                f'Invalid parameters: {', '.join(f'{i} = {j.cell_contents}' for i, j in zip(freevars, closure))}'  # type:ignore
+                f'Invalid parameters: {', '.join(f'{i} = {j.cell_contents}' for i, j in zip(freevars, closure))}'  # type: ignore
             )
     return None
 
 
-def is_keywords_valid(func: TypstFunc, /, **kwargs: Any) -> NoReturn | None:
+def _all_keywords_valid(func: TypstFunc, *keys: str) -> NoReturn | None:
     """Check if there are invalid keyword-only parameters.
 
     Args:
@@ -61,61 +48,9 @@ def is_keywords_valid(func: TypstFunc, /, **kwargs: Any) -> NoReturn | None:
     Returns:
         NoReturn | None: None if there are no invalid keyword-only parameters, otherwise raises ValueError.
     """
-    keys = kwargs.keys()
-    if not keys <= _extract_func(func).__kwdefaults__.keys():
+    if not set(keys) <= _extract_func(func).__kwdefaults__.keys():
         raise ValueError(f'Parameters which are not keyword-only given: {keys}')
     return None
-
-
-def set_(func: TypstFunc, /, **kwargs: Any) -> Block:
-    """Represent `set` rule in typst.
-
-    Args:
-        func (TypstFunc): The typst function.
-
-    Raises:
-        ValueError: If there are invalid keyword-only parameters.
-
-    Returns:
-        Block: Executable typst code.
-    """
-    is_keywords_valid(func, **kwargs)
-    return f'#set {_original_name(func)}({_strip(_render_value(kwargs))})'
-
-
-def show_(
-    block: Block,
-    target: Block | TypstFunc | None = None,
-    /,
-) -> Block:
-    """Represent `show` rule in typst.
-
-    Args:
-        block (Block): Executable typst code.
-        target (Block | TypstFunc | None, optional): The typst function or `block`. When set to None, this means `show everything` rule. Defaults to None.
-
-    Returns:
-        Block: Executable typst code.
-    """
-    if target is None:
-        _target = ''
-    elif isinstance(target, Block):
-        _target = _render_value(target)
-    else:
-        _target = _original_name(target)
-    return f'#show {_target}: {_render_value(block)}'
-
-
-def import_(path: str, /, *names: str) -> Block:
-    """Represent `import` operation in typst.
-
-    Args:
-        path (str): The path of the file to be imported.
-
-    Returns:
-        Block: Executable typst code.
-    """
-    return f'#import {path}: {_strip(_render_value(names))}'
 
 
 def _extract_func(func: Callable, /) -> TypstFunc:
@@ -128,7 +63,7 @@ def _extract_func(func: Callable, /) -> TypstFunc:
         TypstFunc: The original function.
     """
     # TODO: Check if the extracted function is compatible with `TypstFunc`.
-    return Maybe(func, isinstance(func, curry)).maybe(func, lambda x: x.func)
+    return func.func if isinstance(func, curry) else func
 
 
 @memoize
@@ -142,8 +77,8 @@ def _original_name(func: TypstFunc, /) -> str:
         str: The name representation in typst.
     """
     func = _extract_func(func)
-    return Maybe(func, hasattr(func, '_implement')).maybe(
-        func.__name__, lambda x: x._implement.original_name
+    return (
+        func._implement.original_name if hasattr(func, '_implement') else func.__name__
     )
 
 
@@ -161,9 +96,9 @@ def _filter_params(func: TypstFunc, /, **kwargs: Any) -> dict[str, Any]:
     """
     if not kwargs:
         return {}
-    is_keywords_valid(func, **kwargs)
+    _all_keywords_valid(func, *kwargs.keys())
     defaults = _extract_func(func).__kwdefaults__
-    return Pipe(kwargs).map(keyfilter(lambda x: kwargs[x] != defaults[x])).flush()
+    return keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
 
 
 # endregion
@@ -234,7 +169,15 @@ def _render_value(value: Any, /) -> str:
             return str(value)
 
 
-def _strip(value: str, /) -> str:
+def _strip_brace(value: str, /) -> str:
+    """Strip the left and right braces of a string.
+
+    Args:
+        value (str): The string to be stripped.
+
+    Returns:
+        str: The stripped string.
+    """
     return value[1:-1]
 
 
@@ -298,13 +241,15 @@ def implement(
     """
 
     def wrapper(_func: TypstFunc) -> TypstFunc:
-        def where(**kwargs: Any) -> Block:
-            is_keywords_valid(_func, **kwargs)
-            return f'#{original_name}.where({_strip(_render_value(kwargs))})'
+        def where(**keyword_only: Any) -> Content:
+            _all_keywords_valid(_func, *keyword_only.keys())
+            return (
+                f'#{original_name}.where({_strip_brace(_render_value(keyword_only))})'
+            )
 
-        def with_(**kwargs: Any) -> Block:
-            is_keywords_valid(_func, **kwargs)
-            return f'#{original_name}.with({_strip(_render_value(kwargs))})'
+        def with_(**keyword_only: Any) -> Content:
+            _all_keywords_valid(_func, *keyword_only.keys())
+            return f'#{original_name}.with({_strip_brace(_render_value(keyword_only))})'
 
         setattr(
             _func,
@@ -322,13 +267,69 @@ def implement(
 # region protocols
 
 
+def set_(func: TypstFunc, /, **keyword_only: Any) -> Content:
+    """Represent `set` rule in typst.
+
+    Args:
+        func (TypstFunc): The typst function.
+
+    Raises:
+        ValueError: If there are invalid keyword-only parameters.
+
+    Returns:
+        Content: Executable typst code.
+    """
+    _all_keywords_valid(func, *keyword_only.keys())
+    return f'#set {_original_name(func)}({_strip_brace(_render_value(keyword_only))})'
+
+
+def show_(
+    content: Content,
+    shown: Optional[Union[Content, TypstFunc]] = None,
+    /,
+) -> Content:
+    """Represent `show` rule in typst.
+
+    Args:
+        content (Content): Executable typst code.
+        shown (Optional[Union[Content, TypstFunc]]): The typst function or content. If None, it means `show everything` rule. Defaults to None.
+
+    Raises:
+        ValueError: If the target is invalid.
+
+    Returns:
+        Content: Executable typst code.
+    """
+    if shown is None:
+        _target = ''
+    elif isinstance(shown, Content):
+        _target = _render_value(shown)
+    elif callable(shown):
+        _target = _original_name(shown)
+    else:
+        raise ValueError(f'Invalid target: {shown}')
+    return f'#show {_target}: {_render_value(content)}'
+
+
+def import_(path: str, /, *names: str) -> Content:
+    """Represent `import` operation in typst.
+
+    Args:
+        path (str): The path of the file to be imported.
+
+    Returns:
+        Content: Executable typst code.
+    """
+    return f'#import {path}: {_strip_brace(_render_value(names))}'
+
+
 def normal(
     func: Normal,
     body: Any = '',
     /,
-    *args: Any,
-    **kwargs: Any,
-) -> Block:
+    *positional: Any,
+    **keyword_only: Any,
+) -> Content:
     """Represent the protocol of `normal`.
 
     Args:
@@ -336,152 +337,127 @@ def normal(
         body (Any, optional): The core parameter. Defaults to ''.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    keyword_only = _filter_params(func, **keyword_only)
     return (
         f'#{_original_name(func)}('
         + ', '.join(
-            Pipe([])
-            .map(
-                lambda x: Maybe(body, body != '')
-                .map(_render_value)
-                .maybe(x, lambda y: x + [y])
+            pipe(
+                [],
+                lambda x: x if body == '' else x + [_render_value(body)],
+                lambda x: x
+                if not positional
+                else x + [_strip_brace(_render_value(positional))],
+                lambda x: x
+                if not keyword_only
+                else x + [_strip_brace(_render_value(keyword_only))],
             )
-            .map(
-                lambda x: Maybe(args, args)
-                .map(_render_value)
-                .map(_strip)
-                .maybe(x, lambda y: x + [y])
-            )
-            .map(
-                lambda x: Maybe(kwargs, kwargs)
-                .map(_render_value)
-                .map(_strip)
-                .maybe(x, lambda y: x + [y])
-            )
-            .flush()
         )
         + ')'
     )
 
 
-def positional(func: Positional, *args: Any) -> Block:
+def positional(func: Positional, *positional: Any) -> Content:
     """Represent the protocol of `positional`.
 
     Args:
         func (Positional): The function to be represented.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
     """
-    return f'#{_original_name(func)}{_render_value(args)}'
+    return f'#{_original_name(func)}{_render_value(positional)}'
 
 
-def instance(func: Instance, instance: Block, /, *args: Any, **kwargs: Any) -> Block:
+def instance(
+    func: Instance, instance: Content, /, *positional: Any, **keyword_only: Any
+) -> Content:
     """Represent the protocol of `pre_instance`.
 
     Args:
         func (Instance): The function to be represented.
-        instance (Block): The `instance` to call the function on.
+        instance (Content): The `instance` to call the function on.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    keyword_only = _filter_params(func, **keyword_only)
+    pipe(
+        [],
+        lambda x: x
+        if not positional
+        else x + [_strip_brace(_render_value(positional))],
+        lambda x: x
+        if not keyword_only
+        else x + [_strip_brace(_render_value(keyword_only))],
+    )
     return (
         f'{instance}.{_original_name(func)}('
         + ', '.join(
-            Pipe([])
-            .map(
-                lambda x: Maybe(args, args)
-                .map(_render_value)
-                .map(_strip)
-                .maybe(x, lambda y: x + [y])
+            pipe(
+                [],
+                lambda x: x
+                if not positional
+                else x + [_strip_brace(_render_value(positional))],
+                lambda x: x
+                if not keyword_only
+                else x + [_strip_brace(_render_value(keyword_only))],
             )
-            .map(
-                lambda x: Maybe(kwargs, kwargs)
-                .map(_render_value)
-                .map(_strip)
-                .maybe(x, lambda y: x + [y])
-            )
-            .flush()
         )
         + ')'
     )
 
 
-def pre_series(func: Series, *elements: Any, **kwargs: Any) -> Block:
+def pre_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
     """Represent the protocol of `pre_series`.
 
     Args:
         func (Series): The function to be represented.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    keyword_only = _filter_params(func, **keyword_only)
     return (
         f'#{_original_name(func)}('
         + ', '.join(
-            Pipe([])
-            .map(
+            pipe(
+                [],
+                lambda x: x + [_strip_brace(_render_value(children))]
+                if len(children) != 1
+                else x + [f'..{_render_value(children[0])}'],
                 lambda x: x
-                + [
-                    Maybe(elements, len(elements) == 1)
-                    .map(lambda x: _render_value(x[0]))
-                    .maybe(
-                        Pipe(elements).map(_render_value).map(_strip),
-                        lambda x: Pipe(x).map(lambda x: f'..{x}'),
-                    )
-                    .flush()
-                ]
+                if not keyword_only
+                else x + [_strip_brace(_render_value(keyword_only))],
             )
-            .map(
-                lambda x: Maybe(kwargs, kwargs)
-                .map(_render_value)
-                .map(_strip)
-                .maybe(x, lambda y: x + [y])
-            )
-            .flush()
         )
         + ')'
     )
 
 
-def post_series(func: Series, *elements: Any, **kwargs: Any) -> Block:
+def post_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
     """Represent the protocol of `post_series`.
 
     Args:
         func (Series): The function to be represented.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    keyword_only = _filter_params(func, **keyword_only)
     return (
         f'#{_original_name(func)}('
         + ', '.join(
-            Pipe([])
-            .map(
-                lambda x: Maybe(kwargs, kwargs)
-                .map(_render_value)
-                .map(_strip)
-                .maybe(x, lambda y: x + [y])
-            )
-            .map(
+            pipe(
+                [],
                 lambda x: x
-                + [
-                    Maybe(elements, len(elements) == 1)
-                    .map(lambda x: _render_value(x[0]))
-                    .maybe(
-                        Pipe(elements).map(_render_value).map(_strip),
-                        lambda x: Pipe(x).map(lambda x: f'..{x}'),
-                    )
-                    .flush()
-                ]
+                if not keyword_only
+                else x + [_strip_brace(_render_value(keyword_only))],
+                lambda x: x + [_strip_brace(_render_value(children))]
+                if len(children) != 1
+                else x + [f'..{_render_value(children[0])}'],
             )
-            .flush()
         )
         + ')'
     )
@@ -490,14 +466,12 @@ def post_series(func: Series, *elements: Any, **kwargs: Any) -> Block:
 # endregion
 
 __all__ = [
-    'pad',
-    'is_valid',
-    'is_keywords_valid',
+    'all_predicates_satisfied',
+    'attach_func',
+    'implement',
     'set_',
     'show_',
     'import_',
-    'attach_func',
-    'implement',
     'normal',
     'positional',
     'instance',

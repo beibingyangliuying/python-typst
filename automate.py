@@ -148,7 +148,7 @@ funcs = (
 )
 
 for func in funcs:
-    print(func._implement)  # type:ignore
+    print(func._implement)  # type: ignore
 
 
 def extract_examples(func: Callable) -> str | None:

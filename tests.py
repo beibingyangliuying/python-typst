@@ -28,8 +28,8 @@ class MainTestCase(unittest.TestCase):
         doc.add_import(import_('"@preview/cetz:0.3.1"'))
         doc.add_set_rule(set_(heading, outlined=True))
         doc.add_show_rule(show_(set_(text, fill='red'), heading))
-        doc.add_block(heading(lorem(20)))
-        doc.add_block(par(lorem(20)))
+        doc.add_content(heading(lorem(20)))
+        doc.add_content(par(lorem(20)))
 
         self.assertEqual(
             str(doc),

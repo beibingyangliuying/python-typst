@@ -14,7 +14,7 @@ disallow_incomplete_defs = true
 
 [tool.poetry]
 name = "typstpy"
-version = "1.0.1"
+version = "1.0.2"
 description = "Python interface to generate executable Typst code."
 authors = ["chenjunhan <beibingyangliuying@foxmail.com>"]
 license = "MIT"
@@ -23,8 +23,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 cytoolz = "^0.12.3"
-pymonad = "^2.4.0"
 attrs = "^24.2.0"
+deprecated = "^1.2.15"
 
 
 [tool.poetry.group.dev.dependencies]

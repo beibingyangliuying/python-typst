@@ -1,40 +1,70 @@
-from typing import Any, Iterable
+from typing import Any, Iterable, Literal
 
-from cytoolz.curried import map  # type:ignore
-
-from ..typings import Block
-from ..utils import attach_func, implement, is_valid, normal, pad, positional
-from .visualize import luma, rgb
+from typstpy.std.visualize import luma, rgb
+from typstpy.typings import (
+    Alignment,
+    Auto,
+    Color,
+    Content,
+    Direction,
+    Gradient,
+    Length,
+    Pattern,
+    Ratio,
+    RectangleRadius,
+    RectangleStroke,
+    Relative,
+    SmartquoteQuotes,
+    Stroke,
+    TextCosts,
+)
+from typstpy.utils import (
+    all_predicates_satisfied,
+    attach_func,
+    implement,
+    normal,
+    positional,
+)
 
 
 @implement('highlight', 'https://typst.app/docs/reference/text/highlight/')
 def highlight(
-    body: str,
+    body: Content,
     /,
     *,
-    fill: str | None = rgb('"#fffd11a1"'),
-    stroke: str | dict[str, Any] | None = dict(),
-    top_edge: str = '"ascender"',
-    bottom_edge: str = '"descender"',
-    extent: str = '0pt',
-    radius: str | dict[str, Any] = dict(),
-) -> Block:
+    fill: None | Color | Gradient | Pattern = rgb('"#fffd11a1"'),
+    stroke: None
+    | Length
+    | Color
+    | Gradient
+    | Stroke
+    | Pattern
+    | RectangleStroke = dict(),
+    top_edge: Length
+    | Literal[
+        '"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'
+    ] = '"ascender"',
+    bottom_edge: Length
+    | Literal['"baseline"', '"descender"', '"bounds"'] = '"descender"',
+    extent: Length = '0pt',
+    radius: Relative | RectangleRadius = dict(),
+) -> Content:
     """Interface of `highlight` in typst. See [the documentation](https://typst.app/docs/reference/text/highlight/) for more information.
 
     Args:
-        body (str): The content that should be highlighted.
-        fill (str | None, optional): The color to highlight the text with. Defaults to rgb('"#fffd11a1"').
-        stroke (str | dict[str, Any] | None, optional): The highlight's border color. Defaults to dict().
-        top_edge (str, optional): The top end of the background rectangle. Defaults to '"ascender"'.
-        bottom_edge (str, optional): The bottom end of the background rectangle. Defaults to '"descender"'.
-        extent (str, optional): The amount by which to extend the background to the sides beyond (or within if negative) the content. Defaults to '0pt'.
-        radius (str | dict[str, Any], optional): How much to round the highlight's corners. Defaults to dict().
+        body (Content): The content that should be highlighted.
+        fill (None | Color | Gradient | Pattern, optional): The color to highlight the text with. Defaults to rgb('"#fffd11a1"').
+        stroke (None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): The highlight's border color. Defaults to dict().
+        top_edge (Length | Literal['"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'], optional): The top end of the background rectangle. Defaults to '"ascender"'.
+        bottom_edge (Length | Literal['"baseline"', '"descender"', '"bounds"'], optional): The bottom end of the background rectangle. Defaults to '"descender"'.
+        extent (Length, optional): The amount by which to extend the background to the sides beyond (or within if negative) the content. Defaults to '0pt'.
+        radius (Relative | RectangleRadius, optional): How much to round the highlight's corners. Defaults to dict().
 
     Raises:
         ValueError: If `top_edge` or `bottom_edge` is invalid.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> highlight('"Hello, world!"', fill=rgb('"#ffffff"'))
@@ -50,10 +80,10 @@ def highlight(
         ... )
         '#highlight("Hello, world!", fill: rgb("#ffffff"), stroke: rgb("#000000"), top-edge: "bounds", bottom-edge: "bounds")'
     """
-    is_valid(
+    all_predicates_satisfied(
         lambda: top_edge
-        in map(pad, ('ascender', 'cap-height', 'x-height', 'baseline', 'bounds')),
-        lambda: bottom_edge in map(pad, ('baseline', 'descender', 'bounds')),
+        in ['"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'],
+        lambda: bottom_edge in ['"baseline"', '"descender"', '"bounds"'],
     )
     return normal(
         highlight,
@@ -68,14 +98,14 @@ def highlight(
 
 
 @implement('linebreak', 'https://typst.app/docs/reference/text/linebreak/')
-def linebreak(*, justify: bool = False) -> Block:
+def linebreak(*, justify: bool = False) -> Content:
     """Interface of `linebreak` in typst. See [the documentation](https://typst.app/docs/reference/text/linebreak/) for more information.
 
     Args:
         justify (bool, optional): Whether to justify the line before the break. Defaults to False.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> linebreak()
@@ -87,14 +117,14 @@ def linebreak(*, justify: bool = False) -> Block:
 
 
 @implement('lorem', 'https://typst.app/docs/reference/text/lorem/')
-def lorem(words: int, /) -> Block:
+def lorem(words: int, /) -> Content:
     """Interface of `lorem` in typst. See [the documentation](https://typst.app/docs/reference/text/lorem/) for more information.
 
     Args:
         words (int): The length of the blind text in words.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> lorem(10)
@@ -104,14 +134,14 @@ def lorem(words: int, /) -> Block:
 
 
 @implement('lower', 'https://typst.app/docs/reference/text/lower/')
-def lower(text: str, /) -> Block:
+def lower(text: str | Content, /) -> str | Content:
     """Interface of `lower` in typst. See [the documentation](https://typst.app/docs/reference/text/lower/) for more information.
 
     Args:
-        text (str): The text to convert to lowercase.
+        text (str | Content): The text to convert to lowercase.
 
     Returns:
-        Block: Executable typst code.
+        str | Content: Executable typst code.
 
     Examples:
         >>> lower('"Hello, World!"')
@@ -126,27 +156,33 @@ def lower(text: str, /) -> Block:
 
 @implement('overline', 'https://typst.app/docs/reference/text/overline/')
 def overline(
-    body: str,
+    body: Content,
     /,
     *,
-    stroke: str | dict[str, Any] = 'auto',
-    offset: str = 'auto',
-    extent: str = '0pt',
+    stroke: Auto
+    | Length
+    | Color
+    | Gradient
+    | Stroke
+    | Pattern
+    | RectangleStroke = 'auto',
+    offset: Auto | Length = 'auto',
+    extent: Length = '0pt',
     evade: bool = True,
     background: bool = False,
-) -> Block:
+) -> Content:
     """Interface of `overline` in typst. See [the documentation](https://typst.app/docs/reference/text/overline/) for more information.
 
     Args:
-        body (str): The content to add a line over.
-        stroke (str | dict[str, Any], optional): How to stroke the line. Defaults to 'auto'.
-        offset (str, optional): The position of the line relative to the baseline. Defaults to 'auto'.
-        extent (str, optional): The amount by which to extend the line beyond (or within if negative) the content. Defaults to '0pt'.
+        body (Content): The content to add a line over.
+        stroke (Auto | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): How to stroke the line. Defaults to 'auto'.
+        offset (Auto | Length, optional): The position of the line relative to the baseline. Defaults to 'auto'.
+        extent (Length, optional): The amount by which to extend the line beyond (or within if negative) the content. Defaults to '0pt'.
         evade (bool, optional): Whether the line skips sections in which it would collide with the glyphs. Defaults to True.
         background (bool, optional): Whether the line is placed behind the content it overlines. Defaults to False.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> overline('"Hello, World!"')
@@ -175,17 +211,17 @@ def overline(
 
 
 @implement('raw.line', 'https://typst.app/docs/reference/text/raw/#definitions-line')
-def _raw_line(number: int, count: int, text: str, body: str, /) -> Block:
+def _raw_line(number: int, count: int, text: str, body: Content, /) -> Content:
     """Interface of `raw.line` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/#definitions-line) for more information.
 
     Args:
         number (int): The line number of the raw line inside of the raw block, starts at 1.
         count (int): The total number of lines in the raw block.
         text (str): The line of raw text.
-        body (str): The highlighted raw text.
+        body (Content): The highlighted raw text.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> raw.line(1, 1, '"Hello, World!"', '"Hello, World!"')
@@ -201,25 +237,25 @@ def raw(
     /,
     *,
     block: bool = False,
-    lang: str | None = None,
-    align: str = 'start',
+    lang: None | str = None,
+    align: Alignment = 'start',
     syntaxes: str | Iterable[str] = tuple(),
-    theme: str | None = 'auto',
+    theme: None | Auto | str = 'auto',
     tab_size: int = 2,
-) -> Block:
+) -> Content:
     """Interface of `raw` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/) for more information.
 
     Args:
         text (str): The raw text.
         block (bool, optional): Whether the raw text is displayed as a separate block. Defaults to False.
-        lang (str | None, optional): The language to syntax-highlight in. Defaults to None.
-        align (str, optional): The horizontal alignment that each line in a raw block should have. Defaults to 'start'.
+        lang (None | str, optional): The language to syntax-highlight in. Defaults to None.
+        align (Alignment, optional): The horizontal alignment that each line in a raw block should have. Defaults to 'start'.
         syntaxes (str | Iterable[str], optional): One or multiple additional syntax definitions to load. Defaults to tuple().
-        theme (str | None, optional): The theme to use for syntax highlighting. Defaults to 'auto'.
+        theme (None | Auto | str, optional): The theme to use for syntax highlighting. Defaults to 'auto'.
         tab_size (int, optional): The size for a tab stop in spaces. Defaults to 2.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> raw('"Hello, World!"')
@@ -244,14 +280,14 @@ def raw(
 
 
 @implement('smallcaps', 'https://typst.app/docs/reference/text/smallcaps/')
-def smallcaps(body: str, /) -> Block:
+def smallcaps(body: Content, /) -> Content:
     """Interface of `smallcaps` in typst. See [the documentation](https://typst.app/docs/reference/text/smallcaps/) for more information.
 
     Args:
-        body (str): The content to display in small capitals.
+        body (Content): The content to display in small capitals.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> smallcaps('"Hello, World!"')
@@ -268,18 +304,18 @@ def smartquote(
     double: bool = True,
     enabled: bool = True,
     alternative: bool = False,
-    quotes: str | Iterable[str] | dict[str, Any] = 'auto',
-) -> Block:
+    quotes: Auto | str | Iterable[str] | SmartquoteQuotes = 'auto',
+) -> Content:
     """Interface of `smartquote` in typst. See [the documentation](https://typst.app/docs/reference/text/smartquote/) for more information.
 
     Args:
         double (bool, optional): Whether this should be a double quote. Defaults to True.
         enabled (bool, optional): Whether smart quotes are enabled. Defaults to True.
         alternative (bool, optional): Whether to use alternative quotes. Defaults to False.
-        quotes (str | Iterable[str] | dict[str, Any], optional): The quotes to use. Defaults to 'auto'.
+        quotes (Auto | str | Iterable[str] | SmartquoteQuotes, optional): The quotes to use. Defaults to 'auto'.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> smartquote(double=False, enabled=False, alternative=True, quotes='"()"')
@@ -298,25 +334,31 @@ def smartquote(
 
 @implement('strike', 'https://typst.app/docs/reference/text/strike/')
 def strike(
-    body: str,
+    body: Content,
     /,
     *,
-    stroke: str | dict[str, Any] = 'auto',
-    offset: str = 'auto',
-    extent: str = '0pt',
+    stroke: Auto
+    | Length
+    | Color
+    | Gradient
+    | Stroke
+    | Pattern
+    | RectangleStroke = 'auto',
+    offset: Auto | Length = 'auto',
+    extent: Length = '0pt',
     background: bool = False,
-) -> Block:
+) -> Content:
     """Interface of `strike` in typst. See [the documentation](https://typst.app/docs/reference/text/strike/) for more information.
 
     Args:
-        body (str): The content to strike through.
-        stroke (str | dict[str, Any], optional): How to stroke the line. Defaults to 'auto'.
-        offset (str, optional): The position of the line relative to the baseline. Defaults to 'auto'.
-        extent (str, optional): The amount by which to extend the line beyond (or within if negative) the content. Defaults to '0pt'.
+        body (Content): The content to strike through.
+        stroke (Auto | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): How to stroke the line. Defaults to 'auto'.
+        offset (Auto | Length, optional): The position of the line relative to the baseline. Defaults to 'auto'.
+        extent (Length, optional): The amount by which to extend the line beyond (or within if negative) the content. Defaults to '0pt'.
         background (bool, optional): Whether the line is placed behind the content. Defaults to False.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> strike('"Hello, World!"')
@@ -344,23 +386,23 @@ def strike(
 
 @implement('sub', 'https://typst.app/docs/reference/text/sub/')
 def subscript(
-    body: str,
+    body: Content,
     /,
     *,
     typographic: bool = True,
-    baseline: str = '0.2em',
-    size: str = '0.6em',
-) -> Block:
+    baseline: Length = '0.2em',
+    size: Length = '0.6em',
+) -> Content:
     """Interface of `sub` in typst. See [the documentation](https://typst.app/docs/reference/text/sub/) for more information.
 
     Args:
-        body (str): The text to display in subscript.
+        body (Content): The text to display in subscript.
         typographic (bool, optional): Whether to prefer the dedicated subscript characters of the font. Defaults to True.
-        baseline (str, optional): The baseline shift for synthetic subscripts. Defaults to '0.2em'.
-        size (str, optional): The font size for synthetic subscripts. Defaults to '0.6em'.
+        baseline (Length, optional): The baseline shift for synthetic subscripts. Defaults to '0.2em'.
+        size (Length, optional): The font size for synthetic subscripts. Defaults to '0.6em'.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> subscript('"Hello, World!"')
@@ -381,23 +423,23 @@ def subscript(
 
 @implement('super', 'https://typst.app/docs/reference/text/super/')
 def superscript(
-    body: str,
+    body: Content,
     /,
     *,
     typographic: bool = True,
-    baseline: str = '-0.5em',
-    size: str = '0.6em',
-) -> Block:
+    baseline: Length = '-0.5em',
+    size: Length = '0.6em',
+) -> Content:
     """Interface of `super` in typst. See [the documentation](https://typst.app/docs/reference/text/super/) for more information.
 
     Args:
-        body (str): The text to display in superscript.
+        body (Content): The text to display in superscript.
         typographic (bool, optional): Whether to prefer the dedicated superscript characters of the font. Defaults to True.
-        baseline (str, optional): The baseline shift for synthetic superscripts. Defaults to '-0.5em'.
-        size (str, optional): The font size for synthetic superscripts. Defaults to '0.6em'.
+        baseline (Length, optional): The baseline shift for synthetic superscripts. Defaults to '-0.5em'.
+        size (Length, optional): The font size for synthetic superscripts. Defaults to '0.6em'.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> superscript('"Hello, World!"')
@@ -420,75 +462,94 @@ def superscript(
 
 @implement('text', 'https://typst.app/docs/reference/text/text/')
 def text(
-    body: str,
+    body: str | Content,
     /,
     *,
     font: str | Iterable[str] = '"libertinus serif"',
     fallback: bool = True,
-    style: str = '"normal"',
-    weight: str | int = '"regular"',
-    stretch: str = '100%',
-    size: str = '11pt',
-    fill: str = luma('0%'),
-    stroke: str | dict[str, Any] | None = None,
-    tracking: str = '0pt',
-    spacing: str = '100% + 0pt',
-    cjk_latin_spacing: str | None = 'auto',
+    style: Literal['"normal"', '"italic"', '"oblique"'] = '"normal"',
+    weight: int
+    | Literal[
+        '"thin"',
+        '"extralight"',
+        '"light"',
+        '"regular"',
+        '"medium"',
+        '"semibold"',
+        '"bold"',
+        '"extrabold"',
+        '"black"',
+    ] = '"regular"',
+    stretch: Ratio = '100%',
+    size: Length = '11pt',
+    fill: Color | Gradient | Pattern = luma('0%'),
+    stroke: None
+    | Length
+    | Color
+    | Gradient
+    | Stroke
+    | Pattern
+    | RectangleStroke = None,
+    tracking: Length = '0pt',
+    spacing: Relative = '100% + 0pt',
+    cjk_latin_spacing: None | Auto = 'auto',
     overhang: bool = True,
-    top_edge: str = '"cap-height"',
-    bottom_edge: str = '"baseline"',
+    top_edge: Literal[
+        '"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'
+    ] = '"cap-height"',
+    bottom_edge: Literal['"baseline"', '"descender"', '"bounds"'] = '"baseline"',
     lang: str = '"en"',
-    region: str | None = None,
-    script: str = 'auto',
-    dir: str = 'auto',
-    hyphenate: str | bool = 'auto',
-    costs: dict[str, Any] = dict(
+    region: None | str = None,
+    script: Auto | str = 'auto',
+    dir: Auto | Direction = 'auto',
+    hyphenate: Auto | bool = 'auto',
+    costs: TextCosts = dict(
         hyphenation='100%', runt='100%', widow='100%', orphan='100%'
     ),
     kerning: bool = True,
     alternates: bool = False,
-    stylistic_set: int | Iterable[int] | None = tuple(),
+    stylistic_set: None | int | Iterable[int] = tuple(),
     ligatures: bool = True,
     discretionary_ligatures: bool = False,
     historical_ligatures: bool = False,
-    number_type: str = 'auto',
-    number_width: str = 'auto',
+    number_type: Auto | Literal['"lining"', '"old-style"'] = 'auto',
+    number_width: Auto | Literal['"proportional"', '"tabular"'] = 'auto',
     slashed_zero: bool = False,
     fractions: bool = False,
     features: Iterable[str] | dict[str, Any] = dict(),
-) -> Block:
+) -> Content:
     """Interface of `text` in typst. See [the documentation](https://typst.app/docs/reference/text/text/) for more information.
 
     Args:
-        body (str): Content in which all text is styled according to the other arguments.
+        body (str | Content): Content in which all text is styled according to the other arguments.
         font (str | Iterable[str], optional): A font family name or priority list of font family names. Defaults to '"libertinus serif"'.
         fallback (bool, optional): Whether to allow last resort font fallback when the primary font list contains no match. Defaults to True.
-        style (str, optional): The desired font style. Defaults to '"normal"'.
-        weight (str | int, optional): The desired thickness of the font's glyphs. Defaults to '"regular"'.
-        stretch (str, optional): The desired width of the glyphs. Defaults to '100%'.
-        size (str, optional): The size of the glyphs. Defaults to '11pt'.
-        fill (str, optional): The glyph fill paint. Defaults to luma('0%').
-        stroke (str | dict[str, Any] | None, optional): How to stroke the text. Defaults to None.
-        tracking (str, optional): The amount of space that should be added between characters. Defaults to '0pt'.
-        spacing (str, optional): The amount of space between words. Defaults to '100% + 0pt'.
-        cjk_latin_spacing (str | None, optional): Whether to automatically insert spacing between CJK and Latin characters. Defaults to 'auto'.
+        style (Literal['"normal"', '"italic"', '"oblique"'], optional): The desired font style. Defaults to '"normal"'.
+        weight (int | Literal['"thin"', '"extralight"', '"light"', '"regular"', '"medium"', '"semibold"', '"bold"', '"extrabold"', '"black"'], optional): The desired thickness of the font's glyphs. Defaults to '"regular"'.
+        stretch (Ratio, optional): The desired width of the glyphs. Defaults to '100%'.
+        size (Length, optional): The size of the glyphs. Defaults to '11pt'.
+        fill (Color | Gradient | Pattern, optional): The glyph fill paint. Defaults to luma('0%').
+        stroke (None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): How to stroke the text. Defaults to None.
+        tracking (Length, optional): The amount of space that should be added between characters. Defaults to '0pt'.
+        spacing (Relative, optional): The amount of space between words. Defaults to '100% + 0pt'.
+        cjk_latin_spacing (None | Auto, optional): Whether to automatically insert spacing between CJK and Latin characters. Defaults to 'auto'.
         overhang (bool, optional): Whether certain glyphs can hang over into the margin in justified text. Defaults to True.
-        top_edge (str, optional): The top end of the conceptual frame around the text used for layout and positioning. Defaults to '"cap-height"'.
-        bottom_edge (str, optional): The bottom end of the conceptual frame around the text used for layout and positioning. Defaults to '"baseline"'.
+        top_edge (Literal['"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'], optional): The top end of the conceptual frame around the text used for layout and positioning. Defaults to '"cap-height"'.
+        bottom_edge (Literal['"baseline"', '"descender"', '"bounds"'], optional): The bottom end of the conceptual frame around the text used for layout and positioning. Defaults to '"baseline"'.
         lang (str, optional): An ISO 639-1/2/3 language code. Defaults to '"en"'.
-        region (str | None, optional): An ISO 3166-1 alpha-2 region code. Defaults to None.
-        script (str, optional): The OpenType writing script. Defaults to 'auto'.
-        dir (str, optional): The dominant direction for text and inline objects. Defaults to 'auto'.
-        hyphenate (str | bool, optional): Whether to hyphenate text to improve line breaking. Defaults to 'auto'.
-        costs (dict[str, Any], optional): The "cost" of various choices when laying out text. Defaults to dict( hyphenation='100%', runt='100%', widow='100%', orphan='100%' ).
+        region (None | str, optional): An ISO 3166-1 alpha-2 region code. Defaults to None.
+        script (Auto | str, optional): The OpenType writing script. Defaults to 'auto'.
+        dir (Auto | Direction, optional): The dominant direction for text and inline objects. Defaults to 'auto'.
+        hyphenate (Auto | bool, optional): Whether to hyphenate text to improve line breaking. Defaults to 'auto'.
+        costs (TextCosts, optional): The "cost" of various choices when laying out text. Defaults to dict( hyphenation='100%', runt='100%', widow='100%', orphan='100%' ).
         kerning (bool, optional): Whether to apply kerning. Defaults to True.
         alternates (bool, optional): Whether to apply stylistic alternates. Defaults to False.
-        stylistic_set (int | Iterable[int] | None, optional): Which stylistic sets to apply. Defaults to tuple().
+        stylistic_set (None | int | Iterable[int], optional): Which stylistic sets to apply. Defaults to tuple().
         ligatures (bool, optional): Whether standard ligatures are active. Defaults to True.
         discretionary_ligatures (bool, optional): Whether ligatures that should be used sparingly are active. Defaults to False.
         historical_ligatures (bool, optional): Whether historical ligatures are active. Defaults to False.
-        number_type (str, optional): Which kind of numbers / figures to select. Defaults to 'auto'.
-        number_width (str, optional): The width of numbers / figures. Defaults to 'auto'.
+        number_type (Auto | Literal['"lining"', '"old-style"'], optional): Which kind of numbers / figures to select. Defaults to 'auto'.
+        number_width (Auto | Literal['"proportional"', '"tabular"'], optional): The width of numbers / figures. Defaults to 'auto'.
         slashed_zero (bool, optional): Whether to have a slash through the zero glyph. Defaults to False.
         fractions (bool, optional): Whether to turn numbers into fractions. Defaults to False.
         features (Iterable[str] | dict[str, Any], optional): Raw OpenType features to apply. Defaults to dict().
@@ -497,7 +558,7 @@ def text(
         ValueError: If `style` or `weight` or `top_edge` or `bottom_edge` or `number_type` or `number_width` is invalid.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> text('"Hello, World!"')
@@ -507,31 +568,27 @@ def text(
         >>> text('[Hello, World!]', font='"Times New Roman"')
         '#text([Hello, World!], font: "Times New Roman")'
     """
-    is_valid(
-        lambda: style in map(pad, ('normal', 'italic', 'oblique')),
+    all_predicates_satisfied(
+        lambda: style in ['"normal"', '"italic"', '"oblique"'],
         lambda: isinstance(weight, int)
         or weight
-        in map(
-            pad,
-            (
-                'thin',
-                'extralight',
-                'light',
-                'regular',
-                'medium',
-                'semibold',
-                'bold',
-                'extrabold',
-                'black',
-            ),
-        ),
+        in [
+            '"thin"',
+            '"extralight"',
+            '"light"',
+            '"regular"',
+            '"medium"',
+            '"semibold"',
+            '"bold"',
+            '"extrabold"',
+            '"black"',
+        ],
         lambda: top_edge
-        in map(pad, ('ascender', 'cap-height', 'x-height', 'baseline', 'bounds')),
-        lambda: bottom_edge in map(pad, ('baseline', 'descender', 'bounds')),
-        lambda: number_type == 'auto'
-        or number_type in map(pad, ('lining', 'old-style')),
+        in ['"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'],
+        lambda: bottom_edge in ['"baseline"', '"descender"', '"bounds"'],
+        lambda: number_type == 'auto' or number_type in ['"lining"', '"old-style"'],
         lambda: number_width == 'auto'
-        or number_width in map(pad, ('proportional', 'tabular')),
+        or number_width in ['"proportional"', '"tabular"'],
     )
     return normal(
         text,
@@ -572,27 +629,33 @@ def text(
 
 @implement('underline', 'https://typst.app/docs/reference/text/underline/')
 def underline(
-    body: str,
+    body: Content,
     /,
     *,
-    stroke: str | dict[str, Any] = 'auto',
-    offset: str = 'auto',
-    extent: str = '0pt',
+    stroke: Auto
+    | Length
+    | Color
+    | Gradient
+    | Stroke
+    | Pattern
+    | RectangleStroke = 'auto',
+    offset: Auto | Length = 'auto',
+    extent: Length = '0pt',
     evade: bool = True,
     background: bool = False,
-) -> Block:
+) -> Content:
     """Interface of `underline` in typst. See [the documentation](https://typst.app/docs/reference/text/underline/) for more information.
 
     Args:
-        body (str): The content to underline.
-        stroke (str | dict[str, Any], optional): How to stroke the line. Defaults to 'auto'.
-        offset (str, optional): The position of the line relative to the baseline, read from the font tables if auto. Defaults to 'auto'.
-        extent (str, optional): The amount by which to extend the line beyond (or within if negative) the content. Defaults to '0pt'.
+        body (Content): The content to underline.
+        stroke (Auto | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): How to stroke the line. Defaults to 'auto'.
+        offset (Auto | Length, optional): The position of the line relative to the baseline, read from the font tables if auto. Defaults to 'auto'.
+        extent (Length, optional): The amount by which to extend the line beyond (or within if negative) the content. Defaults to '0pt'.
         evade (bool, optional): Whether the line skips sections in which it would collide with the glyphs. Defaults to True.
         background (bool, optional): Whether the line is placed behind the content it underlines. Defaults to False.
 
     Returns:
-        Block: Executable typst code.
+        Content: Executable typst code.
 
     Examples:
         >>> underline('"Hello, World!"')
@@ -621,14 +684,14 @@ def underline(
 
 
 @implement('upper', 'https://typst.app/docs/reference/text/upper/')
-def upper(text: str, /) -> Block:
+def upper(text: str | Content, /) -> str | Content:
     """Interface of `upper` in typst. See [the documentation](https://typst.app/docs/reference/text/upper/) for more information.
 
     Args:
-        text (str): The text to convert to uppercase.
+        text (str | Content): The text to convert to uppercase.
 
     Returns:
-        Block: Executable typst code.
+        str | Content: Executable typst code.
 
     Examples:
         >>> upper('"Hello, World!"')
