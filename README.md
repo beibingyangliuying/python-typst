@@ -61,7 +61,7 @@ pip install typstpy
 | oklch | oklch | [https://typst.app/docs/reference/visualize/color/#definitions-oklch](https://typst.app/docs/reference/visualize/color/#definitions-oklch) |
 | outline | outline | [https://typst.app/docs/reference/model/outline/](https://typst.app/docs/reference/model/outline/) |
 | overline | overline | [https://typst.app/docs/reference/text/overline/](https://typst.app/docs/reference/text/overline/) |
-| padding | pad | [https://typst.app/docs/reference/layout/pad/](https://typst.app/docs/reference/layout/pad/) |
+| pad | pad | [https://typst.app/docs/reference/layout/pad/](https://typst.app/docs/reference/layout/pad/) |
 | page | page | [https://typst.app/docs/reference/layout/page/](https://typst.app/docs/reference/layout/page/) |
 | pagebreak | pagebreak | [https://typst.app/docs/reference/layout/pagebreak/](https://typst.app/docs/reference/layout/pagebreak/) |
 | par | par | [https://typst.app/docs/reference/model/par/](https://typst.app/docs/reference/model/par/) |
@@ -96,6 +96,9 @@ pip install typstpy
 
 ## Change logs
 
+- _1.0.3_:
+  - Fix: Fix the behavior of `show_`.
+  - Compatibility: The parameters' order of `show_` is flipped compared to previous version.
 - _1.0.2_: Improved type annotations.
 - _1.0.1_: Implement `set`, `show`, and `import`.
 - _1.0.0_: Completed documentation and test cases in `layout`, `model`, `text` and `visualize` modules. Improved functionality.
@@ -463,10 +466,10 @@ from typstpy.std import *
 '#overline(upper("Hello, World!"), stroke: red, offset: 0pt, evade: false, background: true)'
 ```
 
-`padding`:
+`pad`:
 
 ```python
->>> padding(
+>>> pad(
 ...     lorem(20),
 ...     left='4% + 0pt',
 ...     top='4% + 0pt',

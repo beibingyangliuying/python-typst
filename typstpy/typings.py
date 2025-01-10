@@ -3,7 +3,7 @@ from typing import Any, Callable, Literal, Protocol, TypedDict
 # region foundations
 
 
-Auto = str
+Auto = Literal['auto']
 Alignment = str
 Angle = str
 Content = str

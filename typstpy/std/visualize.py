@@ -116,7 +116,7 @@ def _color_map(name: str, /) -> Color:
     """
     all_predicates_satisfied(
         lambda: name
-        in (
+        in {
             'turbo',
             'cividis',
             'rainbow',
@@ -131,7 +131,7 @@ def _color_map(name: str, /) -> Color:
             'icefire',
             'flare',
             'crest',
-        ),
+        },
     )
     return f'#color.map.{name}'
 
@@ -770,7 +770,7 @@ def _gradient_linear(
     """
     all_predicates_satisfied(
         lambda: len(stops) >= 2,
-        lambda: relative == 'auto' or relative in ['"self"', '"parent"'],
+        lambda: relative == 'auto' or relative in {'"self"', '"parent"'},
     )
     return pre_series(_gradient_linear, *stops, space=space, relative=relative)
 
@@ -805,7 +805,7 @@ def _gradient_radial(
         Gradient: A color gradient.
     """
     all_predicates_satisfied(
-        lambda: relative == 'auto' or relative in ['"self"', '"parent"'],
+        lambda: relative == 'auto' or relative in {'"self"', '"parent"'},
     )
     return pre_series(
         _gradient_radial,
@@ -845,7 +845,7 @@ def _gradient_conic(
         Gradient: A color gradient.
     """
     all_predicates_satisfied(
-        lambda: relative == 'auto' or relative in ['"self"', '"parent"'],
+        lambda: relative == 'auto' or relative in {'"self"', '"parent"'},
     )
     return pre_series(
         _gradient_conic,
@@ -1060,8 +1060,8 @@ def _image_decode(
         Content: Executable typst code.
     """
     all_predicates_satisfied(
-        lambda: format == 'auto' or format in ['"png"', '"jpg"', '"gif"', '"svg"'],
-        lambda: fit in ['"cover"', '"contain"', '"stretch"'],
+        lambda: format == 'auto' or format in {'"png"', '"jpg"', '"gif"', '"svg"'},
+        lambda: fit in {'"cover"', '"contain"', '"stretch"'},
     )
     return normal(
         _image_decode, data, format=format, width=width, height=height, alt=alt, fit=fit
@@ -1087,7 +1087,7 @@ def image(
         format (Auto | Literal['"png"', '"jpg"', '"gif"', '"svg"'], optional): The image's format. Defaults to 'auto'.
         width (Auto | Relative, optional): The width of the image. Defaults to 'auto'.
         height (Auto | Relative | Fraction, optional): The height of the image. Defaults to 'auto'.
-        alt (None | str | None, optional): A text describing the image. Defaults to None.
+        alt (None | str, optional): A text describing the image. Defaults to None.
         fit (Literal['"cover"', '"contain"', '"stretch"'], optional): How the image should adjust itself to a given area (the area is defined by the width and height fields). Defaults to '"cover"'.
 
     Raises:
@@ -1103,8 +1103,8 @@ def image(
         '#image("image.png", fit: "contain")'
     """
     all_predicates_satisfied(
-        lambda: format == 'auto' or format in ['"png"', '"jpg"', '"gif"', '"svg"'],
-        lambda: fit in ['"cover"', '"contain"', '"stretch"'],
+        lambda: format == 'auto' or format in {'"png"', '"jpg"', '"gif"', '"svg"'},
+        lambda: fit in {'"cover"', '"contain"', '"stretch"'},
     )
     return normal(
         image,
@@ -1200,7 +1200,7 @@ def path(
         ... )
         '#path(fill: red, stroke: blue, (0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
     """
-    all_predicates_satisfied(lambda: fill_rule in ['"non-zero"', '"evenodd"'])
+    all_predicates_satisfied(lambda: fill_rule in {'"non-zero"', '"evenodd"'})
     return post_series(
         path, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke, closed=closed
     )
@@ -1230,7 +1230,7 @@ def pattern(
         Pattern: A repeating pattern fill.
     """
     all_predicates_satisfied(
-        lambda: relative == 'auto' or relative in ['"self"', '"parent"']
+        lambda: relative == 'auto' or relative in {'"self"', '"parent"'}
     )
     return normal(pattern, body, size=size, spacing=spacing, relative=relative)
 
@@ -1297,7 +1297,7 @@ def polygon(
     Returns:
         Content: Executable typst code.
     """
-    all_predicates_satisfied(lambda: fill_rule in ['"non-zero"', '"evenodd"'])
+    all_predicates_satisfied(lambda: fill_rule in {'"non-zero"', '"evenodd"'})
     return post_series(
         polygon, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke
     )

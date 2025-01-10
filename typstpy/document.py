@@ -69,6 +69,10 @@ class Document:
         """
         self._show_rules.append(show_rule)
 
+    @deprecated(
+        version='1.0.3',
+        reason='The method will be removed since version 1.1.x. Use `print` in standard library instead.',
+    )
     def save(self, path: str, /) -> None:
         """Save the document to a file.
 

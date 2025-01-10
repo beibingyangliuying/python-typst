@@ -82,8 +82,8 @@ def highlight(
     """
     all_predicates_satisfied(
         lambda: top_edge
-        in ['"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'],
-        lambda: bottom_edge in ['"baseline"', '"descender"', '"bounds"'],
+        in {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
+        lambda: bottom_edge in {'"baseline"', '"descender"', '"bounds"'},
     )
     return normal(
         highlight,
@@ -569,10 +569,10 @@ def text(
         '#text([Hello, World!], font: "Times New Roman")'
     """
     all_predicates_satisfied(
-        lambda: style in ['"normal"', '"italic"', '"oblique"'],
+        lambda: style in {'"normal"', '"italic"', '"oblique"'},
         lambda: isinstance(weight, int)
         or weight
-        in [
+        in {
             '"thin"',
             '"extralight"',
             '"light"',
@@ -582,13 +582,13 @@ def text(
             '"bold"',
             '"extrabold"',
             '"black"',
-        ],
+        },
         lambda: top_edge
-        in ['"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'],
-        lambda: bottom_edge in ['"baseline"', '"descender"', '"bounds"'],
-        lambda: number_type == 'auto' or number_type in ['"lining"', '"old-style"'],
+        in {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
+        lambda: bottom_edge in {'"baseline"', '"descender"', '"bounds"'},
+        lambda: number_type == 'auto' or number_type in {'"lining"', '"old-style"'},
         lambda: number_width == 'auto'
-        or number_width in ['"proportional"', '"tabular"'],
+        or number_width in {'"proportional"', '"tabular"'},
     )
     return normal(
         text,

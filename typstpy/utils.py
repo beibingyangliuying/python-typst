@@ -1,4 +1,4 @@
-from typing import Any, Callable, NoReturn, Optional, Union
+from typing import Any, Callable, NoReturn, Optional
 
 from attrs import frozen
 from cytoolz.curried import (  # type: ignore
@@ -284,15 +284,15 @@ def set_(func: TypstFunc, /, **keyword_only: Any) -> Content:
 
 
 def show_(
-    content: Content,
-    shown: Optional[Union[Content, TypstFunc]] = None,
+    element: Content | TypstFunc | None,
+    appearance: Content | TypstFunc,
     /,
 ) -> Content:
     """Represent `show` rule in typst.
 
     Args:
-        content (Content): Executable typst code.
-        shown (Optional[Union[Content, TypstFunc]]): The typst function or content. If None, it means `show everything` rule. Defaults to None.
+        element (Content | TypstFunc | None): The typst function or content. If None, it means `show everything` rule.
+        appearance (Content | TypstFunc): The typst function or content.
 
     Raises:
         ValueError: If the target is invalid.
@@ -300,15 +300,20 @@ def show_(
     Returns:
         Content: Executable typst code.
     """
-    if shown is None:
-        _target = ''
-    elif isinstance(shown, Content):
-        _target = _render_value(shown)
-    elif callable(shown):
-        _target = _original_name(shown)
+
+    if element is None:
+        _element = ''
+    elif callable(element):
+        _element = _original_name(element)
     else:
-        raise ValueError(f'Invalid target: {shown}')
-    return f'#show {_target}: {_render_value(content)}'
+        _element = _render_value(element)
+
+    if callable(appearance):
+        _appearance = _original_name(appearance)
+    else:
+        _appearance = _render_value(appearance)
+
+    return f'#show {_element}: {_appearance}'
 
 
 def import_(path: str, /, *names: str) -> Content:

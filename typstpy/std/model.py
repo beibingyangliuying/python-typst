@@ -162,7 +162,7 @@ def cite(
     """
     all_predicates_satisfied(
         lambda: form is None
-        or form in ['"normal"', '"prose"', '"full"', '"author"', '"year"'],
+        or form in {'"normal"', '"prose"', '"full"', '"author"', '"year"'},
         lambda: style == 'auto' or style in VALID_CITATION_STYLES,
     )
     return normal(
@@ -285,7 +285,7 @@ def figure(
         >>> figure(image('"image.png"'), caption='[Hello, World!]')
         '#figure(image("image.png"), caption: [Hello, World!])'
     """
-    all_predicates_satisfied(lambda: scope in ['"column"', '"parent"'])
+    all_predicates_satisfied(lambda: scope in {'"column"', '"parent"'})
     return normal(
         figure,
         body,
@@ -604,7 +604,7 @@ def _par_line(
     Returns:
         Content: Executable typst code.
     """
-    all_predicates_satisfied(lambda: numbering_scope in ['"document"', '"page"'])
+    all_predicates_satisfied(lambda: numbering_scope in {'"document"', '"page"'})
     return positional(
         _par_line,
         numbering,
@@ -662,7 +662,7 @@ def par(
         '#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'
     """
     all_predicates_satisfied(
-        lambda: linebreaks == 'auto' or linebreaks in ['"simple"', '"optimized"']
+        lambda: linebreaks == 'auto' or linebreaks in {'"simple"', '"optimized"'}
     )
     return normal(
         par,
