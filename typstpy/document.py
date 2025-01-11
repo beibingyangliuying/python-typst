@@ -12,7 +12,7 @@ from .typings import Content
 @frozen
 class Document:
     _contents: deque[Content] = field(factory=deque, init=False)
-    _imports: deque[Content] = field(factory=deque, init=False)
+    _import_statements: deque[Content] = field(factory=deque, init=False)
     _set_rules: deque[Content] = field(factory=deque, init=False)
     _show_rules: deque[Content] = field(factory=deque, init=False)
 
@@ -32,20 +32,20 @@ class Document:
         """Add a content to the document.
 
         Args:
-            content (Content): The block to be added.
+            content (Content): The content to be added.
         """
         self._contents.append(content)
 
-    def add_import(self, _import: Content, /) -> None:
+    def add_import(self, statement: Content, /) -> None:
         """Import names to the document.
 
         Args:
-            _import (Content): The import statement. Use `std.import_` to generate standard code.
+            statement (Content): The import statement. Use `std.import_` to generate standard code.
 
         See also:
             `std.import_`
         """
-        self._imports.append(_import)
+        self._import_statements.append(statement)
 
     def add_set_rule(self, set_rule: Content, /) -> None:
         """Add a set rule to the document.
@@ -83,14 +83,14 @@ class Document:
             f.write(str(self))
 
     def __str__(self) -> str:
-        """Incorporate import statements, set rules, show rules and blocks into a single string.
+        """Incorporate import statements, set rules, show rules and contents into a single string.
 
         Returns:
             str: The content of the document.
         """
         with StringIO() as stream:
-            if self._imports:
-                stream.write('\n'.join(self._imports))
+            if self._import_statements:
+                stream.write('\n'.join(self._import_statements))
                 stream.write('\n\n')
             if self._set_rules:
                 stream.write('\n'.join(self._set_rules))

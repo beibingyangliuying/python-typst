@@ -57,7 +57,7 @@ class Series(Protocol):
 
 
 VALID_PAPER_SIZES = frozenset(
-    [
+    {
         '"a0"',
         '"a1"',
         '"a2"',
@@ -165,7 +165,7 @@ VALID_PAPER_SIZES = frozenset(
         '"newspaper-broadsheet"',
         '"presentation-16-9"',
         '"presentation-4-3"',
-    ]
+    }
 )
 ValidPaperSizes = Literal[
     '"a0"',
@@ -277,7 +277,7 @@ ValidPaperSizes = Literal[
     '"presentation-4-3"',
 ]
 VALID_CITATION_STYLES = frozenset(
-    [
+    {
         '"annual-reviews"',
         '"pensoft"',
         '"annual-reviews-author-date"',
@@ -360,7 +360,7 @@ VALID_CITATION_STYLES = frozenset(
         '"modern-language-association"',
         '"alphanumeric"',
         '"ieee"',
-    ]
+    }
 )
 ValidCitationStyles = Literal[
     '"annual-reviews"',

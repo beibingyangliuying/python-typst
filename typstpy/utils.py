@@ -5,7 +5,6 @@ from cytoolz.curried import (  # type: ignore
     curry,
     isiterable,
     keyfilter,
-    map,
     memoize,
     pipe,
 )
@@ -48,8 +47,9 @@ def _all_keywords_valid(func: TypstFunc, *keys: str) -> NoReturn | None:
     Returns:
         NoReturn | None: None if there are no invalid keyword-only parameters, otherwise raises ValueError.
     """
-    if not set(keys) <= _extract_func(func).__kwdefaults__.keys():
-        raise ValueError(f'Parameters which are not keyword-only given: {keys}')
+    residual = set(keys) - _extract_func(func).__kwdefaults__.keys()
+    if residual:
+        raise ValueError(f'Parameters which are not keyword-only given: {residual}')
     return None
 
 
@@ -159,12 +159,12 @@ def _render_value(value: Any, /) -> str:
             if not value:
                 return '(:)'
             return f'({', '.join(f'{_render_key(k)}: {_render_value(v)}' for k, v in value.items())})'
-        case str() if value.startswith('#'):  # Function call.
-            return value[1:]
         case str():
+            if value.startswith('#'):  # Function call.
+                return value[1:]
             return value
         case value if isiterable(value):
-            return f"({', '.join(map(_render_value, value))})"
+            return f"({', '.join(_render_value(v) for v in value)})"
         case _:
             return str(value)
 
@@ -204,7 +204,7 @@ def attach_func(
     def wrapper(_func: TypstFunc) -> TypstFunc:
         _name = name if name else _func.__name__
         if _name.startswith('_'):
-            raise ValueError(f'Invalid name: {_name}.')
+            raise ValueError(f'Invalid name: {_name}')
         setattr(_func, _name, func)
         return _func
 
@@ -339,7 +339,7 @@ def normal(
 
     Args:
         func (Normal): The function to be represented.
-        body (Any, optional): The core parameter. Defaults to ''.
+        body (Any, optional): The core parameter, it will be omitted if set to ''. Defaults to ''.
 
     Returns:
         Content: Executable typst code.
@@ -388,15 +388,6 @@ def instance(
         Content: Executable typst code.
     """
     keyword_only = _filter_params(func, **keyword_only)
-    pipe(
-        [],
-        lambda x: x
-        if not positional
-        else x + [_strip_brace(_render_value(positional))],
-        lambda x: x
-        if not keyword_only
-        else x + [_strip_brace(_render_value(keyword_only))],
-    )
     return (
         f'{instance}.{_original_name(func)}('
         + ', '.join(
