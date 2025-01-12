@@ -3,9 +3,10 @@ import unittest
 
 
 def load_tests(loader, tests, ignore):
-    modules = [f'typstpy.std.{i}' for i in ['layout', 'model', 'text', 'visualize']] + [
-        'typstpy.utils',
-        'typstpy.document',
+    modules = [
+        'typstpy.' + i
+        for i in ['std.' + i for i in ['layout', 'model', 'text', 'visualize']]
+        + ['utils', 'document', 'subpar']
     ]
     for module in modules:
         tests.addTests(doctest.DocTestSuite(module))

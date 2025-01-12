@@ -1,7 +1,5 @@
 from typing import Iterable, Literal, Optional
 
-from cytoolz.curried import pipe  # type: ignore
-
 from typstpy.std.layout import hspace, repeat  # noqa
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import image, line  # noqa
@@ -49,16 +47,16 @@ def bibliography(
     """Interface of `bibliography` in typst. See [the documentation](https://typst.app/docs/reference/model/bibliography/) for more information.
 
     Args:
-        path (str | Iterable[str]): Path(s) to Hayagriva .yml and/or BibLaTeX .bib files.
-        title (None | Auto | Content, optional): The title of the bibliography. Defaults to 'auto'.
-        full (bool, optional): Whether to include all works from the given bibliography files, even those that weren't cited in the document. Defaults to False.
-        style (ValidCitationStyles, optional): The bibliography style. Defaults to '"ieee"'.
+        path: Path(s) to Hayagriva .yml and/or BibLaTeX .bib files.
+        title: The title of the bibliography. Defaults to 'auto'.
+        full: Whether to include all works from the given bibliography files, even those that weren't cited in the document. Defaults to False.
+        style: The bibliography style. Defaults to '"ieee"'.
 
     Raises:
         ValueError: If `style` is invalid.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> bibliography('"bibliography.bib"', style='"cell"')
@@ -79,10 +77,10 @@ def _bullet_list_item(body: Content, /) -> Content:
     """Interface of `list.item` in typst. See [the documentation](https://typst.app/docs/reference/model/list/#definitions-item) for more information.
 
     Args:
-        body (Content): The item's body.
+        body: The item's body.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return normal(_bullet_list_item, body)
 
@@ -100,14 +98,14 @@ def bullet_list(
     """Interface of `list` in typst. See [the documentation](https://typst.app/docs/reference/model/list/) for more information.
 
     Args:
-        tight (bool, optional): Defines the default spacing of the list. Defaults to True.
-        marker (Content | Iterable[Content] | Function, optional): The marker which introduces each item. Defaults to ('[•]', '[‣]', '[–]').
-        indent (Length, optional): The indent of each item. Defaults to '0pt'.
-        body_indent (Length, optional): The spacing between the marker and the body of each item. Defaults to '0.5em'.
-        spacing (Auto | Length, optional): The spacing between the items of the list. Defaults to 'auto'.
+        tight: Defines the default spacing of the list. Defaults to True.
+        marker: The marker which introduces each item. Defaults to ('[•]', '[‣]', '[–]').
+        indent: The indent of each item. Defaults to '0pt'.
+        body_indent: The spacing between the marker and the body of each item. Defaults to '0.5em'.
+        spacing: The spacing between the items of the list. Defaults to 'auto'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> bullet_list(lorem(20), lorem(20), lorem(20))
@@ -139,16 +137,16 @@ def cite(
     """Interface of `cite` in typst. See [the documentation](https://typst.app/docs/reference/model/cite/) for more information.
 
     Args:
-        key (Label): The citation key that identifies the entry in the bibliography that shall be cited, as a label.
-        supplement (None | Content, optional): A supplement for the citation such as page or chapter number. Defaults to None.
-        form (None | Literal['"normal"', '"prose"', '"full"', '"author"', '"year"'], optional): The kind of citation to produce. Defaults to '"normal"'.
-        style (Auto | ValidCitationStyles, optional): The citation style. Defaults to 'auto'.
+        key: The citation key that identifies the entry in the bibliography that shall be cited, as a label.
+        supplement: A supplement for the citation such as page or chapter number. Defaults to None.
+        form: The kind of citation to produce. Defaults to '"normal"'.
+        style: The citation style. Defaults to 'auto'.
 
     Raises:
         ValueError: If `form` or `style` is invalid.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> cite('<label>')
@@ -185,13 +183,13 @@ def document(
     """Interface of `document` in typst. See [the documentation](https://typst.app/docs/reference/model/document/) for more information.
 
     Args:
-        title (None | Content, optional): The document's title. Defaults to None.
-        author (str | Iterable[str], optional): The document's authors. Defaults to tuple().
-        keywords (str | Iterable[str], optional): The document's keywords. Defaults to tuple().
-        date (None | Auto | DateTime, optional): The document's creation date. Defaults to 'auto'.
+        title: The document's title. Defaults to None.
+        author: The document's authors. Defaults to tuple().
+        keywords: The document's keywords. Defaults to tuple().
+        date: The document's creation date. Defaults to 'auto'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return normal(document, title=title, author=author, keywords=keywords, date=date)
 
@@ -201,10 +199,10 @@ def emph(body: Content, /) -> Content:
     """Interface of `emph` in typst. See [the documentation](https://typst.app/docs/reference/model/emph/) for more information.
 
     Args:
-        body (Content): The content to emphasize.
+        body: The content to emphasize.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> emph('"Hello, World!"')
@@ -229,12 +227,12 @@ def _figure_caption(
     """Interface of `figure.caption` in typst. See [the documentation](https://typst.app/docs/reference/model/figure/#definitions-caption) for more information.
 
     Args:
-        body (Content): The caption's body.
-        position (Alignment, optional): The caption's position in the figure. Defaults to 'bottom'.
-        separator (Auto | Content, optional): The separator which will appear between the number and body. Defaults to 'auto'.
+        body: The caption's body.
+        position: The caption's position in the figure. Defaults to 'bottom'.
+        separator: The separator which will appear between the number and body. Defaults to 'auto'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> figure.caption('[Hello, World!]')
@@ -263,21 +261,21 @@ def figure(
     """Interface of `figure` in typst. See [the documentation](https://typst.app/docs/reference/model/figure/) for more information.
 
     Args:
-        body (Content): The content of the figure.
-        placement (None | Auto | Alignment, optional): The figure's placement on the page. Defaults to None.
-        scope (Literal['"column"', '"parent"'], optional): Relative to which containing scope the figure is placed. Defaults to '"column"'.
-        caption (None | Content, optional): The figure's caption. Defaults to None.
-        kind (Auto | str | Function, optional): The kind of figure this is. Defaults to 'auto'.
-        supplement (None | Auto | Content | Function, optional): The figure's supplement. Defaults to 'auto'.
-        numbering (None | str | Function, optional): How to number the figure. Defaults to '"1"'.
-        gap (Length, optional): The vertical gap between the body and caption. Defaults to '0.65em'.
-        outlined (bool, optional): Whether the figure should appear in an outline of figures. Defaults to True.
+        body: The content of the figure.
+        placement: The figure's placement on the page. Defaults to None.
+        scope: Relative to which containing scope the figure is placed. Defaults to '"column"'.
+        caption: The figure's caption. Defaults to None.
+        kind: The kind of figure this is. Defaults to 'auto'.
+        supplement: The figure's supplement. Defaults to 'auto'.
+        numbering: How to number the figure. Defaults to '"1"'.
+        gap: The vertical gap between the body and caption. Defaults to '0.65em'.
+        outlined: Whether the figure should appear in an outline of figures. Defaults to True.
 
     Raises:
         ValueError: If `scope` is invalid.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> figure(image('"image.png"'))
@@ -316,14 +314,14 @@ def _footnote_entry(
     """Interface of `footnote.entry` in typst. See [the documentation](https://typst.app/docs/reference/model/footnote/#definitions-entry) for more information.
 
     Args:
-        note (Content): The footnote for this entry.
-        separator (Content, optional): The separator between the document body and the footnote listing. Defaults to line(length='30% + 0pt', stroke='0.5pt').
-        clearance (Length, optional): The amount of clearance between the document body and the separator. Defaults to '1em'.
-        gap (Length, optional): The gap between footnote entries. Defaults to '0.5em'.
-        indent (Length, optional): The indent of each footnote entry. Defaults to '1em'.
+        note: The footnote for this entry.
+        separator: The separator between the document body and the footnote listing. Defaults to line(length='30% + 0pt', stroke='0.5pt').
+        clearance: The amount of clearance between the document body and the separator. Defaults to '1em'.
+        gap: The gap between footnote entries. Defaults to '0.5em'.
+        indent: The indent of each footnote entry. Defaults to '1em'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return normal(
         _footnote_entry,
@@ -341,11 +339,11 @@ def footnote(body: Label | Content, /, *, numbering: str | Function = '"1"') -> 
     """Interface of `footnote` in typst. See [the documentation](https://typst.app/docs/reference/model/footnote/) for more information.
 
     Args:
-        body (Label | Content): The content to put into the footnote.
-        numbering (str | Function, optional): How to number footnotes. Defaults to '"1"'.
+        body: The content to put into the footnote.
+        numbering: How to number footnotes. Defaults to '"1"'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> footnote('[Hello, World!]')
@@ -373,18 +371,18 @@ def heading(
     """Interface of `heading` in typst. See [the documentation](https://typst.app/docs/reference/model/heading/) for more information.
 
     Args:
-        body (Content): The heading's title.
-        level (Auto | int, optional): The absolute nesting depth of the heading, starting from one. Defaults to 'auto'.
-        depth (int, optional): The relative nesting depth of the heading, starting from one. Defaults to 1.
-        offset (int, optional): The starting offset of each heading's level, used to turn its relative depth into its absolute level. Defaults to 0.
-        numbering (None | str | Function, optional): How to number the heading. Defaults to None.
-        supplement (None | Auto | Content | Function, optional): A supplement for the heading. Defaults to 'auto'.
-        outlined (bool, optional): Whether the heading should appear in the outline. Defaults to True.
-        bookmarked (Auto | bool, optional): Whether the heading should appear as a bookmark in the exported PDF's outline. Defaults to 'auto'.
-        hanging_indent (Auto | Length, optional): The indent all but the first line of a heading should have. Defaults to 'auto'.
+        body: The heading's title.
+        level: The absolute nesting depth of the heading, starting from one. Defaults to 'auto'.
+        depth: The relative nesting depth of the heading, starting from one. Defaults to 1.
+        offset: The starting offset of each heading's level, used to turn its relative depth into its absolute level. Defaults to 0.
+        numbering: How to number the heading. Defaults to None.
+        supplement: A supplement for the heading. Defaults to 'auto'.
+        outlined: Whether the heading should appear in the outline. Defaults to True.
+        bookmarked: Whether the heading should appear as a bookmark in the exported PDF's outline. Defaults to 'auto'.
+        hanging_indent: The indent all but the first line of a heading should have. Defaults to 'auto'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> heading('[Hello, World!]')
@@ -428,11 +426,11 @@ def link(
     """Interface of `link` in typst. See [the documentation](https://typst.app/docs/reference/model/link/) for more information.
 
     Args:
-        dest (str | Label | Location | LinkDest): The destination the link points to.
-        body (Optional[Content], optional): The content that should become a link. Defaults to None.
+        dest: The destination the link points to.
+        body: The content that should become a link. Defaults to None.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> link('"https://typst.app"')
@@ -440,7 +438,7 @@ def link(
         >>> link('"https://typst.app"', '"Typst"')
         '#link("https://typst.app", "Typst")'
     """
-    return positional(link, *pipe([dest], lambda x: x if body is None else x + [body]))
+    return positional(link, *([dest] if body is None else [dest, body]))
 
 
 @implement('enum.item', 'https://typst.app/docs/reference/model/enum/#definitions-item')
@@ -448,11 +446,11 @@ def _numbered_list_item(body: Content, /, *, number: None | int = None) -> Conte
     """Interface of `enum.item` in typst. See [the documentation](https://typst.app/docs/reference/model/enum/#definitions-item) for more information.
 
     Args:
-        body (Content): The item's body.
-        number (None | int, optional): The item's number. Defaults to None.
+        body: The item's body.
+        number: The item's number. Defaults to None.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> numbered_list.item('[Hello, World!]', number=2)
@@ -477,17 +475,17 @@ def numbered_list(
     """Interface of `enum` in typst. See [the documentation](https://typst.app/docs/reference/model/enum/) for more information.
 
     Args:
-        tight (bool, optional): Defines the default spacing of the enumeration. Defaults to True.
-        numbering (str | Function, optional): How to number the enumeration. Defaults to '"1."'.
-        start (int, optional): Which number to start the enumeration with. Defaults to 1.
-        full (bool, optional): Whether to display the full numbering, including the numbers of all parent enumerations. Defaults to False.
-        indent (Length, optional): The indentation of each item. Defaults to '0pt'.
-        body_indent (Length, optional): The space between the numbering and the body of each item. Defaults to '0.5em'.
-        spacing (Auto | Length, optional): The spacing between the items of the enumeration. Defaults to 'auto'.
-        number_align (Alignment, optional): The alignment that enum numbers should have. Defaults to 'end + top'.
+        tight: Defines the default spacing of the enumeration. Defaults to True.
+        numbering: How to number the enumeration. Defaults to '"1."'.
+        start: Which number to start the enumeration with. Defaults to 1.
+        full: Whether to display the full numbering, including the numbers of all parent enumerations. Defaults to False.
+        indent: The indentation of each item. Defaults to '0pt'.
+        body_indent: The space between the numbering and the body of each item. Defaults to '0.5em'.
+        spacing: The spacing between the items of the enumeration. Defaults to 'auto'.
+        number_align: The alignment that enum numbers should have. Defaults to 'end + top'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> numbered_list(lorem(20), lorem(20), lorem(20))
@@ -514,10 +512,10 @@ def numbering(numbering_: str | Function, /, *numbers: int) -> Content:
     """Interface of `numbering` in typst. See [the documentation](https://typst.app/docs/reference/model/numbering/) for more information.
 
     Args:
-        numbering_ (str | Function): Defines how the numbering works.
+        numbering_: Defines how the numbering works.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> numbering('"1.1)"', 1, 2)
@@ -535,14 +533,14 @@ def _outline_entry(
     """Interface of `outline.entry` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry) for more information.
 
     Args:
-        level (int): The nesting level of this outline entry.
-        element (Content): The element this entry refers to.
-        body (Content): The content which is displayed in place of the referred element at its entry in the outline.
-        fill (None | Content): The content used to fill the space between the element's outline and its page number, as defined by the outline element this entry is located in.
-        page (Content): The page number of the element this entry links to, formatted with the numbering set for the referenced page.
+        level: The nesting level of this outline entry.
+        element: The element this entry refers to.
+        body: The content which is displayed in place of the referred element at its entry in the outline.
+        fill: The content used to fill the space between the element's outline and its page number, as defined by the outline element this entry is located in.
+        page: The page number of the element this entry links to, formatted with the numbering set for the referenced page.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return positional(_outline_entry, level, element, body, fill, page)
 
@@ -560,14 +558,14 @@ def outline(
     """Interface of `outline` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/) for more information.
 
     Args:
-        title (None | Auto | Content, optional): The title of the outline. Defaults to 'auto'.
-        target (Label | Selector | Location | Function, optional): The type of element to include in the outline. Defaults to heading.where(outlined=True).
-        depth (None | int, optional): The maximum level up to which elements are included in the outline. Defaults to None.
-        indent (None | Auto | bool | Relative | Function, optional): How to indent the outline's entries. Defaults to None.
-        fill (None | Content, optional): Content to fill the space between the title and the page number. Defaults to repeat('[.]').
+        title: The title of the outline. Defaults to 'auto'.
+        target: The type of element to include in the outline. Defaults to heading.where(outlined=True).
+        depth: The maximum level up to which elements are included in the outline. Defaults to None.
+        indent: How to indent the outline's entries. Defaults to None.
+        fill: Content to fill the space between the title and the page number. Defaults to repeat('[.]').
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> outline()
@@ -592,17 +590,17 @@ def _par_line(
     """Interface of `par.line` in typst. See [the documentation](https://typst.app/docs/reference/model/par/#definitions-line) for more information.
 
     Args:
-        numbering (None | str | Function, optional): How to number each line. Defaults to None.
-        number_align (Auto | Alignment, optional): The alignment of line numbers associated with each line. Defaults to 'auto'.
-        number_margin (Alignment, optional): The margin at which line numbers appear. Defaults to 'start'.
-        number_clearance (Auto | Length, optional): The distance between line numbers and text. Defaults to 'auto'.
-        numbering_scope (Literal['"document"', '"page"'], optional): Controls when to reset line numbering. Defaults to '"document"'.
+        numbering: How to number each line. Defaults to None.
+        number_align: The alignment of line numbers associated with each line. Defaults to 'auto'.
+        number_margin: The margin at which line numbers appear. Defaults to 'start'.
+        number_clearance: The distance between line numbers and text. Defaults to 'auto'.
+        numbering_scope: Controls when to reset line numbering. Defaults to '"document"'.
 
     Raises:
         ValueError: If `numbering_scope` is invalid.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     all_predicates_satisfied(lambda: numbering_scope in {'"document"', '"page"'})
     return positional(
@@ -631,19 +629,19 @@ def par(
     """Interface of `par` in typst. See [the documentation](https://typst.app/docs/reference/model/par/) for more information.
 
     Args:
-        body (Content): The contents of the paragraph.
-        leading (Length, optional): The spacing between lines. Defaults to '0.65em'.
-        spacing (Length, optional): The spacing between paragraphs. Defaults to '1.2em'.
-        justify (bool, optional): Whether to justify text in its line. Defaults to False.
-        linebreaks (Auto | Literal['"simple"', '"optimized"'], optional): How to determine line breaks. Defaults to 'auto'.
-        first_line_indent (Length, optional): The indent the first line of a paragraph should have. Defaults to '0pt'.
-        hanging_indent (Length, optional): The indent all but the first line of a paragraph should have. Defaults to '0pt'.
+        body: The contents of the paragraph.
+        leading: The spacing between lines. Defaults to '0.65em'.
+        spacing: The spacing between paragraphs. Defaults to '1.2em'.
+        justify: Whether to justify text in its line. Defaults to False.
+        linebreaks: How to determine line breaks. Defaults to 'auto'.
+        first_line_indent: The indent the first line of a paragraph should have. Defaults to '0pt'.
+        hanging_indent: The indent all but the first line of a paragraph should have. Defaults to '0pt'.
 
     Raises:
         ValueError: If `linebreaks` is invalid.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> par('"Hello, World!"')
@@ -681,7 +679,7 @@ def parbreak() -> Content:
     """Interface of `parbreak` in typst. See [the documentation](https://typst.app/docs/reference/model/parbreak/) for more information.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> parbreak()
@@ -702,13 +700,13 @@ def quote(
     """Interface of `quote` in typst. See [the documentation](https://typst.app/docs/reference/model/quote/) for more information.
 
     Args:
-        body (Content): The quote.
-        block (bool, optional): Whether this is a block quote. Defaults to False.
-        quotes (Auto | bool, optional): Whether double quotes should be added around this quote. Defaults to 'auto'.
-        attribution (None | Label | Content, optional): The attribution of this quote, usually the author or source. Defaults to None.
+        body: The quote.
+        block: Whether this is a block quote. Defaults to False.
+        quotes: Whether double quotes should be added around this quote. Defaults to 'auto'.
+        attribution: The attribution of this quote, usually the author or source. Defaults to None.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> quote('"Hello, World!"')
@@ -730,11 +728,11 @@ def ref(
     """Interface of `ref` in typst. See [the documentation](https://typst.app/docs/reference/model/ref/) for more information.
 
     Args:
-        target (Label): The target label that should be referenced.
-        supplement (None | Auto | Content | Function, optional): A supplement for the reference. Defaults to 'auto'.
+        target: The target label that should be referenced.
+        supplement: A supplement for the reference. Defaults to 'auto'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> ref('<label>')
@@ -750,11 +748,11 @@ def strong(body: Content, /, *, delta: int = 300) -> Content:
     """Interface of `strong` in typst. See [the documentation](https://typst.app/docs/reference/model/strong/) for more information.
 
     Args:
-        body (Content): The content to strongly emphasize.
-        delta (int, optional): The delta to apply on the font weight. Defaults to 300.
+        body: The content to strongly emphasize.
+        delta: The delta to apply on the font weight. Defaults to 300.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> strong('"Hello, World!"')
@@ -791,19 +789,19 @@ def _table_cell(
     """Interface of `table.cell` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-cell) for more information.
 
     Args:
-        body (Content): The cell's body.
-        x (Auto | int, optional): The cell's column (zero-indexed). Defaults to 'auto'.
-        y (Auto | int, optional): The cell's row (zero-indexed). Defaults to 'auto'.
-        colspan (int, optional): The amount of columns spanned by this cell. Defaults to 1.
-        rowspan (int, optional): The cell's fill override. Defaults to 1.
-        fill (None | Auto | Color | Gradient | Pattern, optional): The amount of rows spanned by this cell. Defaults to 'auto'.
-        align (Auto | Alignment, optional): The cell's alignment override. Defaults to 'auto'.
-        inset (Auto | Relative | BoxInset, optional): The cell's inset override. Defaults to 'auto'.
-        stroke (None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): The cell's stroke override. Defaults to dict().
-        breakable (Auto | bool, optional): Whether rows spanned by this cell can be placed in different pages. Defaults to 'auto'.
+        body: The cell's body.
+        x: The cell's column (zero-indexed). Defaults to 'auto'.
+        y: The cell's row (zero-indexed). Defaults to 'auto'.
+        colspan: The amount of columns spanned by this cell. Defaults to 1.
+        rowspan: The cell's fill override. Defaults to 1.
+        fill: The amount of rows spanned by this cell. Defaults to 'auto'.
+        align: The cell's alignment override. Defaults to 'auto'.
+        inset: The cell's inset override. Defaults to 'auto'.
+        stroke: The cell's stroke override. Defaults to dict().
+        breakable: Whether rows spanned by this cell can be placed in different pages. Defaults to 'auto'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return normal(
         _table_cell,
@@ -840,14 +838,14 @@ def _table_hline(
     """Interface of `table.hline` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-hline) for more information.
 
     Args:
-        y (Auto | int, optional): The row above which the horizontal line is placed (zero-indexed). Defaults to 'auto'.
-        start (int, optional): The column at which the horizontal line starts (zero-indexed, inclusive). Defaults to 0.
-        end (None | int, optional): The column before which the horizontal line ends (zero-indexed, exclusive). Defaults to None.
-        stroke (None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): The line's stroke. Defaults to '1pt + black'.
-        position (Alignment, optional): The position at which the line is placed, given its row (y) - either top to draw above it or bottom to draw below it. Defaults to 'top'.
+        y: The row above which the horizontal line is placed (zero-indexed). Defaults to 'auto'.
+        start: The column at which the horizontal line starts (zero-indexed, inclusive). Defaults to 0.
+        end: The column before which the horizontal line ends (zero-indexed, exclusive). Defaults to None.
+        stroke: The line's stroke. Defaults to '1pt + black'.
+        position: The position at which the line is placed, given its row (y) - either top to draw above it or bottom to draw below it. Defaults to 'top'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return normal(
         _table_hline, y=y, start=start, end=end, stroke=stroke, position=position
@@ -874,14 +872,14 @@ def _table_vline(
     """Interface of `table.vline` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-vline) for more information.
 
     Args:
-        x (Auto | int, optional): The column before which the horizontal line is placed (zero-indexed). Defaults to 'auto'.
-        start (int, optional): The row at which the vertical line starts (zero-indexed, inclusive). Defaults to 0.
-        end (None | int, optional): The row on top of which the vertical line ends (zero-indexed, exclusive). Defaults to None.
-        stroke (None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke, optional): The line's stroke. Defaults to '1pt + black'.
-        position (Alignment, optional): The position at which the line is placed, given its column (x) - either start to draw before it or end to draw after it. Defaults to 'start'.
+        x: The column before which the horizontal line is placed (zero-indexed). Defaults to 'auto'.
+        start: The row at which the vertical line starts (zero-indexed, inclusive). Defaults to 0.
+        end: The row on top of which the vertical line ends (zero-indexed, exclusive). Defaults to None.
+        stroke: The line's stroke. Defaults to '1pt + black'.
+        position: The position at which the line is placed, given its column (x) - either start to draw before it or end to draw after it. Defaults to 'start'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return normal(
         _table_vline, x=x, start=start, end=end, stroke=stroke, position=position
@@ -895,10 +893,10 @@ def _table_header(*children: Content, repeat: bool = True) -> Content:
     """Interface of `table.header` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-header) for more information.
 
     Args:
-        repeat (bool, optional): Whether this header should be repeated across pages. Defaults to True.
+        repeat: Whether this header should be repeated across pages. Defaults to True.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return post_series(_table_header, *children, repeat=repeat)
 
@@ -910,10 +908,10 @@ def _table_footer(*children: Content, repeat: bool = True) -> Content:
     """Interface of `table.footer` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-footer) for more information.
 
     Args:
-        repeat (bool, optional): Whether this footer should be repeated across pages. Defaults to True.
+        repeat: Whether this footer should be repeated across pages. Defaults to True.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return post_series(_table_footer, *children, repeat=repeat)
 
@@ -955,18 +953,18 @@ def table(
     """Interface of `table` in typst. See [the documentation](https://typst.app/docs/reference/model/table/) for more information.
 
     Args:
-        columns (Auto | int | Relative | Fraction | Iterable[Relative | Fraction], optional): The column sizes. Defaults to tuple().
-        rows (Auto | int | Relative | Fraction | Iterable[Relative | Fraction], optional): The row sizes. Defaults to tuple().
-        gutter (Auto | int | Relative | Fraction | Iterable[Relative | Fraction], optional): The gaps between rows and columns. Defaults to tuple().
-        column_gutter (Auto | int | Relative | Fraction | Iterable[Relative | Fraction], optional): The gaps between columns. Defaults to tuple().
-        row_gutter (Auto | int | Relative | Fraction | Iterable[Relative | Fraction], optional): The gaps between rows. Defaults to tuple().
-        fill (None | Color | Gradient | Iterable[Color] | Pattern | Function, optional): How to fill the cells. Defaults to None.
-        align (Auto | Iterable[Alignment] | Alignment | Function, optional): How to align the cells' content. Defaults to 'auto'.
-        stroke (None | Length | Color | Gradient | Iterable[Color] | Stroke | Pattern | RectangleStroke | Function, optional): How to stroke the cells. Defaults to '1pt + black'.
-        inset (Relative | Iterable[Relative] | BoxInset | Function, optional): How much to pad the cells' content. Defaults to '0% + 5pt'.
+        columns: The column sizes. Defaults to tuple().
+        rows: The row sizes. Defaults to tuple().
+        gutter: The gaps between rows and columns. Defaults to tuple().
+        column_gutter: The gaps between columns. Defaults to tuple().
+        row_gutter: The gaps between rows. Defaults to tuple().
+        fill: How to fill the cells. Defaults to None.
+        align: How to align the cells' content. Defaults to 'auto'.
+        stroke: How to stroke the cells. Defaults to '1pt + black'.
+        inset: How much to pad the cells' content. Defaults to '0% + 5pt'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> table('[1]', '[2]', '[3]')
@@ -1007,11 +1005,11 @@ def _terms_item(term: Content, description: Content, /) -> Content:
     """Interface of `terms.item` in typst. See [the documentation](https://typst.app/docs/reference/model/terms/#definitions-item) for more information.
 
     Args:
-        term (Content): The term described by the list item.
-        description (Content): The description of the term.
+        term: The term described by the list item.
+        description: The description of the term.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> terms.item('"term"', '"description"')
@@ -1033,14 +1031,14 @@ def terms(
     """Interface of `terms` in typst. See [the documentation](https://typst.app/docs/reference/model/terms/) for more information.
 
     Args:
-        tight (bool, optional): Defines the default spacing of the term list. Defaults to True.
-        separator (Content, optional): The separator between the item and the description. Defaults to hspace('0.6em', weak=True).
-        indent (Length, optional): The indentation of each item. Defaults to '0pt'.
-        hanging_indent (Length, optional): The hanging indent of the description. Defaults to '2em'.
-        spacing (Auto | Length, optional): The spacing between the items of the term list. Defaults to 'auto'.
+        tight: Defines the default spacing of the term list. Defaults to True.
+        separator: The separator between the item and the description. Defaults to hspace('0.6em', weak=True).
+        indent: The indentation of each item. Defaults to '0pt'.
+        hanging_indent: The hanging indent of the description. Defaults to '2em'.
+        spacing: The spacing between the items of the term list. Defaults to 'auto'.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
 
     Examples:
         >>> terms(('[1]', lorem(20)), ('[1]', lorem(20)))

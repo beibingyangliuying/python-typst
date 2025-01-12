@@ -1,15 +1,18 @@
+from collections.abc import Iterable, Mapping
 from typing import Any, Callable, NoReturn, Optional
 
 from attrs import frozen
-from cytoolz.curried import (  # type: ignore
-    curry,
-    isiterable,
-    keyfilter,
-    memoize,
-    pipe,
-)
+from cytoolz.curried import curry, keyfilter, memoize  # type: ignore
 
-from .typings import Content, Instance, Normal, Positional, Predicate, Series, TypstFunc
+from typstpy.typings import (
+    Content,
+    Instance,
+    Normal,
+    Positional,
+    Predicate,
+    Series,
+    TypstFunc,
+)
 
 # region utils
 
@@ -21,7 +24,7 @@ def all_predicates_satisfied(*predicates: Predicate) -> NoReturn | None:
         ValueError: If any predicate is not satisfied.
 
     Returns:
-        NoReturn | None: None if all predicates are satisfied, otherwise raises ValueError.
+        None if all predicates are satisfied, otherwise raises ValueError.
     """
     for predicate in predicates:
         if not predicate():
@@ -39,13 +42,13 @@ def _all_keywords_valid(func: TypstFunc, *keys: str) -> NoReturn | None:
     """Check if there are invalid keyword-only parameters.
 
     Args:
-        func (TypstFunc): The typst function.
+        func: The typst function.
 
     Raises:
         ValueError: If there are invalid keyword-only parameters.
 
     Returns:
-        NoReturn | None: None if there are no invalid keyword-only parameters, otherwise raises ValueError.
+        None if there are no invalid keyword-only parameters, otherwise raises ValueError.
     """
     residual = set(keys) - _extract_func(func).__kwdefaults__.keys()
     if residual:
@@ -57,10 +60,10 @@ def _extract_func(func: Callable, /) -> TypstFunc:
     """Extract the original function from the function decorated by `@curry`.
 
     Args:
-        func (Callable): The function to be extracted.
+        func: The function to be extracted.
 
     Returns:
-        TypstFunc: The original function.
+        The original function.
     """
     # TODO: Check if the extracted function is compatible with `TypstFunc`.
     return func.func if isinstance(func, curry) else func
@@ -71,10 +74,10 @@ def _original_name(func: TypstFunc, /) -> str:
     """Get the name representation in typst of a function.
 
     Args:
-        func (TypstFunc): The function to be retrieved.
+        func: The function to be retrieved.
 
     Returns:
-        str: The name representation in typst.
+        The name representation in typst.
     """
     func = _extract_func(func)
     return (
@@ -86,13 +89,13 @@ def _filter_params(func: TypstFunc, /, **kwargs: Any) -> dict[str, Any]:
     """Filter out parameters that are different from default values.
 
     Args:
-        func (TypstFunc): The function to be filtered.
+        func: The function to be filtered.
 
     Raises:
         ValueError: Parameters which are not keyword-only given.
 
     Returns:
-        dict[str, Any]: The filtered parameters.
+        The filtered parameters.
     """
     if not kwargs:
         return {}
@@ -109,10 +112,10 @@ def _render_key(key: str, /) -> str:
     """Render a key into a valid typst parameter representation.
 
     Args:
-        key (str): The key to be rendered.
+        key: The key to be rendered.
 
     Returns:
-        str: The rendered key.
+        The rendered key.
     """
     return key.replace('_', '-')
 
@@ -121,10 +124,10 @@ def _render_value(value: Any, /) -> str:
     """Render a value into a valid typst parameter representation.
 
     Args:
-        value (Any): The value to be rendered.
+        value: The value to be rendered.
 
     Returns:
-        str: The rendered value.
+        The rendered value.
 
     Examples:
         >>> _render_value(True)
@@ -155,15 +158,15 @@ def _render_value(value: Any, /) -> str:
     match value:
         case None | bool():
             return str(value).lower()
-        case dict():
-            if not value:
-                return '(:)'
-            return f'({', '.join(f'{_render_key(k)}: {_render_value(v)}' for k, v in value.items())})'
         case str():
             if value.startswith('#'):  # Function call.
                 return value[1:]
             return value
-        case value if isiterable(value):
+        case Mapping():
+            if not value:
+                return '(:)'
+            return f'({', '.join(f'{_render_key(k)}: {_render_value(v)}' for k, v in value.items())})'
+        case Iterable():
             return f"({', '.join(_render_value(v) for v in value)})"
         case _:
             return str(value)
@@ -173,10 +176,10 @@ def _strip_brace(value: str, /) -> str:
     """Strip the left and right braces of a string.
 
     Args:
-        value (str): The string to be stripped.
+        value: The string to be stripped.
 
     Returns:
-        str: The stripped string.
+        The stripped string.
     """
     return value[1:-1]
 
@@ -191,14 +194,14 @@ def attach_func(
     """Attach a typst function to another typst function.
 
     Args:
-        func (TypstFunc): The function to attach.
-        name (Optional[str], optional): The attribute name to be set. When set to None, the function's name will be used. Defaults to None.
+        func: The function to attach.
+        name: The attribute name to be set. When set to None, the function's name will be used. Defaults to None.
 
     Raises:
         ValueError: Invalid name.
 
     Returns:
-        Callable[[TypstFunc], TypstFunc]: The decorator function.
+        The decorator function.
     """
 
     def wrapper(_func: TypstFunc) -> TypstFunc:
@@ -228,16 +231,16 @@ class _Implement:
 
 
 def implement(
-    original_name: str, hyperlink: str, /
+    original_name: str, hyperlink: str = '', /
 ) -> Callable[[TypstFunc], TypstFunc]:
     """Set `_implement` attribute of a typst function and attach it with `where` and `with_` functions. The attribute type is `_Implement`.
 
     Args:
-        original_name (str): The original function name in typst.
-        hyperlink (str): The hyperlink of the documentation in typst.
+        original_name: The original function name in typst.
+        hyperlink: The hyperlink of the documentation in typst. Defaults to ''.
 
     Returns:
-        Callable[[TypstFunc], TypstFunc]: The decorator function.
+        The decorator function.
     """
 
     def wrapper(_func: TypstFunc) -> TypstFunc:
@@ -271,13 +274,13 @@ def set_(func: TypstFunc, /, **keyword_only: Any) -> Content:
     """Represent `set` rule in typst.
 
     Args:
-        func (TypstFunc): The typst function.
+        func: The typst function.
 
     Raises:
         ValueError: If there are invalid keyword-only parameters.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     _all_keywords_valid(func, *keyword_only.keys())
     return f'#set {_original_name(func)}({_strip_brace(_render_value(keyword_only))})'
@@ -291,14 +294,14 @@ def show_(
     """Represent `show` rule in typst.
 
     Args:
-        element (Content | TypstFunc | None): The typst function or content. If None, it means `show everything` rule.
-        appearance (Content | TypstFunc): The typst function or content.
+        element: The typst function or content. If None, it means `show everything` rule.
+        appearance: The typst function or content.
 
     Raises:
         ValueError: If the target is invalid.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
 
     if element is None:
@@ -320,10 +323,10 @@ def import_(path: str, /, *names: str) -> Content:
     """Represent `import` operation in typst.
 
     Args:
-        path (str): The path of the file to be imported.
+        path: The path of the file to be imported.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return f'#import {path}: {_strip_brace(_render_value(names))}'
 
@@ -338,39 +341,33 @@ def normal(
     """Represent the protocol of `normal`.
 
     Args:
-        func (Normal): The function to be represented.
-        body (Any, optional): The core parameter, it will be omitted if set to ''. Defaults to ''.
+        func: The function to be represented.
+        body: The core parameter, it will be omitted if set to ''. Defaults to ''.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     keyword_only = _filter_params(func, **keyword_only)
-    return (
-        f'#{_original_name(func)}('
-        + ', '.join(
-            pipe(
-                [],
-                lambda x: x if body == '' else x + [_render_value(body)],
-                lambda x: x
-                if not positional
-                else x + [_strip_brace(_render_value(positional))],
-                lambda x: x
-                if not keyword_only
-                else x + [_strip_brace(_render_value(keyword_only))],
-            )
-        )
-        + ')'
-    )
+
+    params = []
+    if body != '':
+        params.append(_render_value(body))
+    if positional:
+        params.append(_strip_brace(_render_value(positional)))
+    if keyword_only:
+        params.append(_strip_brace(_render_value(keyword_only)))
+
+    return f'#{_original_name(func)}(' + ', '.join(params) + ')'
 
 
 def positional(func: Positional, *positional: Any) -> Content:
     """Represent the protocol of `positional`.
 
     Args:
-        func (Positional): The function to be represented.
+        func: The function to be represented.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     return f'#{_original_name(func)}{_render_value(positional)}'
 
@@ -381,82 +378,65 @@ def instance(
     """Represent the protocol of `pre_instance`.
 
     Args:
-        func (Instance): The function to be represented.
-        instance (Content): The `instance` to call the function on.
+        func: The function to be represented.
+        instance: The `instance` to call the function on.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     keyword_only = _filter_params(func, **keyword_only)
-    return (
-        f'{instance}.{_original_name(func)}('
-        + ', '.join(
-            pipe(
-                [],
-                lambda x: x
-                if not positional
-                else x + [_strip_brace(_render_value(positional))],
-                lambda x: x
-                if not keyword_only
-                else x + [_strip_brace(_render_value(keyword_only))],
-            )
-        )
-        + ')'
-    )
+
+    params = []
+    if positional:
+        params.append(_strip_brace(_render_value(positional)))
+    if keyword_only:
+        params.append(_strip_brace(_render_value(keyword_only)))
+
+    return f'{instance}.{_original_name(func)}(' + ', '.join(params) + ')'
 
 
 def pre_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
     """Represent the protocol of `pre_series`.
 
     Args:
-        func (Series): The function to be represented.
+        func: The function to be represented.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     keyword_only = _filter_params(func, **keyword_only)
-    return (
-        f'#{_original_name(func)}('
-        + ', '.join(
-            pipe(
-                [],
-                lambda x: x + [_strip_brace(_render_value(children))]
-                if len(children) != 1
-                else x + [f'..{_render_value(children[0])}'],
-                lambda x: x
-                if not keyword_only
-                else x + [_strip_brace(_render_value(keyword_only))],
-            )
-        )
-        + ')'
-    )
+
+    params = []
+    if len(children) != 1:
+        params.append(_strip_brace(_render_value(children)))
+    else:
+        params.append(f'..{_render_value(children[0])}')
+    if keyword_only:
+        params.append(_strip_brace(_render_value(keyword_only)))
+
+    return f'#{_original_name(func)}(' + ', '.join(params) + ')'
 
 
 def post_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
     """Represent the protocol of `post_series`.
 
     Args:
-        func (Series): The function to be represented.
+        func: The function to be represented.
 
     Returns:
-        Content: Executable typst code.
+        Executable typst code.
     """
     keyword_only = _filter_params(func, **keyword_only)
-    return (
-        f'#{_original_name(func)}('
-        + ', '.join(
-            pipe(
-                [],
-                lambda x: x
-                if not keyword_only
-                else x + [_strip_brace(_render_value(keyword_only))],
-                lambda x: x + [_strip_brace(_render_value(children))]
-                if len(children) != 1
-                else x + [f'..{_render_value(children[0])}'],
-            )
-        )
-        + ')'
-    )
+
+    params = []
+    if keyword_only:
+        params.append(_strip_brace(_render_value(keyword_only)))
+    if len(children) != 1:
+        params.append(_strip_brace(_render_value(children)))
+    else:
+        params.append(f'..{_render_value(children[0])}')
+
+    return f'#{_original_name(func)}(' + ', '.join(params) + ')'
 
 
 # endregion

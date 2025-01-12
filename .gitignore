@@ -1,4 +1,5 @@
 .vscode/
+.idea/
 dist/
 .coverage
 coverage.xml

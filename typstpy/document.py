@@ -5,7 +5,7 @@ from typing import final
 from attrs import field, frozen
 from deprecated.sphinx import deprecated  # type: ignore
 
-from .typings import Content
+from typstpy.typings import Content
 
 
 @final
@@ -24,7 +24,7 @@ class Document:
         """Add a block to the document.
 
         Args:
-            block (Content): The block to be added.
+            block: The block to be added.
         """
         self._contents.append(block)
 
@@ -32,7 +32,7 @@ class Document:
         """Add a content to the document.
 
         Args:
-            content (Content): The content to be added.
+            content: The content to be added.
         """
         self._contents.append(content)
 
@@ -40,7 +40,7 @@ class Document:
         """Import names to the document.
 
         Args:
-            statement (Content): The import statement. Use `std.import_` to generate standard code.
+            statement: The import statement. Use `std.import_` to generate standard code.
 
         See also:
             `std.import_`
@@ -51,7 +51,7 @@ class Document:
         """Add a set rule to the document.
 
         Args:
-            set_rule (Content): The set rule to be added. Use `std.set_` to generate standard code.
+            set_rule: The set rule to be added. Use `std.set_` to generate standard code.
 
         See also:
             `std.set_`
@@ -62,7 +62,7 @@ class Document:
         """Add a show rule to the document.
 
         Args:
-            show_rule (Content): The show rule to be added. Use `std.show_` to generate standard code.
+            show_rule: The show rule to be added. Use `std.show_` to generate standard code.
 
         See also:
             `std.show_`
@@ -77,7 +77,7 @@ class Document:
         """Save the document to a file.
 
         Args:
-            path (str): The path of the file to be saved.
+            path: The path of the file to be saved.
         """
         with open(path, 'w') as f:
             f.write(str(self))
@@ -86,7 +86,7 @@ class Document:
         """Incorporate import statements, set rules, show rules and contents into a single string.
 
         Returns:
-            str: The content of the document.
+            The content of the document.
         """
         with StringIO() as stream:
             if self._import_statements:

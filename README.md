@@ -96,6 +96,7 @@ pip install typstpy
 
 ## Change logs
 
+- _1.0.4_: Implement package `subpar`.
 - _1.0.3_:
   - Fix: Fix the behavior of `show_`.
   - Compatibility: The parameters' order of `show_` is flipped compared to previous version.
