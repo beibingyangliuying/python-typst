@@ -3,18 +3,12 @@ import warnings
 from collections.abc import Iterable, Mapping, Set
 from functools import singledispatch
 from io import StringIO
-from typing import Any, Callable, ClassVar, NoReturn, Optional, Self
+from typing import Any, Callable, ClassVar, NoReturn, Optional, Protocol, Self
 
 from attrs import frozen
 from cytoolz.curried import curry, keyfilter, memoize  # type: ignore
 
-from typstpy.typings import (
-    Content,
-    Instance,
-    Normal,
-    Positional,
-    Series,
-)
+from typstpy.typings import Content
 
 # region utils
 
@@ -62,7 +56,10 @@ def _all_keywords_valid(func: TypstFunc, keys: Set[str], /) -> NoReturn | None:
     Returns:
         None if there are no invalid keyword-only parameters, otherwise raises `ValueError`.
     """
-    residual = keys - func.__kwdefaults__.keys()
+    defaults = func.__kwdefaults__
+    if defaults is None:
+        return None
+    residual = keys - defaults.keys()
     if residual:
         raise ValueError(f'Parameters which are not keyword-only given: {residual}')
     return None
@@ -101,8 +98,10 @@ def _filter_params(func: TypstFunc, /, **kwargs: Any) -> dict[str, Any]:
     """
     if not kwargs:
         return {}
-    _all_keywords_valid(func, kwargs.keys())
     defaults = func.__kwdefaults__
+    if defaults is None:
+        return kwargs
+    _all_keywords_valid(func, kwargs.keys())
     return keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
 
 
@@ -351,6 +350,10 @@ def import_(path: str, /, *names: str) -> Content:
     return f'#import {path}: {_strip_brace(_render_value(names))}'
 
 
+class Normal(Protocol):
+    def __call__(self, body: Any, /, *args: Any, **kwargs: Any) -> Content: ...
+
+
 def normal(
     func: Normal,
     body: Any = '',
@@ -380,6 +383,10 @@ def normal(
     return f'#{_original_name(func)}(' + ', '.join(params) + ')'
 
 
+class Positional(Protocol):
+    def __call__(self, *args: Any) -> Content: ...
+
+
 def positional(func: Positional, *args: Any) -> Content:
     """Represent the protocol of `positional`.
 
@@ -390,6 +397,10 @@ def positional(func: Positional, *args: Any) -> Content:
         Executable typst code.
     """
     return f'#{_original_name(func)}{_render_value(args)}'
+
+
+class Instance(Protocol):
+    def __call__(self, instance: Content, /, *args: Any, **kwargs: Any) -> Content: ...
 
 
 def instance(
@@ -413,6 +424,10 @@ def instance(
         params.append(_strip_brace(_render_value(kwargs)))
 
     return f'{instance}.{_original_name(func)}(' + ', '.join(params) + ')'
+
+
+class Series(Protocol):
+    def __call__(self, *children: Any, **kwargs: Any) -> Content: ...
 
 
 def pre_series(func: Series, *children: Any, **kwargs: Any) -> Content:
@@ -462,7 +477,6 @@ def post_series(func: Series, *children: Any, **kwargs: Any) -> Content:
 # endregion
 
 __all__ = [
-    'TypstFunc',
     'all_predicates_satisfied',
     'attach_func',
     'implement',

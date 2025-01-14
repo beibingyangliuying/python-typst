@@ -1,5 +1,12 @@
 from typing import Any, Iterable, Literal
 
+from typstpy._utils import (
+    all_predicates_satisfied,
+    attach_func,
+    implement,
+    normal,
+    positional,
+)
 from typstpy.std.visualize import luma, rgb
 from typstpy.typings import (
     Alignment,
@@ -17,13 +24,6 @@ from typstpy.typings import (
     SmartquoteQuotes,
     Stroke,
     TextCosts,
-)
-from typstpy.utils import (
-    all_predicates_satisfied,
-    attach_func,
-    implement,
-    normal,
-    positional,
 )
 
 

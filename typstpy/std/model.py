@@ -1,5 +1,13 @@
 from typing import Iterable, Literal, Optional
 
+from typstpy._utils import (
+    all_predicates_satisfied,
+    attach_func,
+    implement,
+    normal,
+    positional,
+    post_series,
+)
 from typstpy.std.layout import hspace, repeat  # noqa
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import image, line  # noqa
@@ -24,14 +32,6 @@ from typstpy.typings import (
     Selector,
     Stroke,
     ValidCitationStyles,
-)
-from typstpy.utils import (
-    all_predicates_satisfied,
-    attach_func,
-    implement,
-    normal,
-    positional,
-    post_series,
 )
 
 

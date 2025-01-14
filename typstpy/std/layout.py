@@ -2,6 +2,14 @@ from typing import Iterable
 
 from deprecated.sphinx import deprecated  # type: ignore
 
+from typstpy._utils import (
+    all_predicates_satisfied,
+    attach_func,
+    implement,
+    normal,
+    positional,
+    post_series,
+)
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import rect  # noqa
 from typstpy.typings import (
@@ -26,14 +34,6 @@ from typstpy.typings import (
     Relative,
     Stroke,
     ValidPaperSizes,
-)
-from typstpy.utils import (
-    all_predicates_satisfied,
-    attach_func,
-    implement,
-    normal,
-    positional,
-    post_series,
 )
 
 

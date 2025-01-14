@@ -1,9 +1,9 @@
 # Version: 0.2.0
 from typing import Any
 
+from typstpy._utils import implement, pre_series
 from typstpy.std import figure, image  # noqa
 from typstpy.typings import Content
-from typstpy.utils import implement, pre_series
 
 
 @implement('subpar.grid', 'https://typst.app/universe/package/subpar')

@@ -1,5 +1,15 @@
 from typing import Any, Optional, Sequence, overload
 
+from typstpy._utils import (
+    all_predicates_satisfied,
+    attach_func,
+    implement,
+    instance,
+    normal,
+    positional,
+    post_series,
+    pre_series,
+)
 from typstpy.typings import (
     Angle,
     Auto,
@@ -18,16 +28,6 @@ from typstpy.typings import (
     RectangleStroke,
     Relative,
     Stroke,
-)
-from typstpy.utils import (
-    all_predicates_satisfied,
-    attach_func,
-    implement,
-    instance,
-    normal,
-    positional,
-    post_series,
-    pre_series,
 )
 
 

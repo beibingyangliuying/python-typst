@@ -1,4 +1,4 @@
-from typing import Any, Literal, Protocol, TypedDict
+from typing import Literal, TypedDict
 
 # region foundations
 
@@ -77,26 +77,6 @@ Selector = str
 """A filter for selecting elements within the document. See [the documentation](https://typst.app/docs/reference/foundations/selector/) for more information."""
 Stroke = str
 """Defines how to draw a line. See [the documentation](https://typst.app/docs/reference/visualize/stroke/) for more information."""
-
-
-# endregion
-# region protocols
-
-
-class Normal(Protocol):
-    def __call__(self, body: Any, /, *args: Any, **kwargs: Any) -> Content: ...
-
-
-class Positional(Protocol):
-    def __call__(self, *args: Any) -> Content: ...
-
-
-class Instance(Protocol):
-    def __call__(self, instance: Content, /, *args: Any, **kwargs: Any) -> Content: ...
-
-
-class Series(Protocol):
-    def __call__(self, *children: Any, **kwargs: Any) -> Content: ...
 
 
 # endregion
@@ -579,10 +559,6 @@ __all__ = [
     'Relative',
     'Selector',
     'Stroke',
-    'Normal',
-    'Positional',
-    'Instance',
-    'Series',
     'VALID_PAPER_SIZES',
     'ValidPaperSizes',
     'VALID_CITATION_STYLES',

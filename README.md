@@ -13,140 +13,9 @@ Repository on GitHub: [python-typst](https://github.com/beibingyangliuying/pytho
 Homepage on PyPI: [python-typst](https://pypi.org/project/typstpy/).
 Any contributions are welcome.
 
-## Installation
-
-```bash
-pip install typstpy
-```
-
-## Current Supports
-
-| Package's function name | Typst's function name | Documentation on typst |
-| --- | --- | --- |
-| std.visualize.circle | circle | [https://typst.app/docs/reference/visualize/circle/](https://typst.app/docs/reference/visualize/circle/) |
-| std.visualize._color_map | color.map | [https://typst.app/docs/reference/visualize/color/#predefined-color-maps](https://typst.app/docs/reference/visualize/color/#predefined-color-maps) |
-| std.visualize.luma | luma | [https://typst.app/docs/reference/visualize/color/#definitions-luma](https://typst.app/docs/reference/visualize/color/#definitions-luma) |
-| std.visualize.oklab | oklab | [https://typst.app/docs/reference/visualize/color/#definitions-oklab](https://typst.app/docs/reference/visualize/color/#definitions-oklab) |
-| std.visualize.oklch | oklch | [https://typst.app/docs/reference/visualize/color/#definitions-oklch](https://typst.app/docs/reference/visualize/color/#definitions-oklch) |
-| std.visualize._color_linear_rgb | color.linear-rgb | [https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb](https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb) |
-| std.visualize.rgb | rgb | [https://typst.app/docs/reference/visualize/color/#definitions-rgb](https://typst.app/docs/reference/visualize/color/#definitions-rgb) |
-| std.visualize.cmyk | cmyk | [https://typst.app/docs/reference/visualize/color/#definitions-cmyk](https://typst.app/docs/reference/visualize/color/#definitions-cmyk) |
-| std.visualize._color_hsl | color.hsl | [https://typst.app/docs/reference/visualize/color/#definitions-hsl](https://typst.app/docs/reference/visualize/color/#definitions-hsl) |
-| std.visualize._color_hsv | color.hsv | [https://typst.app/docs/reference/visualize/color/#definitions-hsv](https://typst.app/docs/reference/visualize/color/#definitions-hsv) |
-| std.visualize._color_components | components | [https://typst.app/docs/reference/visualize/color/#definitions-components](https://typst.app/docs/reference/visualize/color/#definitions-components) |
-| std.visualize._color_space | space | [https://typst.app/docs/reference/visualize/color/#definitions-space](https://typst.app/docs/reference/visualize/color/#definitions-space) |
-| std.visualize._color_to_hex | to-hex | [https://typst.app/docs/reference/visualize/color/#definitions-to-hex](https://typst.app/docs/reference/visualize/color/#definitions-to-hex) |
-| std.visualize._color_lighten | lighten | [https://typst.app/docs/reference/visualize/color/#definitions-lighten](https://typst.app/docs/reference/visualize/color/#definitions-lighten) |
-| std.visualize._color_darken | darken | [https://typst.app/docs/reference/visualize/color/#definitions-darken](https://typst.app/docs/reference/visualize/color/#definitions-darken) |
-| std.visualize._color_saturate | saturate | [https://typst.app/docs/reference/visualize/color/#definitions-saturate](https://typst.app/docs/reference/visualize/color/#definitions-saturate) |
-| std.visualize._color_desaturate | desaturate | [https://typst.app/docs/reference/visualize/color/#definitions-desaturate](https://typst.app/docs/reference/visualize/color/#definitions-desaturate) |
-| std.visualize._color_negate | negate | [https://typst.app/docs/reference/visualize/color/#definitions-negate](https://typst.app/docs/reference/visualize/color/#definitions-negate) |
-| std.visualize._color_rotate | rotate | [https://typst.app/docs/reference/visualize/color/#definitions-rotate](https://typst.app/docs/reference/visualize/color/#definitions-rotate) |
-| std.visualize._color_mix | color.mix | [https://typst.app/docs/reference/visualize/color/#definitions-mix](https://typst.app/docs/reference/visualize/color/#definitions-mix) |
-| std.visualize._color_transparentize | transparentize | [https://typst.app/docs/reference/visualize/color/#definitions-transparentize](https://typst.app/docs/reference/visualize/color/#definitions-transparentize) |
-| std.visualize._color_opacify | opacify | [https://typst.app/docs/reference/visualize/color/#definitions-opacify](https://typst.app/docs/reference/visualize/color/#definitions-opacify) |
-| std.visualize.color | color | [https://typst.app/docs/reference/visualize/color/](https://typst.app/docs/reference/visualize/color/) |
-| std.visualize.ellipse | ellipse | [https://typst.app/docs/reference/visualize/ellipse/](https://typst.app/docs/reference/visualize/ellipse/) |
-| std.visualize._gradient_linear | gradient.linear | [https://typst.app/docs/reference/visualize/gradient/#definitions-linear](https://typst.app/docs/reference/visualize/gradient/#definitions-linear) |
-| std.visualize._gradient_radial | gradient.radial | [https://typst.app/docs/reference/visualize/gradient/#definitions-radial](https://typst.app/docs/reference/visualize/gradient/#definitions-radial) |
-| std.visualize._gradient_conic | gradient.conic | [https://typst.app/docs/reference/visualize/gradient/#definitions-conic](https://typst.app/docs/reference/visualize/gradient/#definitions-conic) |
-| std.visualize._gradient_sharp | sharp | [https://typst.app/docs/reference/visualize/gradient/#definitions-sharp](https://typst.app/docs/reference/visualize/gradient/#definitions-sharp) |
-| std.visualize._gradient_repeat | repeat | [https://typst.app/docs/reference/visualize/gradient/#definitions-repeat](https://typst.app/docs/reference/visualize/gradient/#definitions-repeat) |
-| std.visualize._gradient_kind | kind | [https://typst.app/docs/reference/visualize/gradient/#definitions-kind](https://typst.app/docs/reference/visualize/gradient/#definitions-kind) |
-| std.visualize._gradient_stops | stops | [https://typst.app/docs/reference/visualize/gradient/#definitions-stops](https://typst.app/docs/reference/visualize/gradient/#definitions-stops) |
-| std.visualize._gradient_space | space | [https://typst.app/docs/reference/visualize/gradient/#definitions-space](https://typst.app/docs/reference/visualize/gradient/#definitions-space) |
-| std.visualize._gradient_relative | relative | [https://typst.app/docs/reference/visualize/gradient/#definitions-relative](https://typst.app/docs/reference/visualize/gradient/#definitions-relative) |
-| std.visualize._gradient_angle | angle | [https://typst.app/docs/reference/visualize/gradient/#definitions-angle](https://typst.app/docs/reference/visualize/gradient/#definitions-angle) |
-| std.visualize._gradient_sample | sample | [https://typst.app/docs/reference/visualize/gradient/#definitions-sample](https://typst.app/docs/reference/visualize/gradient/#definitions-sample) |
-| std.visualize._gradient_samples | samples | [https://typst.app/docs/reference/visualize/gradient/#definitions-samples](https://typst.app/docs/reference/visualize/gradient/#definitions-samples) |
-| std.visualize.gradient | gradient | [https://typst.app/docs/reference/visualize/gradient/](https://typst.app/docs/reference/visualize/gradient/) |
-| std.visualize._image_decode | image.decode | [https://typst.app/docs/reference/visualize/image/#definitions-decode](https://typst.app/docs/reference/visualize/image/#definitions-decode) |
-| std.visualize.image | image | [https://typst.app/docs/reference/visualize/image/](https://typst.app/docs/reference/visualize/image/) |
-| std.visualize.line | line | [https://typst.app/docs/reference/visualize/line/](https://typst.app/docs/reference/visualize/line/) |
-| std.visualize.path | path | [https://typst.app/docs/reference/visualize/path/](https://typst.app/docs/reference/visualize/path/) |
-| std.visualize.pattern | pattern | [https://typst.app/docs/reference/visualize/pattern/](https://typst.app/docs/reference/visualize/pattern/) |
-| std.visualize._polygon_regular | polygon.regular | [https://typst.app/docs/reference/visualize/polygon/#definitions-regular](https://typst.app/docs/reference/visualize/polygon/#definitions-regular) |
-| std.visualize.polygon | polygon | [https://typst.app/docs/reference/visualize/polygon/](https://typst.app/docs/reference/visualize/polygon/) |
-| std.visualize.rect | rect | [https://typst.app/docs/reference/visualize/rect/](https://typst.app/docs/reference/visualize/rect/) |
-| std.visualize.square | square | [https://typst.app/docs/reference/visualize/square/](https://typst.app/docs/reference/visualize/square/) |
-| std.text.highlight | highlight | [https://typst.app/docs/reference/text/highlight/](https://typst.app/docs/reference/text/highlight/) |
-| std.text.linebreak | linebreak | [https://typst.app/docs/reference/text/linebreak/](https://typst.app/docs/reference/text/linebreak/) |
-| std.text.lorem | lorem | [https://typst.app/docs/reference/text/lorem/](https://typst.app/docs/reference/text/lorem/) |
-| std.text.lower | lower | [https://typst.app/docs/reference/text/lower/](https://typst.app/docs/reference/text/lower/) |
-| std.text.overline | overline | [https://typst.app/docs/reference/text/overline/](https://typst.app/docs/reference/text/overline/) |
-| std.text._raw_line | raw.line | [https://typst.app/docs/reference/text/raw/#definitions-line](https://typst.app/docs/reference/text/raw/#definitions-line) |
-| std.text.raw | raw | [https://typst.app/docs/reference/text/raw/](https://typst.app/docs/reference/text/raw/) |
-| std.text.smallcaps | smallcaps | [https://typst.app/docs/reference/text/smallcaps/](https://typst.app/docs/reference/text/smallcaps/) |
-| std.text.smartquote | smartquote | [https://typst.app/docs/reference/text/smartquote/](https://typst.app/docs/reference/text/smartquote/) |
-| std.text.strike | strike | [https://typst.app/docs/reference/text/strike/](https://typst.app/docs/reference/text/strike/) |
-| std.text.subscript | sub | [https://typst.app/docs/reference/text/sub/](https://typst.app/docs/reference/text/sub/) |
-| std.text.superscript | super | [https://typst.app/docs/reference/text/super/](https://typst.app/docs/reference/text/super/) |
-| std.text.text | text | [https://typst.app/docs/reference/text/text/](https://typst.app/docs/reference/text/text/) |
-| std.text.underline | underline | [https://typst.app/docs/reference/text/underline/](https://typst.app/docs/reference/text/underline/) |
-| std.text.upper | upper | [https://typst.app/docs/reference/text/upper/](https://typst.app/docs/reference/text/upper/) |
-| std.layout.align | align | [https://typst.app/docs/reference/layout/align/](https://typst.app/docs/reference/layout/align/) |
-| std.layout.block | block | [https://typst.app/docs/reference/layout/block/](https://typst.app/docs/reference/layout/block/) |
-| std.layout.box | box | [https://typst.app/docs/reference/layout/box/](https://typst.app/docs/reference/layout/box/) |
-| std.layout.colbreak | colbreak | [https://typst.app/docs/reference/layout/colbreak/](https://typst.app/docs/reference/layout/colbreak/) |
-| std.layout.columns | columns | [https://typst.app/docs/reference/layout/columns/](https://typst.app/docs/reference/layout/columns/) |
-| std.layout._grid_cell | grid.cell | [https://typst.app/docs/reference/layout/grid/#definitions-cell](https://typst.app/docs/reference/layout/grid/#definitions-cell) |
-| std.layout._grid_hline | grid.hline | [https://typst.app/docs/reference/layout/grid/#definitions-hline](https://typst.app/docs/reference/layout/grid/#definitions-hline) |
-| std.layout._grid_vline | grid.vline | [https://typst.app/docs/reference/layout/grid/#definitions-vline](https://typst.app/docs/reference/layout/grid/#definitions-vline) |
-| std.layout._grid_header | grid.header | [https://typst.app/docs/reference/layout/grid/#definitions-header](https://typst.app/docs/reference/layout/grid/#definitions-header) |
-| std.layout._grid_footer | grid.footer | [https://typst.app/docs/reference/layout/grid/#definitions-footer](https://typst.app/docs/reference/layout/grid/#definitions-footer) |
-| std.layout.grid | grid | [https://typst.app/docs/reference/layout/grid/](https://typst.app/docs/reference/layout/grid/) |
-| std.layout.hide | hide | [https://typst.app/docs/reference/layout/hide/](https://typst.app/docs/reference/layout/hide/) |
-| std.layout.layout | layout | [https://typst.app/docs/reference/layout/layout/](https://typst.app/docs/reference/layout/layout/) |
-| std.layout.measure | measure | [https://typst.app/docs/reference/layout/measure/](https://typst.app/docs/reference/layout/measure/) |
-| std.layout.move | move | [https://typst.app/docs/reference/layout/move/](https://typst.app/docs/reference/layout/move/) |
-| std.layout.padding | pad | [https://typst.app/docs/reference/layout/pad/](https://typst.app/docs/reference/layout/pad/) |
-| std.layout.pad | pad | [https://typst.app/docs/reference/layout/pad/](https://typst.app/docs/reference/layout/pad/) |
-| std.layout.page | page | [https://typst.app/docs/reference/layout/page/](https://typst.app/docs/reference/layout/page/) |
-| std.layout.pagebreak | pagebreak | [https://typst.app/docs/reference/layout/pagebreak/](https://typst.app/docs/reference/layout/pagebreak/) |
-| std.layout._place_flush | place.flush | [https://typst.app/docs/reference/layout/place/#definitions-flush](https://typst.app/docs/reference/layout/place/#definitions-flush) |
-| std.layout.place | place | [https://typst.app/docs/reference/layout/place/](https://typst.app/docs/reference/layout/place/) |
-| std.layout.repeat | repeat | [https://typst.app/docs/reference/layout/repeat/](https://typst.app/docs/reference/layout/repeat/) |
-| std.layout.rotate | rotate | [https://typst.app/docs/reference/layout/rotate/](https://typst.app/docs/reference/layout/rotate/) |
-| std.layout.scale | scale | [https://typst.app/docs/reference/layout/scale/](https://typst.app/docs/reference/layout/scale/) |
-| std.layout.skew | skew | [https://typst.app/docs/reference/layout/skew/](https://typst.app/docs/reference/layout/skew/) |
-| std.layout.hspace | h | [https://typst.app/docs/reference/layout/h/](https://typst.app/docs/reference/layout/h/) |
-| std.layout.vspace | v | [https://typst.app/docs/reference/layout/v/](https://typst.app/docs/reference/layout/v/) |
-| std.layout.stack | stack | [https://typst.app/docs/reference/layout/stack/](https://typst.app/docs/reference/layout/stack/) |
-| std.model.bibliography | bibliography | [https://typst.app/docs/reference/model/bibliography/](https://typst.app/docs/reference/model/bibliography/) |
-| std.model._bullet_list_item | list.item | [https://typst.app/docs/reference/model/list/#definitions-item](https://typst.app/docs/reference/model/list/#definitions-item) |
-| std.model.bullet_list | list | [https://typst.app/docs/reference/model/list/](https://typst.app/docs/reference/model/list/) |
-| std.model.cite | cite | [https://typst.app/docs/reference/model/cite/](https://typst.app/docs/reference/model/cite/) |
-| std.model.document | document | [https://typst.app/docs/reference/model/document/](https://typst.app/docs/reference/model/document/) |
-| std.model.emph | emph | [https://typst.app/docs/reference/model/emph/](https://typst.app/docs/reference/model/emph/) |
-| std.model._figure_caption | figure.caption | [https://typst.app/docs/reference/model/figure/#definitions-caption](https://typst.app/docs/reference/model/figure/#definitions-caption) |
-| std.model.figure | figure | [https://typst.app/docs/reference/model/figure/](https://typst.app/docs/reference/model/figure/) |
-| std.model._footnote_entry | footnote.entry | [https://typst.app/docs/reference/model/footnote/#definitions-entry](https://typst.app/docs/reference/model/footnote/#definitions-entry) |
-| std.model.footnote | footnote | [https://typst.app/docs/reference/model/footnote/](https://typst.app/docs/reference/model/footnote/) |
-| std.model.heading | heading | [https://typst.app/docs/reference/model/heading/](https://typst.app/docs/reference/model/heading/) |
-| std.model.link | link | [https://typst.app/docs/reference/model/link/](https://typst.app/docs/reference/model/link/) |
-| std.model._numbered_list_item | enum.item | [https://typst.app/docs/reference/model/enum/#definitions-item](https://typst.app/docs/reference/model/enum/#definitions-item) |
-| std.model.numbered_list | enum | [https://typst.app/docs/reference/model/enum/](https://typst.app/docs/reference/model/enum/) |
-| std.model.numbering | numbering | [https://typst.app/docs/reference/model/numbering/](https://typst.app/docs/reference/model/numbering/) |
-| std.model._outline_entry | outline.entry | [https://typst.app/docs/reference/model/outline/#definitions-entry](https://typst.app/docs/reference/model/outline/#definitions-entry) |
-| std.model.outline | outline | [https://typst.app/docs/reference/model/outline/](https://typst.app/docs/reference/model/outline/) |
-| std.model._par_line | par.line | [https://typst.app/docs/reference/model/par/#definitions-line](https://typst.app/docs/reference/model/par/#definitions-line) |
-| std.model.par | par | [https://typst.app/docs/reference/model/par/](https://typst.app/docs/reference/model/par/) |
-| std.model.parbreak | parbreak | [https://typst.app/docs/reference/model/parbreak/](https://typst.app/docs/reference/model/parbreak/) |
-| std.model.quote | quote | [https://typst.app/docs/reference/model/quote/](https://typst.app/docs/reference/model/quote/) |
-| std.model.ref | ref | [https://typst.app/docs/reference/model/ref/](https://typst.app/docs/reference/model/ref/) |
-| std.model.strong | strong | [https://typst.app/docs/reference/model/strong/](https://typst.app/docs/reference/model/strong/) |
-| std.model._table_cell | table.cell | [https://typst.app/docs/reference/model/table/#definitions-cell](https://typst.app/docs/reference/model/table/#definitions-cell) |
-| std.model._table_hline | table.hline | [https://typst.app/docs/reference/model/table/#definitions-hline](https://typst.app/docs/reference/model/table/#definitions-hline) |
-| std.model._table_vline | table.vline | [https://typst.app/docs/reference/model/table/#definitions-vline](https://typst.app/docs/reference/model/table/#definitions-vline) |
-| std.model._table_header | table.header | [https://typst.app/docs/reference/model/table/#definitions-header](https://typst.app/docs/reference/model/table/#definitions-header) |
-| std.model._table_footer | table.footer | [https://typst.app/docs/reference/model/table/#definitions-footer](https://typst.app/docs/reference/model/table/#definitions-footer) |
-| std.model.table | table | [https://typst.app/docs/reference/model/table/](https://typst.app/docs/reference/model/table/) |
-| std.model._terms_item | terms.item | [https://typst.app/docs/reference/model/terms/#definitions-item](https://typst.app/docs/reference/model/terms/#definitions-item) |
-| std.model.terms | terms | [https://typst.app/docs/reference/model/terms/](https://typst.app/docs/reference/model/terms/) |
-| subpar.grid | subpar.grid | [https://typst.app/universe/package/subpar](https://typst.app/universe/package/subpar) |
-
 ## Change logs
 
+- _1.1.0_: Provide `customizations` module to support custom functions.
 - _1.0.4_: Implement package `subpar`.
 - _1.0.3_:
   - Fix: Fix the behavior of `show_`.
@@ -156,6 +25,189 @@ pip install typstpy
 - _1.0.0_: Completed documentation and test cases in `layout`, `model`, `text` and `visualize` modules. Improved functionality.
 - _1.0.0-beta.2_: Improved the implementation and documentation of functions in the `layout` module.
 - _1.0.0-beta.1_: Completely reconstructed the underlying implementation.
+
+## Installation
+
+```bash
+pip install typstpy
+```
+
+## How to customize?
+
+typstpy provides the `customizations` module to support defining functions that are not yet supported in typstpy.
+The examples are:
+
+```python
+>>> from typstpy.customizations import *
+>>> pad = normal('pad')
+>>> pad(
+...     '[Hello, world!]',
+...     left='4% + 0pt',
+...     top='4% + 0pt',
+...     right='4% + 0pt',
+...     bottom='4% + 0pt',
+... )
+'#pad([Hello, world!], left: 4% + 0pt, top: 4% + 0pt, right: 4% + 0pt, bottom: 4% + 0pt)'
+>>> pagebreak = normal('pagebreak')
+>>> pagebreak(weak=True)
+'#pagebreak(weak: true)'
+>>> rgb = positional('rgb')
+>>> color_lighten = instance('lighten')
+>>> color_lighten(rgb(255, 255, 255), '50%')
+'#rgb(255, 255, 255).lighten(50%)'
+>>> rgb = positional('rgb')
+>>> rgb(255, 255, 255, '50%')
+'#rgb(255, 255, 255, 50%)'
+>>> table = post_series('table')
+>>> table(
+...     '[1]',
+...     '[2]',
+...     '[3]',
+...     columns=['1fr', '2fr', '3fr'],
+...     rows=['1fr', '2fr', '3fr'],
+...     gutter=['1fr', '2fr', '3fr'],
+...     column_gutter=['1fr', '2fr', '3fr'],
+...     row_gutter=['1fr', '2fr', '3fr'],
+...     fill='red',
+...     align=['center', 'center', 'center'],
+... )
+'#table(columns: (1fr, 2fr, 3fr), rows: (1fr, 2fr, 3fr), gutter: (1fr, 2fr, 3fr), column-gutter: (1fr, 2fr, 3fr), row-gutter: (1fr, 2fr, 3fr), fill: red, align: (center, center, center), [1], [2], [3])'
+>>> subpar_grid = pre_series('subpar.grid')
+>>> subpar_grid(
+...     '[]',
+...     '[]',
+...     columns=('1fr', '1fr'),
+...     caption='[A figure composed of two sub figures.]',
+...     label='<full>',
+... )
+'#subpar.grid([], [], columns: (1fr, 1fr), caption: [A figure composed of two sub figures.], label: <full>)'
+```
+
+## Current Supports
+
+| Package's function name             | Typst's function name | Documentation on typst                                                                                                                                       |
+| ----------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| std.visualize.circle                | circle                | [https://typst.app/docs/reference/visualize/circle/](https://typst.app/docs/reference/visualize/circle/)                                                     |
+| std.visualize._color_map            | color.map             | [https://typst.app/docs/reference/visualize/color/#predefined-color-maps](https://typst.app/docs/reference/visualize/color/#predefined-color-maps)           |
+| std.visualize.luma                  | luma                  | [https://typst.app/docs/reference/visualize/color/#definitions-luma](https://typst.app/docs/reference/visualize/color/#definitions-luma)                     |
+| std.visualize.oklab                 | oklab                 | [https://typst.app/docs/reference/visualize/color/#definitions-oklab](https://typst.app/docs/reference/visualize/color/#definitions-oklab)                   |
+| std.visualize.oklch                 | oklch                 | [https://typst.app/docs/reference/visualize/color/#definitions-oklch](https://typst.app/docs/reference/visualize/color/#definitions-oklch)                   |
+| std.visualize._color_linear_rgb     | color.linear-rgb      | [https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb](https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb)         |
+| std.visualize.rgb                   | rgb                   | [https://typst.app/docs/reference/visualize/color/#definitions-rgb](https://typst.app/docs/reference/visualize/color/#definitions-rgb)                       |
+| std.visualize.cmyk                  | cmyk                  | [https://typst.app/docs/reference/visualize/color/#definitions-cmyk](https://typst.app/docs/reference/visualize/color/#definitions-cmyk)                     |
+| std.visualize._color_hsl            | color.hsl             | [https://typst.app/docs/reference/visualize/color/#definitions-hsl](https://typst.app/docs/reference/visualize/color/#definitions-hsl)                       |
+| std.visualize._color_hsv            | color.hsv             | [https://typst.app/docs/reference/visualize/color/#definitions-hsv](https://typst.app/docs/reference/visualize/color/#definitions-hsv)                       |
+| std.visualize._color_components     | components            | [https://typst.app/docs/reference/visualize/color/#definitions-components](https://typst.app/docs/reference/visualize/color/#definitions-components)         |
+| std.visualize._color_space          | space                 | [https://typst.app/docs/reference/visualize/color/#definitions-space](https://typst.app/docs/reference/visualize/color/#definitions-space)                   |
+| std.visualize._color_to_hex         | to-hex                | [https://typst.app/docs/reference/visualize/color/#definitions-to-hex](https://typst.app/docs/reference/visualize/color/#definitions-to-hex)                 |
+| std.visualize._color_lighten        | lighten               | [https://typst.app/docs/reference/visualize/color/#definitions-lighten](https://typst.app/docs/reference/visualize/color/#definitions-lighten)               |
+| std.visualize._color_darken         | darken                | [https://typst.app/docs/reference/visualize/color/#definitions-darken](https://typst.app/docs/reference/visualize/color/#definitions-darken)                 |
+| std.visualize._color_saturate       | saturate              | [https://typst.app/docs/reference/visualize/color/#definitions-saturate](https://typst.app/docs/reference/visualize/color/#definitions-saturate)             |
+| std.visualize._color_desaturate     | desaturate            | [https://typst.app/docs/reference/visualize/color/#definitions-desaturate](https://typst.app/docs/reference/visualize/color/#definitions-desaturate)         |
+| std.visualize._color_negate         | negate                | [https://typst.app/docs/reference/visualize/color/#definitions-negate](https://typst.app/docs/reference/visualize/color/#definitions-negate)                 |
+| std.visualize._color_rotate         | rotate                | [https://typst.app/docs/reference/visualize/color/#definitions-rotate](https://typst.app/docs/reference/visualize/color/#definitions-rotate)                 |
+| std.visualize._color_mix            | color.mix             | [https://typst.app/docs/reference/visualize/color/#definitions-mix](https://typst.app/docs/reference/visualize/color/#definitions-mix)                       |
+| std.visualize._color_transparentize | transparentize        | [https://typst.app/docs/reference/visualize/color/#definitions-transparentize](https://typst.app/docs/reference/visualize/color/#definitions-transparentize) |
+| std.visualize._color_opacify        | opacify               | [https://typst.app/docs/reference/visualize/color/#definitions-opacify](https://typst.app/docs/reference/visualize/color/#definitions-opacify)               |
+| std.visualize.color                 | color                 | [https://typst.app/docs/reference/visualize/color/](https://typst.app/docs/reference/visualize/color/)                                                       |
+| std.visualize.ellipse               | ellipse               | [https://typst.app/docs/reference/visualize/ellipse/](https://typst.app/docs/reference/visualize/ellipse/)                                                   |
+| std.visualize._gradient_linear      | gradient.linear       | [https://typst.app/docs/reference/visualize/gradient/#definitions-linear](https://typst.app/docs/reference/visualize/gradient/#definitions-linear)           |
+| std.visualize._gradient_radial      | gradient.radial       | [https://typst.app/docs/reference/visualize/gradient/#definitions-radial](https://typst.app/docs/reference/visualize/gradient/#definitions-radial)           |
+| std.visualize._gradient_conic       | gradient.conic        | [https://typst.app/docs/reference/visualize/gradient/#definitions-conic](https://typst.app/docs/reference/visualize/gradient/#definitions-conic)             |
+| std.visualize._gradient_sharp       | sharp                 | [https://typst.app/docs/reference/visualize/gradient/#definitions-sharp](https://typst.app/docs/reference/visualize/gradient/#definitions-sharp)             |
+| std.visualize._gradient_repeat      | repeat                | [https://typst.app/docs/reference/visualize/gradient/#definitions-repeat](https://typst.app/docs/reference/visualize/gradient/#definitions-repeat)           |
+| std.visualize._gradient_kind        | kind                  | [https://typst.app/docs/reference/visualize/gradient/#definitions-kind](https://typst.app/docs/reference/visualize/gradient/#definitions-kind)               |
+| std.visualize._gradient_stops       | stops                 | [https://typst.app/docs/reference/visualize/gradient/#definitions-stops](https://typst.app/docs/reference/visualize/gradient/#definitions-stops)             |
+| std.visualize._gradient_space       | space                 | [https://typst.app/docs/reference/visualize/gradient/#definitions-space](https://typst.app/docs/reference/visualize/gradient/#definitions-space)             |
+| std.visualize._gradient_relative    | relative              | [https://typst.app/docs/reference/visualize/gradient/#definitions-relative](https://typst.app/docs/reference/visualize/gradient/#definitions-relative)       |
+| std.visualize._gradient_angle       | angle                 | [https://typst.app/docs/reference/visualize/gradient/#definitions-angle](https://typst.app/docs/reference/visualize/gradient/#definitions-angle)             |
+| std.visualize._gradient_sample      | sample                | [https://typst.app/docs/reference/visualize/gradient/#definitions-sample](https://typst.app/docs/reference/visualize/gradient/#definitions-sample)           |
+| std.visualize._gradient_samples     | samples               | [https://typst.app/docs/reference/visualize/gradient/#definitions-samples](https://typst.app/docs/reference/visualize/gradient/#definitions-samples)         |
+| std.visualize.gradient              | gradient              | [https://typst.app/docs/reference/visualize/gradient/](https://typst.app/docs/reference/visualize/gradient/)                                                 |
+| std.visualize._image_decode         | image.decode          | [https://typst.app/docs/reference/visualize/image/#definitions-decode](https://typst.app/docs/reference/visualize/image/#definitions-decode)                 |
+| std.visualize.image                 | image                 | [https://typst.app/docs/reference/visualize/image/](https://typst.app/docs/reference/visualize/image/)                                                       |
+| std.visualize.line                  | line                  | [https://typst.app/docs/reference/visualize/line/](https://typst.app/docs/reference/visualize/line/)                                                         |
+| std.visualize.path                  | path                  | [https://typst.app/docs/reference/visualize/path/](https://typst.app/docs/reference/visualize/path/)                                                         |
+| std.visualize.pattern               | pattern               | [https://typst.app/docs/reference/visualize/pattern/](https://typst.app/docs/reference/visualize/pattern/)                                                   |
+| std.visualize._polygon_regular      | polygon.regular       | [https://typst.app/docs/reference/visualize/polygon/#definitions-regular](https://typst.app/docs/reference/visualize/polygon/#definitions-regular)           |
+| std.visualize.polygon               | polygon               | [https://typst.app/docs/reference/visualize/polygon/](https://typst.app/docs/reference/visualize/polygon/)                                                   |
+| std.visualize.rect                  | rect                  | [https://typst.app/docs/reference/visualize/rect/](https://typst.app/docs/reference/visualize/rect/)                                                         |
+| std.visualize.square                | square                | [https://typst.app/docs/reference/visualize/square/](https://typst.app/docs/reference/visualize/square/)                                                     |
+| std.text.highlight                  | highlight             | [https://typst.app/docs/reference/text/highlight/](https://typst.app/docs/reference/text/highlight/)                                                         |
+| std.text.linebreak                  | linebreak             | [https://typst.app/docs/reference/text/linebreak/](https://typst.app/docs/reference/text/linebreak/)                                                         |
+| std.text.lorem                      | lorem                 | [https://typst.app/docs/reference/text/lorem/](https://typst.app/docs/reference/text/lorem/)                                                                 |
+| std.text.lower                      | lower                 | [https://typst.app/docs/reference/text/lower/](https://typst.app/docs/reference/text/lower/)                                                                 |
+| std.text.overline                   | overline              | [https://typst.app/docs/reference/text/overline/](https://typst.app/docs/reference/text/overline/)                                                           |
+| std.text._raw_line                  | raw.line              | [https://typst.app/docs/reference/text/raw/#definitions-line](https://typst.app/docs/reference/text/raw/#definitions-line)                                   |
+| std.text.raw                        | raw                   | [https://typst.app/docs/reference/text/raw/](https://typst.app/docs/reference/text/raw/)                                                                     |
+| std.text.smallcaps                  | smallcaps             | [https://typst.app/docs/reference/text/smallcaps/](https://typst.app/docs/reference/text/smallcaps/)                                                         |
+| std.text.smartquote                 | smartquote            | [https://typst.app/docs/reference/text/smartquote/](https://typst.app/docs/reference/text/smartquote/)                                                       |
+| std.text.strike                     | strike                | [https://typst.app/docs/reference/text/strike/](https://typst.app/docs/reference/text/strike/)                                                               |
+| std.text.subscript                  | sub                   | [https://typst.app/docs/reference/text/sub/](https://typst.app/docs/reference/text/sub/)                                                                     |
+| std.text.superscript                | super                 | [https://typst.app/docs/reference/text/super/](https://typst.app/docs/reference/text/super/)                                                                 |
+| std.text.text                       | text                  | [https://typst.app/docs/reference/text/text/](https://typst.app/docs/reference/text/text/)                                                                   |
+| std.text.underline                  | underline             | [https://typst.app/docs/reference/text/underline/](https://typst.app/docs/reference/text/underline/)                                                         |
+| std.text.upper                      | upper                 | [https://typst.app/docs/reference/text/upper/](https://typst.app/docs/reference/text/upper/)                                                                 |
+| std.layout.align                    | align                 | [https://typst.app/docs/reference/layout/align/](https://typst.app/docs/reference/layout/align/)                                                             |
+| std.layout.block                    | block                 | [https://typst.app/docs/reference/layout/block/](https://typst.app/docs/reference/layout/block/)                                                             |
+| std.layout.box                      | box                   | [https://typst.app/docs/reference/layout/box/](https://typst.app/docs/reference/layout/box/)                                                                 |
+| std.layout.colbreak                 | colbreak              | [https://typst.app/docs/reference/layout/colbreak/](https://typst.app/docs/reference/layout/colbreak/)                                                       |
+| std.layout.columns                  | columns               | [https://typst.app/docs/reference/layout/columns/](https://typst.app/docs/reference/layout/columns/)                                                         |
+| std.layout._grid_cell               | grid.cell             | [https://typst.app/docs/reference/layout/grid/#definitions-cell](https://typst.app/docs/reference/layout/grid/#definitions-cell)                             |
+| std.layout._grid_hline              | grid.hline            | [https://typst.app/docs/reference/layout/grid/#definitions-hline](https://typst.app/docs/reference/layout/grid/#definitions-hline)                           |
+| std.layout._grid_vline              | grid.vline            | [https://typst.app/docs/reference/layout/grid/#definitions-vline](https://typst.app/docs/reference/layout/grid/#definitions-vline)                           |
+| std.layout._grid_header             | grid.header           | [https://typst.app/docs/reference/layout/grid/#definitions-header](https://typst.app/docs/reference/layout/grid/#definitions-header)                         |
+| std.layout._grid_footer             | grid.footer           | [https://typst.app/docs/reference/layout/grid/#definitions-footer](https://typst.app/docs/reference/layout/grid/#definitions-footer)                         |
+| std.layout.grid                     | grid                  | [https://typst.app/docs/reference/layout/grid/](https://typst.app/docs/reference/layout/grid/)                                                               |
+| std.layout.hide                     | hide                  | [https://typst.app/docs/reference/layout/hide/](https://typst.app/docs/reference/layout/hide/)                                                               |
+| std.layout.layout                   | layout                | [https://typst.app/docs/reference/layout/layout/](https://typst.app/docs/reference/layout/layout/)                                                           |
+| std.layout.measure                  | measure               | [https://typst.app/docs/reference/layout/measure/](https://typst.app/docs/reference/layout/measure/)                                                         |
+| std.layout.move                     | move                  | [https://typst.app/docs/reference/layout/move/](https://typst.app/docs/reference/layout/move/)                                                               |
+| std.layout.padding                  | pad                   | [https://typst.app/docs/reference/layout/pad/](https://typst.app/docs/reference/layout/pad/)                                                                 |
+| std.layout.pad                      | pad                   | [https://typst.app/docs/reference/layout/pad/](https://typst.app/docs/reference/layout/pad/)                                                                 |
+| std.layout.page                     | page                  | [https://typst.app/docs/reference/layout/page/](https://typst.app/docs/reference/layout/page/)                                                               |
+| std.layout.pagebreak                | pagebreak             | [https://typst.app/docs/reference/layout/pagebreak/](https://typst.app/docs/reference/layout/pagebreak/)                                                     |
+| std.layout._place_flush             | place.flush           | [https://typst.app/docs/reference/layout/place/#definitions-flush](https://typst.app/docs/reference/layout/place/#definitions-flush)                         |
+| std.layout.place                    | place                 | [https://typst.app/docs/reference/layout/place/](https://typst.app/docs/reference/layout/place/)                                                             |
+| std.layout.repeat                   | repeat                | [https://typst.app/docs/reference/layout/repeat/](https://typst.app/docs/reference/layout/repeat/)                                                           |
+| std.layout.rotate                   | rotate                | [https://typst.app/docs/reference/layout/rotate/](https://typst.app/docs/reference/layout/rotate/)                                                           |
+| std.layout.scale                    | scale                 | [https://typst.app/docs/reference/layout/scale/](https://typst.app/docs/reference/layout/scale/)                                                             |
+| std.layout.skew                     | skew                  | [https://typst.app/docs/reference/layout/skew/](https://typst.app/docs/reference/layout/skew/)                                                               |
+| std.layout.hspace                   | h                     | [https://typst.app/docs/reference/layout/h/](https://typst.app/docs/reference/layout/h/)                                                                     |
+| std.layout.vspace                   | v                     | [https://typst.app/docs/reference/layout/v/](https://typst.app/docs/reference/layout/v/)                                                                     |
+| std.layout.stack                    | stack                 | [https://typst.app/docs/reference/layout/stack/](https://typst.app/docs/reference/layout/stack/)                                                             |
+| std.model.bibliography              | bibliography          | [https://typst.app/docs/reference/model/bibliography/](https://typst.app/docs/reference/model/bibliography/)                                                 |
+| std.model._bullet_list_item         | list.item             | [https://typst.app/docs/reference/model/list/#definitions-item](https://typst.app/docs/reference/model/list/#definitions-item)                               |
+| std.model.bullet_list               | list                  | [https://typst.app/docs/reference/model/list/](https://typst.app/docs/reference/model/list/)                                                                 |
+| std.model.cite                      | cite                  | [https://typst.app/docs/reference/model/cite/](https://typst.app/docs/reference/model/cite/)                                                                 |
+| std.model.document                  | document              | [https://typst.app/docs/reference/model/document/](https://typst.app/docs/reference/model/document/)                                                         |
+| std.model.emph                      | emph                  | [https://typst.app/docs/reference/model/emph/](https://typst.app/docs/reference/model/emph/)                                                                 |
+| std.model._figure_caption           | figure.caption        | [https://typst.app/docs/reference/model/figure/#definitions-caption](https://typst.app/docs/reference/model/figure/#definitions-caption)                     |
+| std.model.figure                    | figure                | [https://typst.app/docs/reference/model/figure/](https://typst.app/docs/reference/model/figure/)                                                             |
+| std.model._footnote_entry           | footnote.entry        | [https://typst.app/docs/reference/model/footnote/#definitions-entry](https://typst.app/docs/reference/model/footnote/#definitions-entry)                     |
+| std.model.footnote                  | footnote              | [https://typst.app/docs/reference/model/footnote/](https://typst.app/docs/reference/model/footnote/)                                                         |
+| std.model.heading                   | heading               | [https://typst.app/docs/reference/model/heading/](https://typst.app/docs/reference/model/heading/)                                                           |
+| std.model.link                      | link                  | [https://typst.app/docs/reference/model/link/](https://typst.app/docs/reference/model/link/)                                                                 |
+| std.model._numbered_list_item       | enum.item             | [https://typst.app/docs/reference/model/enum/#definitions-item](https://typst.app/docs/reference/model/enum/#definitions-item)                               |
+| std.model.numbered_list             | enum                  | [https://typst.app/docs/reference/model/enum/](https://typst.app/docs/reference/model/enum/)                                                                 |
+| std.model.numbering                 | numbering             | [https://typst.app/docs/reference/model/numbering/](https://typst.app/docs/reference/model/numbering/)                                                       |
+| std.model._outline_entry            | outline.entry         | [https://typst.app/docs/reference/model/outline/#definitions-entry](https://typst.app/docs/reference/model/outline/#definitions-entry)                       |
+| std.model.outline                   | outline               | [https://typst.app/docs/reference/model/outline/](https://typst.app/docs/reference/model/outline/)                                                           |
+| std.model._par_line                 | par.line              | [https://typst.app/docs/reference/model/par/#definitions-line](https://typst.app/docs/reference/model/par/#definitions-line)                                 |
+| std.model.par                       | par                   | [https://typst.app/docs/reference/model/par/](https://typst.app/docs/reference/model/par/)                                                                   |
+| std.model.parbreak                  | parbreak              | [https://typst.app/docs/reference/model/parbreak/](https://typst.app/docs/reference/model/parbreak/)                                                         |
+| std.model.quote                     | quote                 | [https://typst.app/docs/reference/model/quote/](https://typst.app/docs/reference/model/quote/)                                                               |
+| std.model.ref                       | ref                   | [https://typst.app/docs/reference/model/ref/](https://typst.app/docs/reference/model/ref/)                                                                   |
+| std.model.strong                    | strong                | [https://typst.app/docs/reference/model/strong/](https://typst.app/docs/reference/model/strong/)                                                             |
+| std.model._table_cell               | table.cell            | [https://typst.app/docs/reference/model/table/#definitions-cell](https://typst.app/docs/reference/model/table/#definitions-cell)                             |
+| std.model._table_hline              | table.hline           | [https://typst.app/docs/reference/model/table/#definitions-hline](https://typst.app/docs/reference/model/table/#definitions-hline)                           |
+| std.model._table_vline              | table.vline           | [https://typst.app/docs/reference/model/table/#definitions-vline](https://typst.app/docs/reference/model/table/#definitions-vline)                           |
+| std.model._table_header             | table.header          | [https://typst.app/docs/reference/model/table/#definitions-header](https://typst.app/docs/reference/model/table/#definitions-header)                         |
+| std.model._table_footer             | table.footer          | [https://typst.app/docs/reference/model/table/#definitions-footer](https://typst.app/docs/reference/model/table/#definitions-footer)                         |
+| std.model.table                     | table                 | [https://typst.app/docs/reference/model/table/](https://typst.app/docs/reference/model/table/)                                                               |
+| std.model._terms_item               | terms.item            | [https://typst.app/docs/reference/model/terms/#definitions-item](https://typst.app/docs/reference/model/terms/#definitions-item)                             |
+| std.model.terms                     | terms                 | [https://typst.app/docs/reference/model/terms/](https://typst.app/docs/reference/model/terms/)                                                               |
+| subpar.grid                         | subpar.grid           | [https://typst.app/universe/package/subpar](https://typst.app/universe/package/subpar)                                                                       |
 
 ## Examples
 
