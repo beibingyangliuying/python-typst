@@ -48,7 +48,7 @@ def circle(
     | Pattern
     | RectangleStroke = 'auto',
     inset: Relative | BoxInset = '0% + 5pt',
-    outset: Relative | BoxOutset = dict(),
+    outset: Relative | BoxOutset = {},
 ) -> Content:
     """Interface of `circle` in typst. See [the documentation](https://typst.app/docs/reference/visualize/circle/) for more information.
 
@@ -60,7 +60,7 @@ def circle(
         fill: How to fill the circle. Defaults to None.
         stroke: How to stroke the circle. Defaults to 'auto'.
         inset: How much to pad the circle's content. Defaults to '0% + 5pt'.
-        outset: How much to expand the circle's size without affecting the layout. Defaults to dict().
+        outset: How much to expand the circle's size without affecting the layout. Defaults to {}.
 
     Raises:
         ValueError: If `radius` is not '0pt' and either `width` or `height` is not 'auto'.
@@ -715,7 +715,7 @@ def ellipse(
     | Pattern
     | RectangleStroke = None,
     inset: Relative | BoxInset = '0% + 5pt',
-    outset: Relative | BoxOutset = dict(),
+    outset: Relative | BoxOutset = {},
 ) -> Content:
     """Interface of `ellipse` in typst. See [the documentation](https://typst.app/docs/reference/visualize/ellipse/) for more information.
 
@@ -726,7 +726,7 @@ def ellipse(
         fill: How to fill the ellipse. Defaults to None.
         stroke: How to stroke the ellipse. Defaults to None.
         inset: How much to pad the ellipse's content. Defaults to '0% + 5pt'.
-        outset: How much to expand the ellipse's size without affecting the layout. Defaults to dict().
+        outset: How much to expand the ellipse's size without affecting the layout. Defaults to {}.
 
     Returns:
         Executable typst code.
@@ -1325,9 +1325,9 @@ def rect(
     | Stroke
     | Pattern
     | RectangleStroke = 'auto',
-    radius: Relative | RectangleRadius = dict(),
+    radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = '0% + 5pt',
-    outset: Relative | BoxOutset = dict(),
+    outset: Relative | BoxOutset = {},
 ) -> Content:
     """Interface of `rect` in typst. See [the documentation](https://typst.app/docs/reference/visualize/rect/) for more information.
 
@@ -1337,9 +1337,9 @@ def rect(
         height: The rectangle's height, relative to its parent container. Defaults to 'auto'.
         fill: How to fill the rectangle. Defaults to None.
         stroke: How to stroke the rectangle. Defaults to 'auto'.
-        radius: How much to round the rectangle's corners, relative to the minimum of the width and height divided by two. Defaults to dict().
+        radius: How much to round the rectangle's corners, relative to the minimum of the width and height divided by two. Defaults to {}.
         inset: How much to pad the rectangle's content. Defaults to '0% + 5pt'.
-        outset: How much to expand the rectangle's size without affecting the layout. Defaults to dict().
+        outset: How much to expand the rectangle's size without affecting the layout. Defaults to {}.
 
     Returns:
         Executable typst code.
@@ -1374,9 +1374,9 @@ def square(
     | Stroke
     | Pattern
     | RectangleStroke = 'auto',
-    radius: Relative | RectangleRadius = dict(),
+    radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = '0% + 5pt',
-    outset: Relative | BoxOutset = dict(),
+    outset: Relative | BoxOutset = {},
 ) -> Content:
     """Interface of `square` in typst. See [the documentation](https://typst.app/docs/reference/visualize/square/) for more information.
 
@@ -1387,9 +1387,9 @@ def square(
         height: The square's height. Defaults to 'auto'.
         fill: How to fill the square. Defaults to None.
         stroke: How to stroke the square. Defaults to 'auto'.
-        radius: How much to round the square's corners. Defaults to dict().
+        radius: How much to round the square's corners. Defaults to {}.
         inset: How much to pad the square's content. Defaults to '0% + 5pt'.
-        outset: How much to expand the square's size without affecting the layout. Defaults to dict().
+        outset: How much to expand the square's size without affecting the layout. Defaults to {}.
 
     Raises:
         ValueError: If `size` is not 'auto' when either `width` or `height` is not 'auto'.

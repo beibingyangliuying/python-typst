@@ -33,13 +33,7 @@ def highlight(
     /,
     *,
     fill: None | Color | Gradient | Pattern = rgb('"#fffd11a1"'),
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Pattern
-    | RectangleStroke = dict(),
+    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
     top_edge: Length
     | Literal[
         '"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'
@@ -47,18 +41,18 @@ def highlight(
     bottom_edge: Length
     | Literal['"baseline"', '"descender"', '"bounds"'] = '"descender"',
     extent: Length = '0pt',
-    radius: Relative | RectangleRadius = dict(),
+    radius: Relative | RectangleRadius = {},
 ) -> Content:
     """Interface of `highlight` in typst. See [the documentation](https://typst.app/docs/reference/text/highlight/) for more information.
 
     Args:
         body: The content that should be highlighted.
         fill: The color to highlight the text with. Defaults to rgb('"#fffd11a1"').
-        stroke: The highlight's border color. Defaults to dict().
+        stroke: The highlight's border color. Defaults to {}.
         top_edge: The top end of the background rectangle. Defaults to '"ascender"'.
         bottom_edge: The bottom end of the background rectangle. Defaults to '"descender"'.
         extent: The amount by which to extend the background to the sides beyond (or within if negative) the content. Defaults to '0pt'.
-        radius: How much to round the highlight's corners. Defaults to dict().
+        radius: How much to round the highlight's corners. Defaults to {}.
 
     Raises:
         ValueError: If `top_edge` or `bottom_edge` is invalid.
@@ -516,7 +510,7 @@ def text(
     number_width: Auto | Literal['"proportional"', '"tabular"'] = 'auto',
     slashed_zero: bool = False,
     fractions: bool = False,
-    features: Iterable[str] | dict[str, Any] = dict(),
+    features: Iterable[str] | dict[str, Any] = {},
 ) -> Content:
     """Interface of `text` in typst. See [the documentation](https://typst.app/docs/reference/text/text/) for more information.
 
@@ -552,7 +546,7 @@ def text(
         number_width: The width of numbers / figures. Defaults to 'auto'.
         slashed_zero: Whether to have a slash through the zero glyph. Defaults to False.
         fractions: Whether to turn numbers into fractions. Defaults to False.
-        features: Raw OpenType features to apply. Defaults to dict().
+        features: Raw OpenType features to apply. Defaults to {}.
 
     Raises:
         ValueError: If `style` or `weight` or `top_edge` or `bottom_edge` or `number_type` or `number_width` is invalid.

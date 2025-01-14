@@ -777,13 +777,7 @@ def _table_cell(
     fill: None | Auto | Color | Gradient | Pattern = 'auto',
     align: Auto | Alignment = 'auto',
     inset: Auto | Relative | BoxInset = 'auto',
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Pattern
-    | RectangleStroke = dict(),
+    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
     breakable: Auto | bool = 'auto',
 ) -> Content:
     """Interface of `table.cell` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-cell) for more information.
@@ -797,7 +791,7 @@ def _table_cell(
         fill: The amount of rows spanned by this cell. Defaults to 'auto'.
         align: The cell's alignment override. Defaults to 'auto'.
         inset: The cell's inset override. Defaults to 'auto'.
-        stroke: The cell's stroke override. Defaults to dict().
+        stroke: The cell's stroke override. Defaults to {}.
         breakable: Whether rows spanned by this cell can be placed in different pages. Defaults to 'auto'.
 
     Returns:

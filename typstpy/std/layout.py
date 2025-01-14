@@ -71,16 +71,10 @@ def block(
     height: Auto | Relative | Fraction = 'auto',
     breakable: bool = True,
     fill: None | Color | Gradient | Pattern = None,
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Pattern
-    | RectangleStroke = dict(),
-    radius: Relative | RectangleRadius = dict(),
-    inset: Relative | BoxInset = dict(),
-    outset: Relative | BoxOutset = dict(),
+    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
+    radius: Relative | RectangleRadius = {},
+    inset: Relative | BoxInset = {},
+    outset: Relative | BoxOutset = {},
     spacing: Relative | Fraction = '1.2em',
     above: Auto | Relative | Fraction = 'auto',
     below: Auto | Relative | Fraction = 'auto',
@@ -95,10 +89,10 @@ def block(
         height: The block's height. Defaults to 'auto'.
         breakable: Whether the block can be broken and continue on the next page. Defaults to True.
         fill: The block's background color. Defaults to None.
-        stroke: The block's border color. Defaults to dict().
-        radius: How much to round the block's corners. Defaults to dict().
-        inset: How much to round the block's corners. Defaults to dict().
-        outset: How much to round the block's corners. Defaults to dict().
+        stroke: The block's border color. Defaults to {}.
+        radius: How much to round the block's corners. Defaults to {}.
+        inset: How much to round the block's corners. Defaults to {}.
+        outset: How much to round the block's corners. Defaults to {}.
         spacing: The spacing around the block. Defaults to '1.2em'.
         above: The spacing between this block and its predecessor. Defaults to 'auto'.
         below: The spacing between this block and its successor. Defaults to 'auto'.
@@ -146,16 +140,10 @@ def box(
     height: Auto | Relative = 'auto',
     baseline: Relative = '0% + 0pt',
     fill: None | Color | Gradient | Pattern = None,
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Pattern
-    | RectangleStroke = dict(),
-    radius: Relative | RectangleRadius = dict(),
-    inset: Relative | BoxInset = dict(),
-    outset: Relative | BoxOutset = dict(),
+    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
+    radius: Relative | RectangleRadius = {},
+    inset: Relative | BoxInset = {},
+    outset: Relative | BoxOutset = {},
     clip: bool = False,
 ) -> Content:
     """Interface of `box` in typst. See [the documentation](https://typst.app/docs/reference/layout/box/) for more information.
@@ -166,10 +154,10 @@ def box(
         height: The height of the box. Defaults to 'auto'.
         baseline: An amount to shift the box's baseline by. Defaults to '0% + 0pt'.
         fill: The box's background color. Defaults to None.
-        stroke: The box's border color. Defaults to dict().
-        radius: How much to round the box's corners. Defaults to dict().
-        inset: How much to pad the box's content. Defaults to dict().
-        outset: How much to expand the box's size without affecting the layout. Defaults to dict().
+        stroke: The box's border color. Defaults to {}.
+        radius: How much to round the box's corners. Defaults to {}.
+        inset: How much to pad the box's content. Defaults to {}.
+        outset: How much to expand the box's size without affecting the layout. Defaults to {}.
         clip: Whether to clip the content inside the box. Defaults to False.
 
     Returns:
@@ -262,13 +250,7 @@ def _grid_cell(
     fill: None | Auto | Color | Gradient | Pattern = 'auto',
     align: Auto | Alignment = 'auto',
     inset: Auto | Relative | BoxInset = 'auto',
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Pattern
-    | RectangleStroke = dict(),
+    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
     breakable: Auto | bool = 'auto',
 ) -> Content:
     """Interface of `grid.cell` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-cell) for more information.
@@ -282,7 +264,7 @@ def _grid_cell(
         fill: The cell's fill override. Defaults to 'auto'.
         align: The cell's alignment override. Defaults to 'auto'.
         inset: The cell's inset override. Defaults to 'auto'.
-        stroke: The cell's stroke override. Defaults to dict().
+        stroke: The cell's stroke override. Defaults to {}.
         breakable: Whether rows spanned by this cell can be placed in different pages. Defaults to 'auto'.
 
     Returns:
@@ -427,7 +409,7 @@ def grid(
     | Pattern
     | RectangleStroke
     | Function = None,
-    inset: Relative | Iterable[Relative] | BoxInset | Function = dict(),
+    inset: Relative | Iterable[Relative] | BoxInset | Function = {},
 ) -> Content:
     """Interface of `grid` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/) for more information.
 
@@ -440,7 +422,7 @@ def grid(
         fill: How to fill the cells. Defaults to None.
         align: How to align the cells' content. Defaults to 'auto'.
         stroke: How to stroke the cells. Defaults to None.
-        inset: How much to pad the cells' content. Defaults to dict().
+        inset: How much to pad the cells' content. Defaults to {}.
 
     Returns:
         Executable typst code.

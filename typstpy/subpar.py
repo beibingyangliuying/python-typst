@@ -15,7 +15,7 @@ def grid(
     column_gutter: Any = 'auto',
     row_gutter: Any = 'auto',
     align: Any = 'bottom',
-    inset: Any = dict(),
+    inset: Any = {},
     kind: Any = 'image',
     numbering: Any = '"1"',
     numbering_sub: Any = '"(a)"',
@@ -41,7 +41,7 @@ def grid(
         column_gutter: _description_. Defaults to 'auto'.
         row_gutter: _description_. Defaults to 'auto'.
         align: _description_. Defaults to 'bottom'.
-        inset: _description_. Defaults to dict().
+        inset: _description_. Defaults to {}.
         kind: _description_. Defaults to 'image'.
         numbering: _description_. Defaults to '"1"'.
         numbering_sub: _description_. Defaults to '"(a)"'.
