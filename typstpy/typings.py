@@ -1,55 +1,102 @@
-from typing import Any, Callable, Literal, Protocol, TypedDict
+from typing import Any, Literal, Protocol, TypedDict
 
 # region foundations
 
 
+# TODO: Use `type` expression in future version.
 Auto = Literal['auto']
-Alignment = str
+"""A value that indicates a smart default. See [the documentation](https://typst.app/docs/reference/foundations/auto/) for more information."""
+Alignment = Literal[
+    'start',
+    'end',
+    'left',
+    'center',
+    'right',
+    'top',
+    'horizon',
+    'bottom',
+    'start + end',
+    'start + left',
+    'start + center',
+    'start + right',
+    'start + top',
+    'start + horizon',
+    'start + bottom',
+    'end + left',
+    'end + center',
+    'end + right',
+    'end + top',
+    'end + horizon',
+    'end + bottom',
+    'left + center',
+    'left + right',
+    'left + top',
+    'left + horizon',
+    'left + bottom',
+    'center + right',
+    'center + top',
+    'center + horizon',
+    'center + bottom',
+    'right + top',
+    'right + horizon',
+    'right + bottom',
+    'top + horizon',
+    'top + bottom',
+    'horizon + bottom',
+]
+"""Where to align something along an axis. See [the documentation](https://typst.app/docs/reference/layout/alignment/) for more information."""
 Angle = str
+"""An angle describing a rotation. See [the documentation](https://typst.app/docs/reference/layout/angle/) for more information."""
 Content = str
+"""Executable typst code. See [the documentation](https://typst.app/docs/reference/foundations/content/) for more information."""
 Color = str
+"""A color in a specific color space. See [the documentation](https://typst.app/docs/reference/visualize/color/) for more information."""
 DateTime = str
-Direction = str
+"""Represents a date, a time, or a combination of both. See [the documentation](https://typst.app/docs/reference/foundations/datetime/) for more information."""
+Direction = Literal['ltr', 'rtl', 'ttb', 'btt']
+"""The four directions into which content can be laid out. See [the documentation](https://typst.app/docs/reference/layout/direction/) for more information."""
 Fraction = str
+"""Defines how the remaining space in a layout is distributed. See [the documentation](https://typst.app/docs/reference/layout/fraction/) for more information."""
 Function = str
+"""A mapping from argument values to a return value. See [the documentation](https://typst.app/docs/reference/foundations/function/) for more information."""
 Gradient = str
+"""A color gradient. See [the documentation](https://typst.app/docs/reference/visualize/gradient/) for more information."""
 Label = str
+"""A label for an element. See [the documentation](https://typst.app/docs/reference/foundations/label/) for more information."""
 Length = str
+"""A size or distance, possibly expressed with contextual units. See [the documentation](https://typst.app/docs/reference/layout/length/) for more information."""
 Location = str
+"""Identifies an element in the document. See [the documentation](https://typst.app/docs/reference/introspection/location/) for more information."""
 Pattern = str
+"""A repeating pattern fill. See [the documentation](https://typst.app/docs/reference/visualize/pattern/) for more information."""
 Ratio = str
+"""A ratio of a whole. See [the documentation](https://typst.app/docs/reference/layout/ratio/) for more information."""
 Relative = str
+"""A length in relation to some known length. See [the documentation](https://typst.app/docs/reference/layout/relative/) for more information."""
 Selector = str
+"""A filter for selecting elements within the document. See [the documentation](https://typst.app/docs/reference/foundations/selector/) for more information."""
 Stroke = str
+"""Defines how to draw a line. See [the documentation](https://typst.app/docs/reference/visualize/stroke/) for more information."""
 
 
 # endregion
-
-TypstFunc = Callable[..., Content]
-"""Functions that generate executable typst code."""
-Predicate = Callable[[], bool]
-
 # region protocols
 
 
 class Normal(Protocol):
-    def __call__(
-        self, body: Any, /, *positional: Any, **keyword_only: Any
-    ) -> Content: ...
+    def __call__(self, body: Any, /, *args: Any, **kwargs: Any) -> Content: ...
 
 
 class Positional(Protocol):
-    def __call__(self, *positional: Any) -> Content: ...
+    def __call__(self, *args: Any) -> Content: ...
 
 
 class Instance(Protocol):
-    def __call__(
-        self, instance: Content, /, *positional: Any, **keyword_only: Any
-    ) -> Content: ...
+    def __call__(self, instance: Content, /, *args: Any, **kwargs: Any) -> Content: ...
 
 
 class Series(Protocol):
-    def __call__(self, *children: Any, **keyword_only: Any) -> Content: ...
+    def __call__(self, *children: Any, **kwargs: Any) -> Content: ...
 
 
 # endregion
@@ -532,8 +579,6 @@ __all__ = [
     'Relative',
     'Selector',
     'Stroke',
-    'TypstFunc',
-    'Predicate',
     'Normal',
     'Positional',
     'Instance',

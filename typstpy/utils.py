@@ -1,5 +1,9 @@
-from collections.abc import Iterable, Mapping
-from typing import Any, Callable, NoReturn, Optional
+import inspect
+import warnings
+from collections.abc import Iterable, Mapping, Set
+from functools import singledispatch
+from io import StringIO
+from typing import Any, Callable, ClassVar, NoReturn, Optional, Self
 
 from attrs import frozen
 from cytoolz.curried import curry, keyfilter, memoize  # type: ignore
@@ -9,64 +13,59 @@ from typstpy.typings import (
     Instance,
     Normal,
     Positional,
-    Predicate,
     Series,
-    TypstFunc,
 )
 
 # region utils
 
 
-def all_predicates_satisfied(*predicates: Predicate) -> NoReturn | None:
-    """Check if all predicates are satisfied and raise `ValueError` exception if not.
+TypstFunc = Callable[..., Content]
+
+
+def all_predicates_satisfied(*predicates: Callable[[], bool]) -> NoReturn | None:
+    """Check if all predicates are satisfied and raise `ValueError` if not.
 
     Raises:
         ValueError: If any predicate is not satisfied.
 
     Returns:
-        None if all predicates are satisfied, otherwise raises ValueError.
+        None if all predicates are satisfied, otherwise raises `ValueError`.
+
+    Examples:
+        >>> def func():
+        ...     a = 1
+        ...     return lambda: a == 2
+        >>> all_predicates_satisfied(func())  # doctest: +IGNORE_EXCEPTION_DETAIL
+        Traceback (most recent call last):
+            ...
+        ValueError: Invalid parameters: a = 1
     """
     for predicate in predicates:
         if not predicate():
-            freevars = predicate.__code__.co_freevars
-            closure = (
-                predicate.__closure__
-            )  # Closure exists if and only if freevars is not empty
+            freevars = inspect.getclosurevars(predicate).nonlocals
             raise ValueError(
-                f'Invalid parameters: {', '.join(f'{i} = {j.cell_contents}' for i, j in zip(freevars, closure))}'  # type: ignore
+                f'Invalid parameters: {', '.join(f'{k} = {v}' for k, v in freevars.items())}'
             )
     return None
 
 
-def _all_keywords_valid(func: TypstFunc, *keys: str) -> NoReturn | None:
+def _all_keywords_valid(func: TypstFunc, keys: Set[str], /) -> NoReturn | None:
     """Check if there are invalid keyword-only parameters.
 
     Args:
         func: The typst function.
+        keys: The keyword-only parameters.
 
     Raises:
         ValueError: If there are invalid keyword-only parameters.
 
     Returns:
-        None if there are no invalid keyword-only parameters, otherwise raises ValueError.
+        None if there are no invalid keyword-only parameters, otherwise raises `ValueError`.
     """
-    residual = set(keys) - _extract_func(func).__kwdefaults__.keys()
+    residual = keys - func.__kwdefaults__.keys()
     if residual:
         raise ValueError(f'Parameters which are not keyword-only given: {residual}')
     return None
-
-
-def _extract_func(func: Callable, /) -> TypstFunc:
-    """Extract the original function from the function decorated by `@curry`.
-
-    Args:
-        func: The function to be extracted.
-
-    Returns:
-        The original function.
-    """
-    # TODO: Check if the extracted function is compatible with `TypstFunc`.
-    return func.func if isinstance(func, curry) else func
 
 
 @memoize
@@ -79,10 +78,13 @@ def _original_name(func: TypstFunc, /) -> str:
     Returns:
         The name representation in typst.
     """
-    func = _extract_func(func)
-    return (
-        func._implement.original_name if hasattr(func, '_implement') else func.__name__
-    )
+    implement = _Implement._registry.get(func, None)
+    if implement is None:
+        warnings.warn(
+            f'The function {func} has not been registered. Use `implement` decorator to register it and set the correct original name.'
+        )
+        return func.__name__
+    return implement.original_name
 
 
 def _filter_params(func: TypstFunc, /, **kwargs: Any) -> dict[str, Any]:
@@ -99,8 +101,8 @@ def _filter_params(func: TypstFunc, /, **kwargs: Any) -> dict[str, Any]:
     """
     if not kwargs:
         return {}
-    _all_keywords_valid(func, *kwargs.keys())
-    defaults = _extract_func(func).__kwdefaults__
+    _all_keywords_valid(func, kwargs.keys())
+    defaults = func.__kwdefaults__
     return keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
 
 
@@ -120,56 +122,33 @@ def _render_key(key: str, /) -> str:
     return key.replace('_', '-')
 
 
-def _render_value(value: Any, /) -> str:
-    """Render a value into a valid typst parameter representation.
+@singledispatch
+def _render_value(obj: object) -> str:
+    return str(obj)
 
-    Args:
-        value: The value to be rendered.
 
-    Returns:
-        The rendered value.
+@_render_value.register
+def _(obj: bool | None) -> str:
+    return str(obj).lower()
 
-    Examples:
-        >>> _render_value(True)
-        'true'
-        >>> _render_value(False)
-        'false'
-        >>> _render_value(None)
-        'none'
-        >>> _render_value(1)
-        '1'
-        >>> _render_value('foo')
-        'foo'
-        >>> _render_value('#color.map')
-        'color.map'
-        >>> _render_value(dict())
-        '(:)'
-        >>> _render_value({'a': 1, 'b': 2})
-        '(a: 1, b: 2)'
-        >>> _render_value(dict(left='5pt', top_right='20pt', bottom_right='10pt'))
-        '(left: 5pt, top-right: 20pt, bottom-right: 10pt)'
-        >>> _render_value([])
-        '()'
-        >>> _render_value([1, 2, 3])
-        '(1, 2, 3)'
-        >>> _render_value([[1] * 5, [2] * 5, [3] * 5])
-        '((1, 1, 1, 1, 1), (2, 2, 2, 2, 2), (3, 3, 3, 3, 3))'
-    """
-    match value:
-        case None | bool():
-            return str(value).lower()
-        case str():
-            if value.startswith('#'):  # Function call.
-                return value[1:]
-            return value
-        case Mapping():
-            if not value:
-                return '(:)'
-            return f'({', '.join(f'{_render_key(k)}: {_render_value(v)}' for k, v in value.items())})'
-        case Iterable():
-            return f"({', '.join(_render_value(v) for v in value)})"
-        case _:
-            return str(value)
+
+@_render_value.register
+def _(text: str) -> str:
+    if text.startswith('#'):
+        return text[1:]
+    return text
+
+
+@_render_value.register
+def _(mapping: Mapping) -> str:
+    if not mapping:
+        return '(:)'
+    return f'({', '.join(f'{_render_key(k)}: {_render_value(v)}' for k, v in mapping.items())})'
+
+
+@_render_value.register
+def _(iterable: Iterable) -> str:
+    return f"({', '.join(_render_value(v) for v in iterable)})"
 
 
 def _strip_brace(value: str, /) -> str:
@@ -189,12 +168,12 @@ def _strip_brace(value: str, /) -> str:
 
 
 def attach_func(
-    func: TypstFunc, name: Optional[str] = None, /
+    attached: TypstFunc, name: Optional[str] = None, /
 ) -> Callable[[TypstFunc], TypstFunc]:
     """Attach a typst function to another typst function.
 
     Args:
-        func: The function to attach.
+        attached: The function to attach.
         name: The attribute name to be set. When set to None, the function's name will be used. Defaults to None.
 
     Raises:
@@ -204,36 +183,82 @@ def attach_func(
         The decorator function.
     """
 
-    def wrapper(_func: TypstFunc) -> TypstFunc:
-        _name = name if name else _func.__name__
+    def wrapper(func: TypstFunc) -> TypstFunc:
+        _name = name if name else func.__name__
         if _name.startswith('_'):
             raise ValueError(f'Invalid name: {_name}')
-        setattr(_func, _name, func)
-        return _func
+        setattr(func, _name, attached)
+        return func
 
     return wrapper
 
 
 @frozen
 class _Implement:
-    name: str
+    _registry: ClassVar[dict[TypstFunc, Self]] = {}
+
     original_name: str
     hyperlink: str
 
-    def __str__(self) -> str:
-        return (
-            '| '
-            + ' | '.join(
-                [self.name, self.original_name, f'[{self.hyperlink}]({self.hyperlink})']
+    @staticmethod
+    def implement_table() -> str:
+        with StringIO() as stream:
+            _print = curry(print, file=stream, sep='\n')
+            _print(
+                "| Package's function name | Typst's function name | Documentation on typst |",
+                '| --- | --- | --- |',
             )
-            + ' |'
-        )
+            _print(
+                *(
+                    f'| {k.__module__[len('typstpy.'):]}.{k.__name__} | {v.original_name} | [{v.hyperlink}]({v.hyperlink}) |'
+                    for k, v in _Implement._registry.items()
+                ),
+            )
+            return stream.getvalue()
+
+    @staticmethod
+    def examples() -> str:
+        def extract_examples(func: TypstFunc) -> str | None:
+            docstring = inspect.getdoc(func)
+            if not docstring:
+                return None
+
+            sign_start = 'Examples:'
+            if sign_start not in docstring:
+                return None
+            index_start = docstring.index(sign_start) + len(sign_start) + 1
+
+            sign_end = 'See also:'
+            index_end = docstring.index(sign_end) if sign_end in docstring else None
+
+            examples = (
+                docstring[index_start:index_end]
+                if index_end
+                else docstring[index_start:]
+            )
+            return '\n'.join(i.lstrip() for i in examples.splitlines())
+
+        with StringIO() as stream:
+            for func in _Implement._registry:
+                examples = extract_examples(func)
+                if examples is None:
+                    continue
+
+                print(
+                    f'`{func.__module__[len('typstpy.'):]}.{func.__name__}`:',
+                    '\n```python',
+                    examples,
+                    '```\n',
+                    sep='\n',
+                    file=stream,
+                )
+            return stream.getvalue()
 
 
 def implement(
     original_name: str, hyperlink: str = '', /
 ) -> Callable[[TypstFunc], TypstFunc]:
-    """Set `_implement` attribute of a typst function and attach it with `where` and `with_` functions. The attribute type is `_Implement`.
+    """Register a typst function and attach it with `where` and `with_` functions.
 
     Args:
         original_name: The original function name in typst.
@@ -243,25 +268,20 @@ def implement(
         The decorator function.
     """
 
-    def wrapper(_func: TypstFunc) -> TypstFunc:
-        def where(**keyword_only: Any) -> Content:
-            _all_keywords_valid(_func, *keyword_only.keys())
-            return (
-                f'#{original_name}.where({_strip_brace(_render_value(keyword_only))})'
-            )
+    def wrapper(func: TypstFunc) -> TypstFunc:
+        _Implement._registry[func] = _Implement(original_name, hyperlink)
 
-        def with_(**keyword_only: Any) -> Content:
-            _all_keywords_valid(_func, *keyword_only.keys())
-            return f'#{original_name}.with({_strip_brace(_render_value(keyword_only))})'
+        def where(**kwargs: Any) -> Content:
+            _all_keywords_valid(func, kwargs.keys())
+            return f'#{original_name}.where({_strip_brace(_render_value(kwargs))})'
 
-        setattr(
-            _func,
-            '_implement',
-            _Implement(_func.__name__, original_name, hyperlink),
-        )
-        attach_func(where, 'where')(_func)
-        attach_func(with_, 'with_')(_func)
-        return _func
+        def with_(**kwargs: Any) -> Content:
+            _all_keywords_valid(func, kwargs.keys())
+            return f'#{original_name}.with({_strip_brace(_render_value(kwargs))})'
+
+        attach_func(where, 'where')(func)
+        attach_func(with_, 'with_')(func)
+        return func
 
     return wrapper
 
@@ -270,7 +290,7 @@ def implement(
 # region protocols
 
 
-def set_(func: TypstFunc, /, **keyword_only: Any) -> Content:
+def set_(func: TypstFunc, /, **kwargs: Any) -> Content:
     """Represent `set` rule in typst.
 
     Args:
@@ -282,8 +302,8 @@ def set_(func: TypstFunc, /, **keyword_only: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    _all_keywords_valid(func, *keyword_only.keys())
-    return f'#set {_original_name(func)}({_strip_brace(_render_value(keyword_only))})'
+    _all_keywords_valid(func, kwargs.keys())
+    return f'#set {_original_name(func)}({_strip_brace(_render_value(kwargs))})'
 
 
 def show_(
@@ -335,8 +355,8 @@ def normal(
     func: Normal,
     body: Any = '',
     /,
-    *positional: Any,
-    **keyword_only: Any,
+    *args: Any,
+    **kwargs: Any,
 ) -> Content:
     """Represent the protocol of `normal`.
 
@@ -347,20 +367,20 @@ def normal(
     Returns:
         Executable typst code.
     """
-    keyword_only = _filter_params(func, **keyword_only)
+    kwargs = _filter_params(func, **kwargs)
 
     params = []
     if body != '':
         params.append(_render_value(body))
-    if positional:
-        params.append(_strip_brace(_render_value(positional)))
-    if keyword_only:
-        params.append(_strip_brace(_render_value(keyword_only)))
+    if args:
+        params.append(_strip_brace(_render_value(args)))
+    if kwargs:
+        params.append(_strip_brace(_render_value(kwargs)))
 
     return f'#{_original_name(func)}(' + ', '.join(params) + ')'
 
 
-def positional(func: Positional, *positional: Any) -> Content:
+def positional(func: Positional, *args: Any) -> Content:
     """Represent the protocol of `positional`.
 
     Args:
@@ -369,11 +389,11 @@ def positional(func: Positional, *positional: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    return f'#{_original_name(func)}{_render_value(positional)}'
+    return f'#{_original_name(func)}{_render_value(args)}'
 
 
 def instance(
-    func: Instance, instance: Content, /, *positional: Any, **keyword_only: Any
+    func: Instance, instance: Content, /, *args: Any, **kwargs: Any
 ) -> Content:
     """Represent the protocol of `pre_instance`.
 
@@ -384,18 +404,18 @@ def instance(
     Returns:
         Executable typst code.
     """
-    keyword_only = _filter_params(func, **keyword_only)
+    kwargs = _filter_params(func, **kwargs)
 
     params = []
-    if positional:
-        params.append(_strip_brace(_render_value(positional)))
-    if keyword_only:
-        params.append(_strip_brace(_render_value(keyword_only)))
+    if args:
+        params.append(_strip_brace(_render_value(args)))
+    if kwargs:
+        params.append(_strip_brace(_render_value(kwargs)))
 
     return f'{instance}.{_original_name(func)}(' + ', '.join(params) + ')'
 
 
-def pre_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
+def pre_series(func: Series, *children: Any, **kwargs: Any) -> Content:
     """Represent the protocol of `pre_series`.
 
     Args:
@@ -404,20 +424,20 @@ def pre_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    keyword_only = _filter_params(func, **keyword_only)
+    kwargs = _filter_params(func, **kwargs)
 
     params = []
     if len(children) != 1:
         params.append(_strip_brace(_render_value(children)))
     else:
         params.append(f'..{_render_value(children[0])}')
-    if keyword_only:
-        params.append(_strip_brace(_render_value(keyword_only)))
+    if kwargs:
+        params.append(_strip_brace(_render_value(kwargs)))
 
     return f'#{_original_name(func)}(' + ', '.join(params) + ')'
 
 
-def post_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
+def post_series(func: Series, *children: Any, **kwargs: Any) -> Content:
     """Represent the protocol of `post_series`.
 
     Args:
@@ -426,11 +446,11 @@ def post_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    keyword_only = _filter_params(func, **keyword_only)
+    kwargs = _filter_params(func, **kwargs)
 
     params = []
-    if keyword_only:
-        params.append(_strip_brace(_render_value(keyword_only)))
+    if kwargs:
+        params.append(_strip_brace(_render_value(kwargs)))
     if len(children) != 1:
         params.append(_strip_brace(_render_value(children)))
     else:
@@ -442,6 +462,7 @@ def post_series(func: Series, *children: Any, **keyword_only: Any) -> Content:
 # endregion
 
 __all__ = [
+    'TypstFunc',
     'all_predicates_satisfied',
     'attach_func',
     'implement',
