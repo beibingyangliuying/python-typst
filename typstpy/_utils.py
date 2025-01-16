@@ -4,6 +4,7 @@ from collections.abc import Callable, Iterable, Mapping
 from functools import singledispatch
 from io import StringIO
 from typing import Any, ClassVar, Optional, Protocol, Self
+from weakref import WeakKeyDictionary, WeakSet
 
 from attrs import frozen
 from cytoolz.curried import curry, keyfilter, memoize  # type: ignore
@@ -100,8 +101,8 @@ def attach_func(attached: TypstFunc, name: Optional[str] = None, /) -> Decorator
 
 @frozen
 class _Implement:
-    _registry: ClassVar[dict[TypstFunc, Self]] = {}
-    _temporary: ClassVar[set[TypstFunc]] = set()
+    _registry: ClassVar[WeakKeyDictionary[TypstFunc, Self]] = WeakKeyDictionary()
+    _temporary: ClassVar[WeakSet[TypstFunc]] = WeakSet()
 
     original_name: str
     hyperlink: str
