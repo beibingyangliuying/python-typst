@@ -12,9 +12,18 @@ check_untyped_defs = true
 show_column_numbers = true
 disallow_incomplete_defs = true
 
+[tool.pylint]
+disable = [
+    "C0301",  # line-too-long
+    "C0114",  # missing-module-docstring
+    "W0621",  # redefined-outer-name
+    "W0622",  # redefined-builtin
+    "C0115",  # missing-class-docstring
+]
+
 [tool.poetry]
 name = "typstpy"
-version = "1.1.0"
+version = "1.1.1"
 description = "Python interface to generate executable Typst code."
 authors = ["chenjunhan <beibingyangliuying@foxmail.com>"]
 license = "MIT"

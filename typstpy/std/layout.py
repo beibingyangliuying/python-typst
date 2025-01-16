@@ -2,14 +2,7 @@ from typing import Iterable
 
 from deprecated.sphinx import deprecated  # type: ignore
 
-from typstpy._utils import (
-    all_predicates_satisfied,
-    attach_func,
-    implement,
-    normal,
-    positional,
-    post_series,
-)
+from typstpy._utils import attach_func, implement, normal, positional, post_series
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import rect  # noqa
 from typstpy.typings import (
@@ -664,7 +657,7 @@ def page(
         foreground: Content in the page's foreground. Defaults to None.
 
     Raises:
-        ValueError: If `paper` is invalid.
+        AssertionError: If `paper` is invalid.
 
     Returns:
         Executable typst code.
@@ -675,7 +668,8 @@ def page(
         >>> page(lorem(20), paper='"a0"', width='8.5in', height='11in')
         '#page(lorem(20), paper: "a0", width: 8.5in, height: 11in)'
     """
-    all_predicates_satisfied(lambda: paper in VALID_PAPER_SIZES)
+    assert paper in VALID_PAPER_SIZES
+
     return normal(
         page,
         body,

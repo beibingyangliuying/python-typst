@@ -1,12 +1,6 @@
 from typing import Any, Iterable, Literal
 
-from typstpy._utils import (
-    all_predicates_satisfied,
-    attach_func,
-    implement,
-    normal,
-    positional,
-)
+from typstpy._utils import attach_func, implement, normal, positional
 from typstpy.std.visualize import luma, rgb
 from typstpy.typings import (
     Alignment,
@@ -55,7 +49,7 @@ def highlight(
         radius: How much to round the highlight's corners. Defaults to {}.
 
     Raises:
-        ValueError: If `top_edge` or `bottom_edge` is invalid.
+        AssertionError: If `top_edge` or `bottom_edge` is invalid.
 
     Returns:
         Executable typst code.
@@ -74,11 +68,15 @@ def highlight(
         ... )
         '#highlight("Hello, world!", fill: rgb("#ffffff"), stroke: rgb("#000000"), top-edge: "bounds", bottom-edge: "bounds")'
     """
-    all_predicates_satisfied(
-        lambda: top_edge
-        in {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
-        lambda: bottom_edge in {'"baseline"', '"descender"', '"bounds"'},
-    )
+    assert top_edge in {
+        '"ascender"',
+        '"cap-height"',
+        '"x-height"',
+        '"baseline"',
+        '"bounds"',
+    }
+    assert bottom_edge in {'"baseline"', '"descender"', '"bounds"'}
+
     return normal(
         highlight,
         body,
@@ -497,9 +495,12 @@ def text(
     script: Auto | str = 'auto',
     dir: Auto | Direction = 'auto',
     hyphenate: Auto | bool = 'auto',
-    costs: TextCosts = dict(
-        hyphenation='100%', runt='100%', widow='100%', orphan='100%'
-    ),
+    costs: TextCosts = {
+        'hyphenation': '100%',
+        'runt': '100%',
+        'widow': '100%',
+        'orphan': '100%',
+    },
     kerning: bool = True,
     alternates: bool = False,
     stylistic_set: None | int | Iterable[int] = tuple(),
@@ -549,7 +550,7 @@ def text(
         features: Raw OpenType features to apply. Defaults to {}.
 
     Raises:
-        ValueError: If `style` or `weight` or `top_edge` or `bottom_edge` or `number_type` or `number_width` is invalid.
+        AssertionError: If `style` or `weight` or `top_edge` or `bottom_edge` or `number_type` or `number_width` is invalid.
 
     Returns:
         Executable typst code.
@@ -562,28 +563,29 @@ def text(
         >>> text('[Hello, World!]', font='"Times New Roman"')
         '#text([Hello, World!], font: "Times New Roman")'
     """
-    all_predicates_satisfied(
-        lambda: style in {'"normal"', '"italic"', '"oblique"'},
-        lambda: isinstance(weight, int)
-        or weight
-        in {
-            '"thin"',
-            '"extralight"',
-            '"light"',
-            '"regular"',
-            '"medium"',
-            '"semibold"',
-            '"bold"',
-            '"extrabold"',
-            '"black"',
-        },
-        lambda: top_edge
-        in {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
-        lambda: bottom_edge in {'"baseline"', '"descender"', '"bounds"'},
-        lambda: number_type == 'auto' or number_type in {'"lining"', '"old-style"'},
-        lambda: number_width == 'auto'
-        or number_width in {'"proportional"', '"tabular"'},
-    )
+    assert style in {'"normal"', '"italic"', '"oblique"'}
+    assert isinstance(weight, int) or weight in {
+        '"thin"',
+        '"extralight"',
+        '"light"',
+        '"regular"',
+        '"medium"',
+        '"semibold"',
+        '"bold"',
+        '"extrabold"',
+        '"black"',
+    }
+    assert top_edge in {
+        '"ascender"',
+        '"cap-height"',
+        '"x-height"',
+        '"baseline"',
+        '"bounds"',
+    }
+    assert bottom_edge in {'"baseline"', '"descender"', '"bounds"'}
+    assert number_type == 'auto' or number_type in {'"lining"', '"old-style"'}
+    assert number_width == 'auto' or number_width in {'"proportional"', '"tabular"'}
+
     return normal(
         text,
         body,

@@ -15,6 +15,8 @@ Any contributions are welcome.
 
 ## Change logs
 
+- _1.1.1_:
+  - Fix: Fix the behavior of `with_`.
 - _1.1.0_: Provide `customizations` module to support custom functions.
 - _1.0.4_: Implement package `subpar`.
 - _1.0.3_:

@@ -1,6 +1,6 @@
 from typing import Any
 
-from typstpy._utils import Instance, Normal, Positional, Series, implement
+from typstpy._utils import Instance, Normal, Positional, Series, implement, temporary
 from typstpy._utils import instance as _instance
 from typstpy._utils import normal as _normal
 from typstpy._utils import positional as _positional
@@ -33,6 +33,7 @@ def normal(original_name: str, /) -> Normal:
         '#pagebreak(weak: true)'
     """
 
+    @temporary()
     @implement(original_name)
     def wrapped(body: Any = '', /, *args: Any, **kwargs: Any) -> Content:
         return _normal(wrapped, body, *args, **kwargs)
@@ -56,6 +57,7 @@ def instance(original_name: str, /) -> Instance:
         '#rgb(255, 255, 255).lighten(50%)'
     """
 
+    @temporary()
     @implement(original_name)
     def wrapped(instance: Content, /, *args: Any, **kwargs: Any) -> Content:
         return _instance(wrapped, instance, *args, **kwargs)
@@ -78,6 +80,7 @@ def positional(original_name: str, /) -> Positional:
         '#rgb(255, 255, 255, 50%)'
     """
 
+    @temporary()
     @implement(original_name)
     def wrapped(*args: Any) -> Content:
         return _positional(wrapped, *args)
@@ -111,6 +114,7 @@ def post_series(original_name: str, /) -> Series:
         '#table(columns: (1fr, 2fr, 3fr), rows: (1fr, 2fr, 3fr), gutter: (1fr, 2fr, 3fr), column-gutter: (1fr, 2fr, 3fr), row-gutter: (1fr, 2fr, 3fr), fill: red, align: (center, center, center), [1], [2], [3])'
     """
 
+    @temporary()
     @implement(original_name)
     def wrapped(*children: Any, **kwargs: Any) -> Content:
         return _post_series(wrapped, *children, **kwargs)
@@ -139,6 +143,7 @@ def pre_series(original_name: str, /) -> Series:
         '#subpar.grid([], [], columns: (1fr, 1fr), caption: [A figure composed of two sub figures.], label: <full>)'
     """
 
+    @temporary()
     @implement(original_name)
     def wrapped(*children: Any, **kwargs: Any) -> Content:
         return _pre_series(wrapped, *children, **kwargs)

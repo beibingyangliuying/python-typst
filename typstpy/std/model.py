@@ -1,13 +1,6 @@
 from typing import Iterable, Literal, Optional
 
-from typstpy._utils import (
-    all_predicates_satisfied,
-    attach_func,
-    implement,
-    normal,
-    positional,
-    post_series,
-)
+from typstpy._utils import attach_func, implement, normal, positional, post_series
 from typstpy.std.layout import hspace, repeat  # noqa
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import image, line  # noqa
@@ -53,7 +46,7 @@ def bibliography(
         style: The bibliography style. Defaults to '"ieee"'.
 
     Raises:
-        ValueError: If `style` is invalid.
+        AssertionError: If `style` is invalid.
 
     Returns:
         Executable typst code.
@@ -62,7 +55,8 @@ def bibliography(
         >>> bibliography('"bibliography.bib"', style='"cell"')
         '#bibliography("bibliography.bib", style: "cell")'
     """
-    all_predicates_satisfied(lambda: style in VALID_CITATION_STYLES)
+    assert style in VALID_CITATION_STYLES
+
     return normal(
         bibliography,
         path,
@@ -143,7 +137,7 @@ def cite(
         style: The citation style. Defaults to 'auto'.
 
     Raises:
-        ValueError: If `form` or `style` is invalid.
+        AssertionError: If `form` or `style` is invalid.
 
     Returns:
         Executable typst code.
@@ -158,11 +152,15 @@ def cite(
         >>> cite('<label>', style='"annual-reviews"')
         '#cite(<label>, style: "annual-reviews")'
     """
-    all_predicates_satisfied(
-        lambda: form is None
-        or form in {'"normal"', '"prose"', '"full"', '"author"', '"year"'},
-        lambda: style == 'auto' or style in VALID_CITATION_STYLES,
-    )
+    assert form is None or form in {
+        '"normal"',
+        '"prose"',
+        '"full"',
+        '"author"',
+        '"year"',
+    }
+    assert style == 'auto' or style in VALID_CITATION_STYLES
+
     return normal(
         cite,
         key,
@@ -272,7 +270,7 @@ def figure(
         outlined: Whether the figure should appear in an outline of figures. Defaults to True.
 
     Raises:
-        ValueError: If `scope` is invalid.
+        AssertionError: If `scope` is invalid.
 
     Returns:
         Executable typst code.
@@ -283,7 +281,8 @@ def figure(
         >>> figure(image('"image.png"'), caption='[Hello, World!]')
         '#figure(image("image.png"), caption: [Hello, World!])'
     """
-    all_predicates_satisfied(lambda: scope in {'"column"', '"parent"'})
+    assert scope in {'"column"', '"parent"'}
+
     return normal(
         figure,
         body,
@@ -597,12 +596,13 @@ def _par_line(
         numbering_scope: Controls when to reset line numbering. Defaults to '"document"'.
 
     Raises:
-        ValueError: If `numbering_scope` is invalid.
+        AssertionError: If `numbering_scope` is invalid.
 
     Returns:
         Executable typst code.
     """
-    all_predicates_satisfied(lambda: numbering_scope in {'"document"', '"page"'})
+    assert numbering_scope in {'"document"', '"page"'}
+
     return positional(
         _par_line,
         numbering,
@@ -638,7 +638,7 @@ def par(
         hanging_indent: The indent all but the first line of a paragraph should have. Defaults to '0pt'.
 
     Raises:
-        ValueError: If `linebreaks` is invalid.
+        AssertionError: If `linebreaks` is invalid.
 
     Returns:
         Executable typst code.
@@ -659,9 +659,8 @@ def par(
         ... )
         '#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'
     """
-    all_predicates_satisfied(
-        lambda: linebreaks == 'auto' or linebreaks in {'"simple"', '"optimized"'}
-    )
+    assert linebreaks == 'auto' or linebreaks in {'"simple"', '"optimized"'}
+
     return normal(
         par,
         body,

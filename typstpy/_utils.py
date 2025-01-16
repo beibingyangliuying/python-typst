@@ -1,111 +1,19 @@
 import inspect
 import warnings
-from collections.abc import Iterable, Mapping, Set
+from collections.abc import Callable, Iterable, Mapping
 from functools import singledispatch
 from io import StringIO
-from typing import Any, Callable, ClassVar, NoReturn, Optional, Protocol, Self
+from typing import Any, ClassVar, Optional, Protocol, Self
 
 from attrs import frozen
 from cytoolz.curried import curry, keyfilter, memoize  # type: ignore
 
 from typstpy.typings import Content
 
-# region utils
-
-
 TypstFunc = Callable[..., Content]
+Decorator = Callable[[TypstFunc], TypstFunc]
 
 
-def all_predicates_satisfied(*predicates: Callable[[], bool]) -> NoReturn | None:
-    """Check if all predicates are satisfied and raise `ValueError` if not.
-
-    Raises:
-        ValueError: If any predicate is not satisfied.
-
-    Returns:
-        None if all predicates are satisfied, otherwise raises `ValueError`.
-
-    Examples:
-        >>> def func():
-        ...     a = 1
-        ...     return lambda: a == 2
-        >>> all_predicates_satisfied(func())  # doctest: +IGNORE_EXCEPTION_DETAIL
-        Traceback (most recent call last):
-            ...
-        ValueError: Invalid parameters: a = 1
-    """
-    for predicate in predicates:
-        if not predicate():
-            freevars = inspect.getclosurevars(predicate).nonlocals
-            raise ValueError(
-                f'Invalid parameters: {', '.join(f'{k} = {v}' for k, v in freevars.items())}'
-            )
-    return None
-
-
-def _all_keywords_valid(func: TypstFunc, keys: Set[str], /) -> NoReturn | None:
-    """Check if there are invalid keyword-only parameters.
-
-    Args:
-        func: The typst function.
-        keys: The keyword-only parameters.
-
-    Raises:
-        ValueError: If there are invalid keyword-only parameters.
-
-    Returns:
-        None if there are no invalid keyword-only parameters, otherwise raises `ValueError`.
-    """
-    defaults = func.__kwdefaults__
-    if defaults is None:
-        return None
-    residual = keys - defaults.keys()
-    if residual:
-        raise ValueError(f'Parameters which are not keyword-only given: {residual}')
-    return None
-
-
-@memoize
-def _original_name(func: TypstFunc, /) -> str:
-    """Get the name representation in typst of a function.
-
-    Args:
-        func: The function to be retrieved.
-
-    Returns:
-        The name representation in typst.
-    """
-    implement = _Implement._registry.get(func, None)
-    if implement is None:
-        warnings.warn(
-            f'The function {func} has not been registered. Use `implement` decorator to register it and set the correct original name.'
-        )
-        return func.__name__
-    return implement.original_name
-
-
-def _filter_params(func: TypstFunc, /, **kwargs: Any) -> dict[str, Any]:
-    """Filter out parameters that are different from default values.
-
-    Args:
-        func: The function to be filtered.
-
-    Raises:
-        ValueError: Parameters which are not keyword-only given.
-
-    Returns:
-        The filtered parameters.
-    """
-    if not kwargs:
-        return {}
-    defaults = func.__kwdefaults__
-    if defaults is None:
-        return kwargs
-    _all_keywords_valid(func, kwargs.keys())
-    return keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
-
-
-# endregion
 # region render
 
 
@@ -166,9 +74,7 @@ def _strip_brace(value: str, /) -> str:
 # region decorators
 
 
-def attach_func(
-    attached: TypstFunc, name: Optional[str] = None, /
-) -> Callable[[TypstFunc], TypstFunc]:
+def attach_func(attached: TypstFunc, name: Optional[str] = None, /) -> Decorator:
     """Attach a typst function to another typst function.
 
     Args:
@@ -195,12 +101,49 @@ def attach_func(
 @frozen
 class _Implement:
     _registry: ClassVar[dict[TypstFunc, Self]] = {}
+    _temporary: ClassVar[set[TypstFunc]] = set()
 
     original_name: str
     hyperlink: str
 
     @staticmethod
+    @memoize
+    def get_original_name(func: TypstFunc, /) -> str:
+        """Get the name representation in typst of a function.
+
+        Args:
+            func: The function to be retrieved.
+
+        Returns:
+            The name representation in typst.
+        """
+        implement = _Implement._registry.get(func, None)
+        if implement is None:
+            warnings.warn(
+                f'The function {func} has not been registered. Use `implement` decorator to register it and set the correct original name.'
+            )
+            return func.__name__
+        return implement.original_name
+
+    @staticmethod
+    def is_temporary(func: TypstFunc, /) -> bool:
+        """_summary_
+
+        Args:
+            func: The function to be checked.
+
+        Returns:
+            _description_
+        """
+        return func in _Implement._temporary
+
+    @staticmethod
     def implement_table() -> str:
+        """_summary_
+
+        Returns:
+            _description_
+        """
         with StringIO() as stream:
             _print = curry(print, file=stream, sep='\n')
             _print(
@@ -217,6 +160,12 @@ class _Implement:
 
     @staticmethod
     def examples() -> str:
+        """_summary_
+
+        Returns:
+            _description_
+        """
+
         def extract_examples(func: TypstFunc) -> str | None:
             docstring = inspect.getdoc(func)
             if not docstring:
@@ -254,9 +203,7 @@ class _Implement:
             return stream.getvalue()
 
 
-def implement(
-    original_name: str, hyperlink: str = '', /
-) -> Callable[[TypstFunc], TypstFunc]:
+def implement(original_name: str, hyperlink: str = '', /) -> Decorator:
     """Register a typst function and attach it with `where` and `with_` functions.
 
     Args:
@@ -271,15 +218,37 @@ def implement(
         _Implement._registry[func] = _Implement(original_name, hyperlink)
 
         def where(**kwargs: Any) -> Content:
-            _all_keywords_valid(func, kwargs.keys())
+            assert kwargs.keys() <= func.__kwdefaults__.keys()
+
             return f'#{original_name}.where({_strip_brace(_render_value(kwargs))})'
 
-        def with_(**kwargs: Any) -> Content:
-            _all_keywords_valid(func, kwargs.keys())
-            return f'#{original_name}.with({_strip_brace(_render_value(kwargs))})'
+        def with_(*args: Any, **kwargs: Any) -> Content:
+            assert (not kwargs) or kwargs.keys() <= func.__kwdefaults__.keys()
+
+            params = []
+            if args:
+                params.append(_strip_brace(_render_value(args)))
+            if kwargs:
+                params.append(_strip_brace(_render_value(kwargs)))
+
+            return f'#{original_name}.with({', '.join(params)})'
 
         attach_func(where, 'where')(func)
         attach_func(with_, 'with_')(func)
+        return func
+
+    return wrapper
+
+
+def temporary() -> Decorator:
+    """Mark a function that is generated from function factory in module `customizations`.
+
+    Returns:
+        The decorator function.
+    """
+
+    def wrapper(func: TypstFunc) -> TypstFunc:
+        _Implement._temporary.add(func)
         return func
 
     return wrapper
@@ -301,8 +270,9 @@ def set_(func: TypstFunc, /, **kwargs: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    _all_keywords_valid(func, kwargs.keys())
-    return f'#set {_original_name(func)}({_strip_brace(_render_value(kwargs))})'
+    assert kwargs.keys() <= func.__kwdefaults__.keys()
+
+    return f'#set {_Implement.get_original_name(func)}({_strip_brace(_render_value(kwargs))})'
 
 
 def show_(
@@ -326,12 +296,12 @@ def show_(
     if element is None:
         _element = ''
     elif callable(element):
-        _element = _original_name(element)
+        _element = _Implement.get_original_name(element)
     else:
         _element = _render_value(element)
 
     if callable(appearance):
-        _appearance = _original_name(appearance)
+        _appearance = _Implement.get_original_name(appearance)
     else:
         _appearance = _render_value(appearance)
 
@@ -370,7 +340,11 @@ def normal(
     Returns:
         Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    defaults = func.__kwdefaults__  # type: ignore
+    if defaults:
+        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+    elif not _Implement.is_temporary(func):
+        assert not kwargs
 
     params = []
     if body != '':
@@ -380,7 +354,7 @@ def normal(
     if kwargs:
         params.append(_strip_brace(_render_value(kwargs)))
 
-    return f'#{_original_name(func)}(' + ', '.join(params) + ')'
+    return f'#{_Implement.get_original_name(func)}(' + ', '.join(params) + ')'
 
 
 class Positional(Protocol):
@@ -396,7 +370,7 @@ def positional(func: Positional, *args: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    return f'#{_original_name(func)}{_render_value(args)}'
+    return f'#{_Implement.get_original_name(func)}{_render_value(args)}'
 
 
 class Instance(Protocol):
@@ -415,7 +389,11 @@ def instance(
     Returns:
         Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    defaults = func.__kwdefaults__  # type: ignore
+    if defaults:
+        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+    elif not _Implement.is_temporary(func):
+        assert not kwargs
 
     params = []
     if args:
@@ -423,7 +401,7 @@ def instance(
     if kwargs:
         params.append(_strip_brace(_render_value(kwargs)))
 
-    return f'{instance}.{_original_name(func)}(' + ', '.join(params) + ')'
+    return f'{instance}.{_Implement.get_original_name(func)}(' + ', '.join(params) + ')'
 
 
 class Series(Protocol):
@@ -439,7 +417,11 @@ def pre_series(func: Series, *children: Any, **kwargs: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    defaults = func.__kwdefaults__  # type: ignore
+    if defaults:
+        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+    elif not _Implement.is_temporary(func):
+        assert not kwargs
 
     params = []
     if len(children) != 1:
@@ -449,7 +431,7 @@ def pre_series(func: Series, *children: Any, **kwargs: Any) -> Content:
     if kwargs:
         params.append(_strip_brace(_render_value(kwargs)))
 
-    return f'#{_original_name(func)}(' + ', '.join(params) + ')'
+    return f'#{_Implement.get_original_name(func)}(' + ', '.join(params) + ')'
 
 
 def post_series(func: Series, *children: Any, **kwargs: Any) -> Content:
@@ -461,7 +443,11 @@ def post_series(func: Series, *children: Any, **kwargs: Any) -> Content:
     Returns:
         Executable typst code.
     """
-    kwargs = _filter_params(func, **kwargs)
+    defaults = func.__kwdefaults__  # type: ignore
+    if defaults:
+        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+    elif not _Implement.is_temporary(func):
+        assert not kwargs
 
     params = []
     if kwargs:
@@ -471,15 +457,15 @@ def post_series(func: Series, *children: Any, **kwargs: Any) -> Content:
     else:
         params.append(f'..{_render_value(children[0])}')
 
-    return f'#{_original_name(func)}(' + ', '.join(params) + ')'
+    return f'#{_Implement.get_original_name(func)}(' + ', '.join(params) + ')'
 
 
 # endregion
 
 __all__ = [
-    'all_predicates_satisfied',
     'attach_func',
     'implement',
+    'temporary',
     'set_',
     'show_',
     'import_',

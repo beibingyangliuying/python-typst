@@ -79,7 +79,7 @@ class Document:
         Args:
             path: The path of the file to be saved.
         """
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding='utf-8') as f:
             f.write(str(self))
 
     def __str__(self) -> str:
