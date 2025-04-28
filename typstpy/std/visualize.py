@@ -1,6 +1,6 @@
 from typing import Any, Optional, Sequence, overload
 
-from typstpy._utils import (
+from typstpy._core import (
     attach_func,
     implement,
     instance,

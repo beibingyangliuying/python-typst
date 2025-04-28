@@ -2,11 +2,11 @@ from typing import Iterable
 
 from deprecated.sphinx import deprecated  # type: ignore
 
-from typstpy._utils import attach_func, implement, normal, positional, post_series
+from typstpy._constants import VALID_PAPER_SIZES
+from typstpy._core import attach_func, implement, normal, positional, post_series
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import rect  # noqa
 from typstpy.typings import (
-    VALID_PAPER_SIZES,
     Alignment,
     Angle,
     Auto,
@@ -20,13 +20,13 @@ from typstpy.typings import (
     Gradient,
     Length,
     PageMargin,
+    PaperSizes,
     Pattern,
     Ratio,
     RectangleRadius,
     RectangleStroke,
     Relative,
     Stroke,
-    ValidPaperSizes,
 )
 
 
@@ -618,7 +618,7 @@ def page(
     body: Content,
     /,
     *,
-    paper: ValidPaperSizes = '"a4"',
+    paper: PaperSizes = '"a4"',
     width: Auto | Length = '595.28pt',
     height: Auto | Length = '841.89pt',
     flipped: bool = False,

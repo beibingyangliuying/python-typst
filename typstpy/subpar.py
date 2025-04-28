@@ -1,7 +1,7 @@
 # Version: 0.2.0
 from typing import Any
 
-from typstpy._utils import implement, pre_series
+from typstpy._core import implement, pre_series
 from typstpy.std import figure, image  # noqa
 from typstpy.typings import Content
 

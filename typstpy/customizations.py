@@ -1,11 +1,11 @@
 from typing import Any
 
-from typstpy._utils import Instance, Normal, Positional, Series, implement, temporary
-from typstpy._utils import instance as _instance
-from typstpy._utils import normal as _normal
-from typstpy._utils import positional as _positional
-from typstpy._utils import post_series as _post_series
-from typstpy._utils import pre_series as _pre_series
+from typstpy._core import Instance, Normal, Positional, Series, implement, temporary
+from typstpy._core import instance as _instance
+from typstpy._core import normal as _normal
+from typstpy._core import positional as _positional
+from typstpy._core import post_series as _post_series
+from typstpy._core import pre_series as _pre_series
 from typstpy.typings import Content
 
 

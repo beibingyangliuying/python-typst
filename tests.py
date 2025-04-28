@@ -6,7 +6,7 @@ def load_tests(loader, tests, ignore):
     modules = [
         'typstpy.' + i
         for i in ['std.' + i for i in ['layout', 'model', 'text', 'visualize']]
-        + ['_utils', 'document', 'subpar', 'customizations']
+        + ['_core', 'document', 'subpar', 'customizations']
     ]
     for module in modules:
         tests.addTests(doctest.DocTestSuite(module))

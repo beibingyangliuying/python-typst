@@ -1,6 +1,6 @@
 from typing import Any, Iterable, Literal
 
-from typstpy._utils import attach_func, implement, normal, positional
+from typstpy._core import attach_func, implement, normal, positional
 from typstpy.std.visualize import luma, rgb
 from typstpy.typings import (
     Alignment,

@@ -1,5 +1,5 @@
 # Version: 0.12.x
-from .._utils import import_, set_, show_
+from .._core import import_, set_, show_
 from . import layout as _layout
 from . import model as _model
 from . import text as _text

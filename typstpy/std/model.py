@@ -1,14 +1,15 @@
 from typing import Iterable, Literal, Optional
 
-from typstpy._utils import attach_func, implement, normal, positional, post_series
+from typstpy._constants import VALID_CITATION_STYLES
+from typstpy._core import attach_func, implement, normal, positional, post_series
 from typstpy.std.layout import hspace, repeat  # noqa
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import image, line  # noqa
 from typstpy.typings import (
-    VALID_CITATION_STYLES,
     Alignment,
     Auto,
     BoxInset,
+    CitationStyles,
     Color,
     Content,
     DateTime,
@@ -24,7 +25,6 @@ from typstpy.typings import (
     Relative,
     Selector,
     Stroke,
-    ValidCitationStyles,
 )
 
 
@@ -35,7 +35,7 @@ def bibliography(
     *,
     title: None | Auto | Content = 'auto',
     full: bool = False,
-    style: ValidCitationStyles = '"ieee"',
+    style: CitationStyles = '"ieee"',
 ) -> Content:
     """Interface of `bibliography` in typst. See [the documentation](https://typst.app/docs/reference/model/bibliography/) for more information.
 
@@ -126,7 +126,7 @@ def cite(
     supplement: None | Content = None,
     form: None
     | Literal['"normal"', '"prose"', '"full"', '"author"', '"year"'] = '"normal"',
-    style: Auto | ValidCitationStyles = 'auto',
+    style: Auto | CitationStyles = 'auto',
 ) -> Content:
     """Interface of `cite` in typst. See [the documentation](https://typst.app/docs/reference/model/cite/) for more information.
 
