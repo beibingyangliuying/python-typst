@@ -36,7 +36,7 @@ def highlight(
     | Literal['"baseline"', '"descender"', '"bounds"'] = '"descender"',
     extent: Length = '0pt',
     radius: Relative | RectangleRadius = {},
-) -> Content:
+):
     """Interface of `highlight` in typst. See [the documentation](https://typst.app/docs/reference/text/highlight/) for more information.
 
     Args:
@@ -90,7 +90,7 @@ def highlight(
 
 
 @implement('linebreak', 'https://typst.app/docs/reference/text/linebreak/')
-def linebreak(*, justify: bool = False) -> Content:
+def linebreak(*, justify: bool = False):
     """Interface of `linebreak` in typst. See [the documentation](https://typst.app/docs/reference/text/linebreak/) for more information.
 
     Args:
@@ -109,7 +109,7 @@ def linebreak(*, justify: bool = False) -> Content:
 
 
 @implement('lorem', 'https://typst.app/docs/reference/text/lorem/')
-def lorem(words: int, /) -> Content:
+def lorem(words: int, /):
     """Interface of `lorem` in typst. See [the documentation](https://typst.app/docs/reference/text/lorem/) for more information.
 
     Args:
@@ -162,7 +162,7 @@ def overline(
     extent: Length = '0pt',
     evade: bool = True,
     background: bool = False,
-) -> Content:
+):
     """Interface of `overline` in typst. See [the documentation](https://typst.app/docs/reference/text/overline/) for more information.
 
     Args:
@@ -203,7 +203,7 @@ def overline(
 
 
 @implement('raw.line', 'https://typst.app/docs/reference/text/raw/#definitions-line')
-def _raw_line(number: int, count: int, text: str, body: Content, /) -> Content:
+def _raw_line(number: int, count: int, text: str, body: Content, /):
     """Interface of `raw.line` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/#definitions-line) for more information.
 
     Args:
@@ -234,7 +234,7 @@ def raw(
     syntaxes: str | Iterable[str] = tuple(),
     theme: None | Auto | str = 'auto',
     tab_size: int = 2,
-) -> Content:
+):
     """Interface of `raw` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/) for more information.
 
     Args:
@@ -272,7 +272,7 @@ def raw(
 
 
 @implement('smallcaps', 'https://typst.app/docs/reference/text/smallcaps/')
-def smallcaps(body: Content, /) -> Content:
+def smallcaps(body: Content, /):
     """Interface of `smallcaps` in typst. See [the documentation](https://typst.app/docs/reference/text/smallcaps/) for more information.
 
     Args:
@@ -297,7 +297,7 @@ def smartquote(
     enabled: bool = True,
     alternative: bool = False,
     quotes: Auto | str | Iterable[str] | SmartquoteQuotes = 'auto',
-) -> Content:
+):
     """Interface of `smartquote` in typst. See [the documentation](https://typst.app/docs/reference/text/smartquote/) for more information.
 
     Args:
@@ -339,7 +339,7 @@ def strike(
     offset: Auto | Length = 'auto',
     extent: Length = '0pt',
     background: bool = False,
-) -> Content:
+):
     """Interface of `strike` in typst. See [the documentation](https://typst.app/docs/reference/text/strike/) for more information.
 
     Args:
@@ -384,7 +384,7 @@ def subscript(
     typographic: bool = True,
     baseline: Length = '0.2em',
     size: Length = '0.6em',
-) -> Content:
+):
     """Interface of `sub` in typst. See [the documentation](https://typst.app/docs/reference/text/sub/) for more information.
 
     Args:
@@ -421,7 +421,7 @@ def superscript(
     typographic: bool = True,
     baseline: Length = '-0.5em',
     size: Length = '0.6em',
-) -> Content:
+):
     """Interface of `super` in typst. See [the documentation](https://typst.app/docs/reference/text/super/) for more information.
 
     Args:
@@ -512,7 +512,7 @@ def text(
     slashed_zero: bool = False,
     fractions: bool = False,
     features: Iterable[str] | dict[str, Any] = {},
-) -> Content:
+):
     """Interface of `text` in typst. See [the documentation](https://typst.app/docs/reference/text/text/) for more information.
 
     Args:
@@ -639,7 +639,7 @@ def underline(
     extent: Length = '0pt',
     evade: bool = True,
     background: bool = False,
-) -> Content:
+):
     """Interface of `underline` in typst. See [the documentation](https://typst.app/docs/reference/text/underline/) for more information.
 
     Args:

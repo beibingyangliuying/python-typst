@@ -36,7 +36,7 @@ def bibliography(
     title: None | Auto | Content = 'auto',
     full: bool = False,
     style: CitationStyles = '"ieee"',
-) -> Content:
+):
     """Interface of `bibliography` in typst. See [the documentation](https://typst.app/docs/reference/model/bibliography/) for more information.
 
     Args:
@@ -67,7 +67,7 @@ def bibliography(
 
 
 @implement('list.item', 'https://typst.app/docs/reference/model/list/#definitions-item')
-def _bullet_list_item(body: Content, /) -> Content:
+def _bullet_list_item(body: Content, /):
     """Interface of `list.item` in typst. See [the documentation](https://typst.app/docs/reference/model/list/#definitions-item) for more information.
 
     Args:
@@ -88,7 +88,7 @@ def bullet_list(
     indent: Length = '0pt',
     body_indent: Length = '0.5em',
     spacing: Auto | Length = 'auto',
-) -> Content:
+):
     """Interface of `list` in typst. See [the documentation](https://typst.app/docs/reference/model/list/) for more information.
 
     Args:
@@ -127,7 +127,7 @@ def cite(
     form: None
     | Literal['"normal"', '"prose"', '"full"', '"author"', '"year"'] = '"normal"',
     style: Auto | CitationStyles = 'auto',
-) -> Content:
+):
     """Interface of `cite` in typst. See [the documentation](https://typst.app/docs/reference/model/cite/) for more information.
 
     Args:
@@ -177,7 +177,7 @@ def document(
     author: str | Iterable[str] = tuple(),
     keywords: str | Iterable[str] = tuple(),
     date: None | Auto | DateTime = 'auto',
-) -> Content:
+):
     """Interface of `document` in typst. See [the documentation](https://typst.app/docs/reference/model/document/) for more information.
 
     Args:
@@ -193,7 +193,7 @@ def document(
 
 
 @implement('emph', 'https://typst.app/docs/reference/model/emph/')
-def emph(body: Content, /) -> Content:
+def emph(body: Content, /):
     """Interface of `emph` in typst. See [the documentation](https://typst.app/docs/reference/model/emph/) for more information.
 
     Args:
@@ -221,7 +221,7 @@ def _figure_caption(
     *,
     position: Alignment = 'bottom',
     separator: Auto | Content = 'auto',
-) -> Content:
+):
     """Interface of `figure.caption` in typst. See [the documentation](https://typst.app/docs/reference/model/figure/#definitions-caption) for more information.
 
     Args:
@@ -255,7 +255,7 @@ def figure(
     numbering: None | str | Function = '"1"',
     gap: Length = '0.65em',
     outlined: bool = True,
-) -> Content:
+):
     """Interface of `figure` in typst. See [the documentation](https://typst.app/docs/reference/model/figure/) for more information.
 
     Args:
@@ -309,7 +309,7 @@ def _footnote_entry(
     clearance: Length = '1em',
     gap: Length = '0.5em',
     indent: Length = '1em',
-) -> Content:
+):
     """Interface of `footnote.entry` in typst. See [the documentation](https://typst.app/docs/reference/model/footnote/#definitions-entry) for more information.
 
     Args:
@@ -334,7 +334,7 @@ def _footnote_entry(
 
 @attach_func(_footnote_entry, 'entry')
 @implement('footnote', 'https://typst.app/docs/reference/model/footnote/')
-def footnote(body: Label | Content, /, *, numbering: str | Function = '"1"') -> Content:
+def footnote(body: Label | Content, /, *, numbering: str | Function = '"1"'):
     """Interface of `footnote` in typst. See [the documentation](https://typst.app/docs/reference/model/footnote/) for more information.
 
     Args:
@@ -366,7 +366,7 @@ def heading(
     outlined: bool = True,
     bookmarked: Auto | bool = 'auto',
     hanging_indent: Auto | Length = 'auto',
-) -> Content:
+):
     """Interface of `heading` in typst. See [the documentation](https://typst.app/docs/reference/model/heading/) for more information.
 
     Args:
@@ -419,9 +419,7 @@ def heading(
 
 
 @implement('link', 'https://typst.app/docs/reference/model/link/')
-def link(
-    dest: str | Label | Location | LinkDest, body: Optional[Content] = None, /
-) -> Content:
+def link(dest: str | Label | Location | LinkDest, body: Optional[Content] = None, /):
     """Interface of `link` in typst. See [the documentation](https://typst.app/docs/reference/model/link/) for more information.
 
     Args:
@@ -441,7 +439,7 @@ def link(
 
 
 @implement('enum.item', 'https://typst.app/docs/reference/model/enum/#definitions-item')
-def _numbered_list_item(body: Content, /, *, number: None | int = None) -> Content:
+def _numbered_list_item(body: Content, /, *, number: None | int = None):
     """Interface of `enum.item` in typst. See [the documentation](https://typst.app/docs/reference/model/enum/#definitions-item) for more information.
 
     Args:
@@ -470,7 +468,7 @@ def numbered_list(
     body_indent: Length = '0.5em',
     spacing: Auto | Length = 'auto',
     number_align: Alignment = 'end + top',
-) -> Content:
+):
     """Interface of `enum` in typst. See [the documentation](https://typst.app/docs/reference/model/enum/) for more information.
 
     Args:
@@ -507,7 +505,7 @@ def numbered_list(
 
 
 @implement('numbering', 'https://typst.app/docs/reference/model/numbering/')
-def numbering(numbering_: str | Function, /, *numbers: int) -> Content:
+def numbering(numbering_: str | Function, /, *numbers: int):
     """Interface of `numbering` in typst. See [the documentation](https://typst.app/docs/reference/model/numbering/) for more information.
 
     Args:
@@ -528,7 +526,7 @@ def numbering(numbering_: str | Function, /, *numbers: int) -> Content:
 )
 def _outline_entry(
     level: int, element: Content, body: Content, fill: None | Content, page: Content, /
-) -> Content:
+):
     """Interface of `outline.entry` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry) for more information.
 
     Args:
@@ -553,7 +551,7 @@ def outline(
     depth: None | int = None,
     indent: None | Auto | bool | Relative | Function = None,
     fill: None | Content = repeat('[.]'),
-) -> Content:
+):
     """Interface of `outline` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/) for more information.
 
     Args:
@@ -585,7 +583,7 @@ def _par_line(
     number_margin: Alignment = 'start',
     number_clearance: Auto | Length = 'auto',
     numbering_scope: Literal['"document"', '"page"'] = '"document"',
-) -> Content:
+):
     """Interface of `par.line` in typst. See [the documentation](https://typst.app/docs/reference/model/par/#definitions-line) for more information.
 
     Args:
@@ -625,7 +623,7 @@ def par(
     linebreaks: Auto | Literal['"simple"', '"optimized"'] = 'auto',
     first_line_indent: Length = '0pt',
     hanging_indent: Length = '0pt',
-) -> Content:
+):
     """Interface of `par` in typst. See [the documentation](https://typst.app/docs/reference/model/par/) for more information.
 
     Args:
@@ -674,7 +672,7 @@ def par(
 
 
 @implement('parbreak', 'https://typst.app/docs/reference/model/parbreak/')
-def parbreak() -> Content:
+def parbreak():
     """Interface of `parbreak` in typst. See [the documentation](https://typst.app/docs/reference/model/parbreak/) for more information.
 
     Returns:
@@ -695,7 +693,7 @@ def quote(
     block: bool = False,
     quotes: Auto | bool = 'auto',
     attribution: None | Label | Content = None,
-) -> Content:
+):
     """Interface of `quote` in typst. See [the documentation](https://typst.app/docs/reference/model/quote/) for more information.
 
     Args:
@@ -721,9 +719,7 @@ def quote(
 
 
 @implement('ref', 'https://typst.app/docs/reference/model/ref/')
-def ref(
-    target: Label, /, *, supplement: None | Auto | Content | Function = 'auto'
-) -> Content:
+def ref(target: Label, /, *, supplement: None | Auto | Content | Function = 'auto'):
     """Interface of `ref` in typst. See [the documentation](https://typst.app/docs/reference/model/ref/) for more information.
 
     Args:
@@ -743,7 +739,7 @@ def ref(
 
 
 @implement('strong', 'https://typst.app/docs/reference/model/strong/')
-def strong(body: Content, /, *, delta: int = 300) -> Content:
+def strong(body: Content, /, *, delta: int = 300):
     """Interface of `strong` in typst. See [the documentation](https://typst.app/docs/reference/model/strong/) for more information.
 
     Args:
@@ -778,7 +774,7 @@ def _table_cell(
     inset: Auto | Relative | BoxInset = 'auto',
     stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
     breakable: Auto | bool = 'auto',
-) -> Content:
+):
     """Interface of `table.cell` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-cell) for more information.
 
     Args:
@@ -827,7 +823,7 @@ def _table_hline(
     | Pattern
     | RectangleStroke = '1pt + black',
     position: Alignment = 'top',
-) -> Content:
+):
     """Interface of `table.hline` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-hline) for more information.
 
     Args:
@@ -861,7 +857,7 @@ def _table_vline(
     | Pattern
     | RectangleStroke = '1pt + black',
     position: Alignment = 'start',
-) -> Content:
+):
     """Interface of `table.vline` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-vline) for more information.
 
     Args:
@@ -882,7 +878,7 @@ def _table_vline(
 @implement(
     'table.header', 'https://typst.app/docs/reference/model/table/#definitions-header'
 )
-def _table_header(*children: Content, repeat: bool = True) -> Content:
+def _table_header(*children: Content, repeat: bool = True):
     """Interface of `table.header` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-header) for more information.
 
     Args:
@@ -897,7 +893,7 @@ def _table_header(*children: Content, repeat: bool = True) -> Content:
 @implement(
     'table.footer', 'https://typst.app/docs/reference/model/table/#definitions-footer'
 )
-def _table_footer(*children: Content, repeat: bool = True) -> Content:
+def _table_footer(*children: Content, repeat: bool = True):
     """Interface of `table.footer` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-footer) for more information.
 
     Args:
@@ -942,7 +938,7 @@ def table(
     | RectangleStroke
     | Function = '1pt + black',
     inset: Relative | Iterable[Relative] | BoxInset | Function = '0% + 5pt',
-) -> Content:
+):
     """Interface of `table` in typst. See [the documentation](https://typst.app/docs/reference/model/table/) for more information.
 
     Args:
@@ -994,7 +990,7 @@ def table(
 @implement(
     'terms.item', 'https://typst.app/docs/reference/model/terms/#definitions-item'
 )
-def _terms_item(term: Content, description: Content, /) -> Content:
+def _terms_item(term: Content, description: Content, /):
     """Interface of `terms.item` in typst. See [the documentation](https://typst.app/docs/reference/model/terms/#definitions-item) for more information.
 
     Args:
@@ -1020,7 +1016,7 @@ def terms(
     indent: Length = '0pt',
     hanging_indent: Length = '2em',
     spacing: Auto | Length = 'auto',
-) -> Content:
+):
     """Interface of `terms` in typst. See [the documentation](https://typst.app/docs/reference/model/terms/) for more information.
 
     Args:

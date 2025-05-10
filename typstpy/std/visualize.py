@@ -48,7 +48,7 @@ def circle(
     | RectangleStroke = 'auto',
     inset: Relative | BoxInset = '0% + 5pt',
     outset: Relative | BoxOutset = {},
-) -> Content:
+):
     """Interface of `circle` in typst. See [the documentation](https://typst.app/docs/reference/visualize/circle/) for more information.
 
     Args:
@@ -417,7 +417,7 @@ def _color_hsv(
     'components',
     'https://typst.app/docs/reference/visualize/color/#definitions-components',
 )
-def _color_components(self: Color, /, *, alpha: bool = True) -> Content:
+def _color_components(self: Color, /, *, alpha: bool = True):
     """Interface of `color.components` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-components) for more information.
 
     Args:
@@ -437,7 +437,7 @@ def _color_components(self: Color, /, *, alpha: bool = True) -> Content:
 @implement(
     'space', 'https://typst.app/docs/reference/visualize/color/#definitions-space'
 )
-def _color_space(self: Color, /) -> Content:
+def _color_space(self: Color, /):
     """Interface of `color.space` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-space) for more information.
 
     Args:
@@ -456,7 +456,7 @@ def _color_space(self: Color, /) -> Content:
 @implement(
     'to-hex', 'https://typst.app/docs/reference/visualize/color/#definitions-to-hex'
 )
-def _color_to_hex(self: Color, /) -> Content:
+def _color_to_hex(self: Color, /):
     """Interface of `color.to-hex` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-to-hex) for more information.
 
     Args:
@@ -475,7 +475,7 @@ def _color_to_hex(self: Color, /) -> Content:
 @implement(
     'lighten', 'https://typst.app/docs/reference/visualize/color/#definitions-lighten'
 )
-def _color_lighten(self: Color, factor: Ratio, /) -> Content:
+def _color_lighten(self: Color, factor: Ratio, /):
     """Interface of `color.lighten` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-lighten) for more information.
 
     Args:
@@ -495,7 +495,7 @@ def _color_lighten(self: Color, factor: Ratio, /) -> Content:
 @implement(
     'darken', 'https://typst.app/docs/reference/visualize/color/#definitions-darken'
 )
-def _color_darken(self: Color, factor: Ratio, /) -> Content:
+def _color_darken(self: Color, factor: Ratio, /):
     """Interface of `color.darken` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-darken) for more information.
 
     Args:
@@ -515,7 +515,7 @@ def _color_darken(self: Color, factor: Ratio, /) -> Content:
 @implement(
     'saturate', 'https://typst.app/docs/reference/visualize/color/#definitions-saturate'
 )
-def _color_saturate(self: Color, factor: Ratio, /) -> Content:
+def _color_saturate(self: Color, factor: Ratio, /):
     """Interface of `color.saturate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-saturate) for more information.
 
     Args:
@@ -536,7 +536,7 @@ def _color_saturate(self: Color, factor: Ratio, /) -> Content:
     'desaturate',
     'https://typst.app/docs/reference/visualize/color/#definitions-desaturate',
 )
-def _color_desaturate(self: Color, factor: Ratio, /) -> Content:
+def _color_desaturate(self: Color, factor: Ratio, /):
     """Interface of `color.desaturate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-desaturate) for more information.
 
     Args:
@@ -556,7 +556,7 @@ def _color_desaturate(self: Color, factor: Ratio, /) -> Content:
 @implement(
     'negate', 'https://typst.app/docs/reference/visualize/color/#definitions-negate'
 )
-def _color_negate(self: Color, /, *, space: Any = 'oklab') -> Content:
+def _color_negate(self: Color, /, *, space: Any = 'oklab'):
     """Interface of `color.negate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-negate) for more information.
 
     Args:
@@ -578,7 +578,7 @@ def _color_negate(self: Color, /, *, space: Any = 'oklab') -> Content:
 @implement(
     'rotate', 'https://typst.app/docs/reference/visualize/color/#definitions-rotate'
 )
-def _color_rotate(self: Color, angle: Angle, /, *, space: Any = 'oklch') -> Content:
+def _color_rotate(self: Color, angle: Angle, /, *, space: Any = 'oklch'):
     """Interface of `color.rotate` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-rotate) for more information.
 
     Args:
@@ -599,7 +599,7 @@ def _color_rotate(self: Color, angle: Angle, /, *, space: Any = 'oklch') -> Cont
 @implement(
     'color.mix', 'https://typst.app/docs/reference/visualize/color/#definitions-mix'
 )
-def _color_mix(*colors: Color | tuple[Color, Ratio], space: Any = 'oklab') -> Content:
+def _color_mix(*colors: Color | tuple[Color, Ratio], space: Any = 'oklab'):
     """Interface of `color.mix` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-mix) for more information.
 
     Args:
@@ -619,7 +619,7 @@ def _color_mix(*colors: Color | tuple[Color, Ratio], space: Any = 'oklab') -> Co
     'transparentize',
     'https://typst.app/docs/reference/visualize/color/#definitions-transparentize',
 )
-def _color_transparentize(self: Color, scale: Ratio, /) -> Content:
+def _color_transparentize(self: Color, scale: Ratio, /):
     """Interface of `color.transparentize` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-transparentize) for more information.
 
     Args:
@@ -639,7 +639,7 @@ def _color_transparentize(self: Color, scale: Ratio, /) -> Content:
 @implement(
     'opacify', 'https://typst.app/docs/reference/visualize/color/#definitions-opacify'
 )
-def _color_opacify(self: Content, scale: Ratio, /) -> Content:
+def _color_opacify(self: Content, scale: Ratio, /):
     """Interface of `color.opacity` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-opacify) for more information.
 
     Args:
@@ -681,7 +681,7 @@ def _color_opacify(self: Content, scale: Ratio, /) -> Content:
     'color',
     'https://typst.app/docs/reference/visualize/color/',
 )
-def color() -> Content:
+def color():
     """Interface of `color` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/) for more information.
 
     Returns:
@@ -712,7 +712,7 @@ def ellipse(
     | RectangleStroke = None,
     inset: Relative | BoxInset = '0% + 5pt',
     outset: Relative | BoxOutset = {},
-) -> Content:
+):
     """Interface of `ellipse` in typst. See [the documentation](https://typst.app/docs/reference/visualize/ellipse/) for more information.
 
     Args:
@@ -897,7 +897,7 @@ def _gradient_repeat(
 @implement(
     'kind', 'https://typst.app/docs/reference/visualize/gradient/#definitions-kind'
 )
-def _gradient_kind(self: Gradient, /) -> Content:
+def _gradient_kind(self: Gradient, /):
     """Interface of `gradient.kind` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-kind) for more information.
 
     Args:
@@ -912,7 +912,7 @@ def _gradient_kind(self: Gradient, /) -> Content:
 @implement(
     'stops', 'https://typst.app/docs/reference/visualize/gradient/#definitions-stops'
 )
-def _gradient_stops(self: Gradient, /) -> Content:
+def _gradient_stops(self: Gradient, /):
     """Interface of `gradient.stops` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-stops) for more information.
 
     Args:
@@ -927,7 +927,7 @@ def _gradient_stops(self: Gradient, /) -> Content:
 @implement(
     'space', 'https://typst.app/docs/reference/visualize/gradient/#definitions-space'
 )
-def _gradient_space(self: Gradient, /) -> Content:
+def _gradient_space(self: Gradient, /):
     """Interface of `gradient.space` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-space) for more information.
 
     Args:
@@ -943,7 +943,7 @@ def _gradient_space(self: Gradient, /) -> Content:
     'relative',
     'https://typst.app/docs/reference/visualize/gradient/#definitions-relative',
 )
-def _gradient_relative(self: Gradient, /) -> Content:
+def _gradient_relative(self: Gradient, /):
     """Interface of `gradient.relative` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-relative) for more information.
 
     Args:
@@ -958,7 +958,7 @@ def _gradient_relative(self: Gradient, /) -> Content:
 @implement(
     'angle', 'https://typst.app/docs/reference/visualize/gradient/#definitions-angle'
 )
-def _gradient_angle(self: Gradient, /) -> Content:
+def _gradient_angle(self: Gradient, /):
     """Interface of `gradient.angle` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-angle) for more information.
 
     Args:
@@ -990,7 +990,7 @@ def _gradient_sample(self: Gradient, t: Angle | Ratio, /) -> Color:
     'samples',
     'https://typst.app/docs/reference/visualize/gradient/#definitions-samples',
 )
-def _gradient_samples(self: Gradient, /, *ts: Angle | Ratio) -> Content:
+def _gradient_samples(self: Gradient, /, *ts: Angle | Ratio):
     """Interface of `gradient.samples` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-samples) for more information.
 
     Args:
@@ -1015,7 +1015,7 @@ def _gradient_samples(self: Gradient, /, *ts: Angle | Ratio) -> Content:
 @attach_func(_gradient_sample, 'sample')
 @attach_func(_gradient_samples, 'samples')
 @implement('gradient', 'https://typst.app/docs/reference/visualize/gradient/')
-def gradient() -> Content:
+def gradient():
     """Interface of `gradient` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/) for more information.
 
     Returns:
@@ -1041,7 +1041,7 @@ def _image_decode(
     height: Auto | Relative | Fraction = 'auto',
     alt: None | str = None,
     fit: Literal['"cover"', '"contain"', '"stretch"'] = '"cover"',  # noqa
-) -> Content:
+):
     """Interface of `image.decode` in typst. See [the documentation](https://typst.app/docs/reference/visualize/image/#definitions-decode) for more information.
 
     Args:
@@ -1077,7 +1077,7 @@ def image(
     height: Auto | Relative | Fraction = 'auto',
     alt: None | str = None,
     fit: Literal['"cover"', '"contain"', '"stretch"'] = '"cover"',  # noqa
-) -> Content:
+):
     """Interface of `image` in typst. See [the documentation](https://typst.app/docs/reference/visualize/image/) for more information.
 
     Args:
@@ -1127,7 +1127,7 @@ def line(
     | Stroke
     | Pattern
     | RectangleStroke = '1pt + black',
-) -> Content:
+):
     """Interface of `line` in typst. See [the documentation](https://typst.app/docs/reference/visualize/line/) for more information.
 
     Args:
@@ -1167,7 +1167,7 @@ def path(
     | Pattern
     | RectangleStroke = 'auto',
     closed: bool = False,
-) -> Content:
+):
     """Interface of `path` in typst. See [the documentation](https://typst.app/docs/reference/visualize/path/) for more information.
 
     Args:
@@ -1249,7 +1249,7 @@ def _polygon_regular(
     | RectangleStroke = None,
     size: Length = '1em',
     vertices: int = 3,
-) -> Content:
+):
     """Interface of `polygon.regular` in typst. See [the documentation](https://typst.app/docs/reference/visualize/polygon/#definitions-regular) for more information.
 
     Args:
@@ -1280,7 +1280,7 @@ def polygon(
     | Stroke
     | Pattern
     | RectangleStroke = 'auto',
-) -> Content:
+):
     """Interface of `polygon` in typst. See [the documentation](https://typst.app/docs/reference/visualize/polygon/) for more information.
 
     Args:
@@ -1320,7 +1320,7 @@ def rect(
     radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = '0% + 5pt',
     outset: Relative | BoxOutset = {},
-) -> Content:
+):
     """Interface of `rect` in typst. See [the documentation](https://typst.app/docs/reference/visualize/rect/) for more information.
 
     Args:
@@ -1369,7 +1369,7 @@ def square(
     radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = '0% + 5pt',
     outset: Relative | BoxOutset = {},
-) -> Content:
+):
     """Interface of `square` in typst. See [the documentation](https://typst.app/docs/reference/visualize/square/) for more information.
 
     Args:

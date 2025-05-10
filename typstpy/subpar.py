@@ -1,37 +1,35 @@
 # Version: 0.2.0
-from typing import Any
 
 from typstpy._core import implement, pre_series
 from typstpy.std import figure, image  # noqa
-from typstpy.typings import Content
 
 
 @implement('subpar.grid', 'https://typst.app/universe/package/subpar')
 def grid(
-    *children: Any,
-    columns: Any = 'auto',
-    rows: Any = 'auto',
-    gutter: Any = '1em',
-    column_gutter: Any = 'auto',
-    row_gutter: Any = 'auto',
-    align: Any = 'bottom',
-    inset: Any = {},
-    kind: Any = 'image',
-    numbering: Any = '"1"',
-    numbering_sub: Any = '"(a)"',
-    numbering_sub_ref: Any = '"1a"',
-    supplement: Any = 'auto',
-    propagate_supplement: Any = True,
-    caption: Any = None,
-    placement: Any = None,
-    scope: Any = '"column"',
-    gap: Any = '0.65em',
-    outlined: Any = True,
-    outlined_sub: Any = False,
-    label: Any = None,
-    show_sub: Any = 'auto',
-    show_sub_caption: Any = 'auto',
-) -> Content:
+    *children,
+    columns='auto',
+    rows='auto',
+    gutter='1em',
+    column_gutter='auto',
+    row_gutter='auto',
+    align='bottom',
+    inset={},
+    kind='image',
+    numbering='"1"',
+    numbering_sub='"(a)"',
+    numbering_sub_ref='"1a"',
+    supplement='auto',
+    propagate_supplement=True,
+    caption=None,
+    placement=None,
+    scope='"column"',
+    gap='0.65em',
+    outlined=True,
+    outlined_sub=False,
+    label=None,
+    show_sub='auto',
+    show_sub_caption='auto',
+):
     """Interface of `subpar.grid` in typst. See [the documentation](https://typst.app/universe/package/subpar) for more information.
 
     Args:
