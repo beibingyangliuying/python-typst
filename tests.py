@@ -39,7 +39,7 @@ class MainTestCase(unittest.TestCase):
         doc.add_import(import_('"@preview/cetz:0.3.1"'))
         doc.add_set_rule(set_(heading, outlined=True))
         doc.add_show_rule(show_(heading, set_(text, fill='red')))
-        doc.add_show_rule(show_(figure.caption, emph))  # type: ignore
+        doc.add_show_rule(show_(figure.caption, emph))
         doc.add_show_rule(show_(None, 'it => it'))
         doc.add_content(heading(lorem(20)))
         doc.add_content(par(lorem(20)))

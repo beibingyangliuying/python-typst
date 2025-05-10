@@ -549,7 +549,7 @@ def _outline_entry(
 def outline(
     *,
     title: None | Auto | Content = 'auto',
-    target: Label | Selector | Location | Function = heading.where(outlined=True),  # type: ignore
+    target: Label | Selector | Location | Function = heading.where(outlined=True),
     depth: None | int = None,
     indent: None | Auto | bool | Relative | Function = None,
     fill: None | Content = repeat('[.]'),
