@@ -1,7 +1,14 @@
-from typing import Iterable, Literal, Optional
+from typing import Any, Iterable, Literal, Optional
 
 from typstpy._constants import VALID_CITATION_STYLES
-from typstpy._core import attach_func, implement, normal, positional, post_series
+from typstpy._core import (
+    attach_func,
+    implement,
+    instance,
+    normal,
+    positional,
+    post_series,
+)
 from typstpy.std.layout import hspace, repeat  # noqa
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import image, line  # noqa
@@ -464,6 +471,7 @@ def numbered_list(
     numbering: str | Function = '"1."',
     start: int = 1,
     full: bool = False,
+    reversed: bool = False,
     indent: Length = '0pt',
     body_indent: Length = '0.5em',
     spacing: Auto | Length = 'auto',
@@ -476,6 +484,7 @@ def numbered_list(
         numbering: How to number the enumeration. Defaults to '"1."'.
         start: Which number to start the enumeration with. Defaults to 1.
         full: Whether to display the full numbering, including the numbers of all parent enumerations. Defaults to False.
+        reversed: Whether to reverse the numbering for this enumeration. Defaults to False.
         indent: The indentation of each item. Defaults to '0pt'.
         body_indent: The space between the numbering and the body of each item. Defaults to '0.5em'.
         spacing: The spacing between the items of the enumeration. Defaults to 'auto'.
@@ -497,6 +506,7 @@ def numbered_list(
         numbering=numbering,
         start=start,
         full=full,
+        reversed=reversed,
         indent=indent,
         body_indent=body_indent,
         spacing=spacing,
@@ -525,41 +535,131 @@ def numbering(numbering_: str | Function, /, *numbers: int):
     'outline.entry', 'https://typst.app/docs/reference/model/outline/#definitions-entry'
 )
 def _outline_entry(
-    level: int, element: Content, body: Content, fill: None | Content, page: Content, /
+    level: int,
+    element: Content,
+    /,
+    *,
+    fill: None | Content = repeat('[.]', gap='0.15em'),
 ):
     """Interface of `outline.entry` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry) for more information.
 
     Args:
         level: The nesting level of this outline entry.
         element: The element this entry refers to.
-        body: The content which is displayed in place of the referred element at its entry in the outline.
-        fill: The content used to fill the space between the element's outline and its page number, as defined by the outline element this entry is located in.
-        page: The page number of the element this entry links to, formatted with the numbering set for the referenced page.
+        fill: Content to fill the space between the title and the page number.
 
     Returns:
         Executable typst code.
     """
-    return positional(_outline_entry, level, element, body, fill, page)
+    return normal(_outline_entry, '', level, element, fill=fill)
+
+
+@implement(
+    'indented',
+    'https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-indented',
+)
+def _outline_indented(
+    self: Content, prefix: None | Content, inner: Content, /, *, gap: Length = '0.5em'
+):
+    """Interface of `outline.indented` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-indented) for more information.
+
+    Args:
+        self: An outline entry.
+        prefix: The prefix is aligned with the inner content of entries that have level one less.
+        inner: The formatted inner content of the entry.
+        gap: The gap between the prefix and the inner content. Defaults to '0.5em'.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_outline_indented, self, prefix, inner, gap=gap)
+
+
+@implement(
+    'prefix',
+    'https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-prefix',
+)
+def _outline_prefix(self: Content, /):
+    """Interface of `outline.prefix` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-prefix) for more information.
+
+    Args:
+        self: An outline entry.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_outline_prefix, self)
+
+
+@implement(
+    'inner',
+    'https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-inner',
+)
+def _outline_inner(self: Content, /):
+    """Interface of `outline.inner` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-inner) for more information.
+
+    Args:
+        self: An outline entry.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_outline_inner, self)
+
+
+@implement(
+    'body',
+    'https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-body',
+)
+def _outline_body(self: Content, /):
+    """Interface of `outline.body` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-body) for more information.
+
+    Args:
+        self: An outline entry.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_outline_body, self)
+
+
+@implement(
+    'page',
+    'https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-page',
+)
+def _outline_page(self: Content, /):
+    """Interface of `outline.page` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-page) for more information.
+
+    Args:
+        self: An outline entry.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_outline_page, self)
 
 
 @attach_func(_outline_entry, 'entry')
+@attach_func(_outline_indented, 'indented')
+@attach_func(_outline_prefix, 'prefix')
+@attach_func(_outline_inner, 'inner')
+@attach_func(_outline_body, 'body')
+@attach_func(_outline_page, 'page')
 @implement('outline', 'https://typst.app/docs/reference/model/outline/')
 def outline(
     *,
     title: None | Auto | Content = 'auto',
-    target: Label | Selector | Location | Function = heading.where(outlined=True),
+    target: Label | Selector | Location | Function = heading,
     depth: None | int = None,
-    indent: None | Auto | bool | Relative | Function = None,
-    fill: None | Content = repeat('[.]'),
+    indent: Auto | Relative | Function = 'auto',
 ):
     """Interface of `outline` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/) for more information.
 
     Args:
         title: The title of the outline. Defaults to 'auto'.
-        target: The type of element to include in the outline. Defaults to heading.where(outlined=True).
+        target: The type of element to include in the outline. Defaults to heading.
         depth: The maximum level up to which elements are included in the outline. Defaults to None.
-        indent: How to indent the outline's entries. Defaults to None.
-        fill: Content to fill the space between the title and the page number. Defaults to repeat('[.]').
+        indent: How to indent the outline's entries. Defaults to 'auto'.
 
     Returns:
         Executable typst code.
@@ -567,12 +667,10 @@ def outline(
     Examples:
         >>> outline()
         '#outline()'
-        >>> outline(title='"Hello, World!"', target=heading.where(outlined=False))
-        '#outline(title: "Hello, World!", target: heading.where(outlined: false))'
+        >>> outline(title='"Hello, World!"', target=heading.where(outlined=True))
+        '#outline(title: "Hello, World!", target: heading.where(outlined: true))'
     """
-    return normal(
-        outline, title=title, target=target, depth=depth, indent=indent, fill=fill
-    )
+    return normal(outline, title=title, target=target, depth=depth, indent=indent)
 
 
 @implement('par.line', 'https://typst.app/docs/reference/model/par/#definitions-line')
@@ -621,7 +719,7 @@ def par(
     spacing: Length = '1.2em',
     justify: bool = False,
     linebreaks: Auto | Literal['"simple"', '"optimized"'] = 'auto',
-    first_line_indent: Length = '0pt',
+    first_line_indent: Length | dict[str, Any] = dict(amount='0pt', all=False),
     hanging_indent: Length = '0pt',
 ):
     """Interface of `par` in typst. See [the documentation](https://typst.app/docs/reference/model/par/) for more information.
@@ -632,7 +730,7 @@ def par(
         spacing: The spacing between paragraphs. Defaults to '1.2em'.
         justify: Whether to justify text in its line. Defaults to False.
         linebreaks: How to determine line breaks. Defaults to 'auto'.
-        first_line_indent: The indent the first line of a paragraph should have. Defaults to '0pt'.
+        first_line_indent: The indent the first line of a paragraph should have. Defaults to dict(amount='0pt', all=False).
         hanging_indent: The indent all but the first line of a paragraph should have. Defaults to '0pt'.
 
     Raises:
@@ -719,12 +817,22 @@ def quote(
 
 
 @implement('ref', 'https://typst.app/docs/reference/model/ref/')
-def ref(target: Label, /, *, supplement: None | Auto | Content | Function = 'auto'):
+def ref(
+    target: Label,
+    /,
+    *,
+    supplement: None | Auto | Content | Function = 'auto',
+    form: str = '"normal"',
+):
     """Interface of `ref` in typst. See [the documentation](https://typst.app/docs/reference/model/ref/) for more information.
 
     Args:
         target: The target label that should be referenced.
         supplement: A supplement for the reference. Defaults to 'auto'.
+        form: The kind of reference to produce. Defaults to '"normal"'.
+
+    Raises:
+        AssertionError: If `form` is invalid.
 
     Returns:
         Executable typst code.
@@ -735,7 +843,9 @@ def ref(target: Label, /, *, supplement: None | Auto | Content | Function = 'aut
         >>> ref('<label>', supplement='[Hello, World!]')
         '#ref(<label>, supplement: [Hello, World!])'
     """
-    return normal(ref, target, supplement=supplement)
+    assert form in {'"normal"', '"page"'}
+
+    return normal(ref, target, supplement=supplement, form=form)
 
 
 @implement('strong', 'https://typst.app/docs/reference/model/strong/')

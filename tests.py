@@ -17,9 +17,9 @@ class MainTestCase(unittest.TestCase):
     def test_where_with(self):
         from typstpy.std import heading, outline
 
-        self.assertRaises(AssertionError, heading.where, outline=True)  # type: ignore
-        self.assertRaises(AssertionError, heading.with_, outline=True)  # type: ignore
-        self.assertFalse(heading.where is outline.where)  # type: ignore
+        self.assertRaises(AssertionError, heading.where, outline=True)
+        self.assertRaises(AssertionError, heading.with_, outline=True)
+        self.assertFalse(heading.where is outline.where)
 
     def test_document(self):
         from typstpy import Document

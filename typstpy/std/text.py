@@ -495,12 +495,9 @@ def text(
     script: Auto | str = 'auto',
     dir: Auto | Direction = 'auto',
     hyphenate: Auto | bool = 'auto',
-    costs: TextCosts = {
-        'hyphenation': '100%',
-        'runt': '100%',
-        'widow': '100%',
-        'orphan': '100%',
-    },
+    costs: TextCosts = dict(
+        hyphenation='100%', runt='100%', widow='100%', orphan='100%'
+    ),
     kerning: bool = True,
     alternates: bool = False,
     stylistic_set: None | int | Iterable[int] = tuple(),
@@ -536,7 +533,7 @@ def text(
         script: The OpenType writing script. Defaults to 'auto'.
         dir: The dominant direction for text and inline objects. Defaults to 'auto'.
         hyphenate: Whether to hyphenate text to improve line breaking. Defaults to 'auto'.
-        costs: The "cost" of various choices when laying out text. Defaults to dict( hyphenation='100%', runt='100%', widow='100%', orphan='100%' ).
+        costs: The "cost" of various choices when laying out text. Defaults to dict(hyphenation='100%', runt='100%', widow='100%', orphan='100%').
         kerning: Whether to apply kerning. Defaults to True.
         alternates: Whether to apply stylistic alternates. Defaults to False.
         stylistic_set: Which stylistic sets to apply. Defaults to tuple().
