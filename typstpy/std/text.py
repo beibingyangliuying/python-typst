@@ -10,7 +10,6 @@ from typstpy.typings import (
     Direction,
     Gradient,
     Length,
-    Pattern,
     Ratio,
     RectangleRadius,
     RectangleStroke,
@@ -18,6 +17,7 @@ from typstpy.typings import (
     SmartquoteQuotes,
     Stroke,
     TextCosts,
+    Tiling,
 )
 
 
@@ -26,8 +26,8 @@ def highlight(
     body: Content,
     /,
     *,
-    fill: None | Color | Gradient | Pattern = rgb('"#fffd11a1"'),
-    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
+    fill: None | Color | Gradient | Tiling = rgb('"#fffd11a1"'),
+    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
     top_edge: Length
     | Literal[
         '"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'
@@ -156,7 +156,7 @@ def overline(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
     offset: Auto | Length = 'auto',
     extent: Length = '0pt',
@@ -272,11 +272,12 @@ def raw(
 
 
 @implement('smallcaps', 'https://typst.app/docs/reference/text/smallcaps/')
-def smallcaps(body: Content, /):
+def smallcaps(body: Content, /, *, all: bool = False):
     """Interface of `smallcaps` in typst. See [the documentation](https://typst.app/docs/reference/text/smallcaps/) for more information.
 
     Args:
         body: The content to display in small capitals.
+        all: Whether to turn uppercase letters into small capitals as well. Defaults to False.
 
     Returns:
         Executable typst code.
@@ -286,8 +287,10 @@ def smallcaps(body: Content, /):
         '#smallcaps("Hello, World!")'
         >>> smallcaps('[Hello, World!]')
         '#smallcaps([Hello, World!])'
+        >>> smallcaps('"Hello, World!"', all=True)
+        '#smallcaps("Hello, World!", all: true)'
     """
-    return normal(smallcaps, body)
+    return normal(smallcaps, body, all=all)
 
 
 @implement('smartquote', 'https://typst.app/docs/reference/text/smartquote/')
@@ -334,7 +337,7 @@ def strike(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
     offset: Auto | Length = 'auto',
     extent: Length = '0pt',
@@ -474,14 +477,8 @@ def text(
     ] = '"regular"',
     stretch: Ratio = '100%',
     size: Length = '11pt',
-    fill: Color | Gradient | Pattern = luma('0%'),
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Pattern
-    | RectangleStroke = None,
+    fill: Color | Gradient | Tiling = luma('0%'),
+    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = None,
     tracking: Length = '0pt',
     spacing: Relative = '100% + 0pt',
     cjk_latin_spacing: None | Auto = 'auto',
@@ -630,7 +627,7 @@ def underline(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
     offset: Auto | Length = 'auto',
     extent: Length = '0pt',

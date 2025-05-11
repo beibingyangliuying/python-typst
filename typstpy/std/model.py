@@ -27,11 +27,11 @@ from typstpy.typings import (
     Length,
     LinkDest,
     Location,
-    Pattern,
     RectangleStroke,
     Relative,
     Selector,
     Stroke,
+    Tiling,
 )
 
 
@@ -182,6 +182,7 @@ def document(
     *,
     title: None | Content = None,
     author: str | Iterable[str] = tuple(),
+    description: None | Content = None,
     keywords: str | Iterable[str] = tuple(),
     date: None | Auto | DateTime = 'auto',
 ):
@@ -190,13 +191,21 @@ def document(
     Args:
         title: The document's title. Defaults to None.
         author: The document's authors. Defaults to tuple().
+        description: The document's description. Defaults to None.
         keywords: The document's keywords. Defaults to tuple().
         date: The document's creation date. Defaults to 'auto'.
 
     Returns:
         Executable typst code.
     """
-    return normal(document, title=title, author=author, keywords=keywords, date=date)
+    return normal(
+        document,
+        title=title,
+        author=author,
+        description=description,
+        keywords=keywords,
+        date=date,
+    )
 
 
 @implement('emph', 'https://typst.app/docs/reference/model/emph/')
@@ -879,10 +888,10 @@ def _table_cell(
     y: Auto | int = 'auto',
     colspan: int = 1,
     rowspan: int = 1,
-    fill: None | Auto | Color | Gradient | Pattern = 'auto',
+    fill: None | Auto | Color | Gradient | Tiling = 'auto',
     align: Auto | Alignment = 'auto',
     inset: Auto | Relative | BoxInset = 'auto',
-    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
+    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
     breakable: Auto | bool = 'auto',
 ):
     """Interface of `table.cell` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-cell) for more information.
@@ -930,7 +939,7 @@ def _table_hline(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = '1pt + black',
     position: Alignment = 'top',
 ):
@@ -964,7 +973,7 @@ def _table_vline(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = '1pt + black',
     position: Alignment = 'start',
 ):
@@ -1036,7 +1045,7 @@ def table(
     | Relative
     | Fraction
     | Iterable[Relative | Fraction] = tuple(),
-    fill: None | Color | Gradient | Iterable[Color] | Pattern | Function = None,
+    fill: None | Color | Gradient | Iterable[Color] | Tiling | Function = None,
     align: Auto | Iterable[Alignment] | Alignment | Function = 'auto',
     stroke: None
     | Length
@@ -1044,7 +1053,7 @@ def table(
     | Gradient
     | Iterable[Color]
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke
     | Function = '1pt + black',
     inset: Relative | Iterable[Relative] | BoxInset | Function = '0% + 5pt',

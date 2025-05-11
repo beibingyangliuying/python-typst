@@ -348,7 +348,7 @@ class Series(Protocol):
 
 
 def pre_series(func: Series, *children, **kwargs) -> Content:
-    """Represent the protocol of `pre_series`.
+    """Represent the protocol of `pre_series`, which means that `children` will be prepended.
 
     Args:
         func: The function to be represented.
@@ -374,7 +374,7 @@ def pre_series(func: Series, *children, **kwargs) -> Content:
 
 
 def post_series(func: Series, *children, **kwargs) -> Content:
-    """Represent the protocol of `post_series`.
+    """Represent the protocol of `post_series`, which means that `children` will be postfixed.
 
     Args:
         func: The function to be represented.

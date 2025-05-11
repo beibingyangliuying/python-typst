@@ -1,5 +1,7 @@
 from typing import Any, Optional, Sequence, overload
 
+from deprecated import deprecated
+
 from typstpy._core import (
     attach_func,
     implement,
@@ -21,12 +23,12 @@ from typstpy.typings import (
     Gradient,
     Length,
     Literal,
-    Pattern,
     Ratio,
     RectangleRadius,
     RectangleStroke,
     Relative,
     Stroke,
+    Tiling,
 )
 
 
@@ -37,14 +39,14 @@ def circle(
     radius: Length = '0pt',
     width: Auto | Relative = 'auto',
     height: Auto | Relative | Function = 'auto',
-    fill: None | Color | Gradient | Pattern = None,
+    fill: None | Color | Gradient | Tiling = None,
     stroke: None
     | Auto
     | Length
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
     inset: Relative | BoxInset = '0% + 5pt',
     outset: Relative | BoxOutset = {},
@@ -694,6 +696,185 @@ def color():
     return '#color'
 
 
+@implement(
+    'curve.move', 'https://typst.app/docs/reference/visualize/curve/#definitions-move'
+)
+def _curve_move(start: tuple[Length, Length], /, *, relative: bool = False):
+    """Interface of `curve.move` in typst. See [the documentation](https://typst.app/docs/reference/visualize/curve/#definitions-move) for more information.
+
+    Args:
+        start: The starting point for the new component.
+        relative: Whether the coordinates are relative to the previous point. Defaults to False.
+
+    Returns:
+        Executable typst code.
+
+    Examples:
+        >>> curve.move(('10pt', '10pt'))
+        '#curve.move((10pt, 10pt))'
+        >>> curve.move(('10pt', '10pt'), relative=True)
+        '#curve.move((10pt, 10pt), relative: true)'
+    """
+    return normal(_curve_move, start, relative=relative)
+
+
+@implement(
+    'curve.line', 'https://typst.app/docs/reference/visualize/curve/#definitions-line'
+)
+def _curve_line(end: tuple[Length, Length], /, *, relative: bool = False):
+    """Interface of `curve.line` in typst. See [the documentation](https://typst.app/docs/reference/visualize/curve/#definitions-line) for more information.
+
+    Args:
+        end: The point at which the line shall end.
+        relative: Whether the coordinates are relative to the previous point. Defaults to False.
+
+    Returns:
+        Executable typst code.
+
+    Examples:
+        >>> curve.line(('10pt', '10pt'))
+        '#curve.line((10pt, 10pt))'
+        >>> curve.line(('10pt', '10pt'), relative=True)
+        '#curve.line((10pt, 10pt), relative: true)'
+    """
+    return normal(_curve_line, end, relative=relative)
+
+
+@implement(
+    'curve.quad', 'https://typst.app/docs/reference/visualize/curve/#definitions-quad'
+)
+def _curve_quad(
+    control: None | Auto | tuple[Length, Length],
+    end: tuple[Length, Length],
+    /,
+    *,
+    relative: bool = False,
+):
+    """Interface of `curve.quad` in typst. See [the documentation](https://typst.app/docs/reference/visualize/curve/#definitions-quad) for more information.
+
+    Args:
+        control: The control point of the quadratic Bézier curve.
+        end: The point at which the segment shall end.
+        relative: Whether the control and end coordinates are relative to the previous point. Defaults to False.
+
+    Returns:
+        Executable typst code.
+
+    Examples:
+        >>> curve.quad(('10pt', '10pt'), ('20pt', '20pt'))
+        '#curve.quad((10pt, 10pt), (20pt, 20pt))'
+        >>> curve.quad(('10pt', '10pt'), ('20pt', '20pt'), relative=True)
+        '#curve.quad((10pt, 10pt), (20pt, 20pt), relative: true)'
+    """
+    return pre_series(_curve_quad, control, end, relative=relative)
+
+
+@implement(
+    'curve.cubic', 'https://typst.app/docs/reference/visualize/curve/#definitions-cubic'
+)
+def _curve_cubic(
+    control_start: None | Auto | tuple[Length, Length],
+    control_end: None | tuple[Length, Length],
+    end: tuple[Length, Length],
+    /,
+    *,
+    relative: bool = False,
+):
+    """Interface of `curve.cubic` in typst. See [the documentation](https://typst.app/docs/reference/visualize/curve/#definitions-cubic) for more information.
+
+    Args:
+        control_start: The control point going out from the start of the curve segment.
+        control_end: The control point going into the end point of the curve segment.
+        end: The point at which the curve segment shall end.
+        relative: Whether the control-start, control-end, and end coordinates are relative to the previous point. Defaults to False.
+
+    Returns:
+        Executable typst code.
+
+    Examples:
+        >>> curve.cubic(('10pt', '10pt'), ('20pt', '20pt'), ('30pt', '30pt'))
+        '#curve.cubic((10pt, 10pt), (20pt, 20pt), (30pt, 30pt))'
+        >>> curve.cubic(('10pt', '10pt'), ('20pt', '20pt'), ('30pt', '30pt'), relative=True)
+        '#curve.cubic((10pt, 10pt), (20pt, 20pt), (30pt, 30pt), relative: true)'
+    """
+    return pre_series(_curve_cubic, control_start, control_end, end, relative=relative)
+
+
+@implement(
+    'curve.close', 'https://typst.app/docs/reference/visualize/curve/#definitions-close'
+)
+def _curve_close(*, mode: str = '"smooth"'):
+    """Interface of `curve.close` in typst. See [the documentation](https://typst.app/docs/reference/visualize/curve/#definitions-close) for more information.
+
+    Args:
+        mode: How to close the curve.
+
+    Raises:
+        AssertionError: If `mode` is invalid.
+
+    Returns:
+        Executable typst code.
+
+    Examples:
+        >>> curve.close(mode='"smooth"')
+        '#curve.close()'
+        >>> curve.close(mode='"straight"')
+        '#curve.close(mode: "straight")'
+    """
+    assert mode in {'"smooth"', '"straight"'}
+
+    return normal(_curve_close, '', mode=mode)
+
+
+@attach_func(_curve_move, 'move')
+@attach_func(_curve_line, 'line')
+@attach_func(_curve_quad, 'quad')
+@attach_func(_curve_cubic, 'cubic')
+@attach_func(_curve_close, 'close')
+@implement('curve', 'https://typst.app/docs/reference/visualize/curve/')
+def curve(
+    *components: Content,
+    fill: None | Color | Gradient | Tiling = None,
+    fill_rule: str = '"non-zero"',
+    stroke: None
+    | Auto
+    | Length
+    | Color
+    | Gradient
+    | Stroke
+    | Tiling
+    | dict[str, Any] = 'auto',
+):
+    """Interface of `curve` in typst. See [the documentation](https://typst.app/docs/reference/visualize/curve/) for more information.
+
+    Args:
+        fill: How to fill the curve. Defaults to None.
+        fill_rule: The drawing rule used to fill the curve. Defaults to '"non-zero"'.
+        stroke: How to stroke the curve. Defaults to 'auto'.
+
+    Raises:
+        AssertionError: If `fill_rule` is invalid.
+
+    Returns:
+        Executable typst code.
+
+    Examples:
+        >>> curve(
+        ...     curve.move(('0pt', '50pt')),
+        ...     curve.line(('100pt', '50pt')),
+        ...     curve.cubic(None, ('90pt', '0pt'), ('50pt', '0pt')),
+        ...     curve.close(),
+        ...     stroke='blue',
+        ... )
+        '#curve(stroke: blue, curve.move((0pt, 50pt)), curve.line((100pt, 50pt)), curve.cubic(none, (90pt, 0pt), (50pt, 0pt)), curve.close())'
+    """
+    assert fill_rule in {'"non-zero"', '"even-odd"'}
+
+    return post_series(
+        curve, *components, fill=fill, fill_rule=fill_rule, stroke=stroke
+    )
+
+
 @implement('ellipse', 'https://typst.app/docs/reference/visualize/ellipse/')
 def ellipse(
     body: None | Content = '',
@@ -701,14 +882,14 @@ def ellipse(
     *,
     width: Auto | Relative = 'auto',
     height: Auto | Relative | Fraction = 'auto',
-    fill: None | Color | Gradient | Pattern = None,
+    fill: None | Color | Gradient | Tiling = None,
     stroke: None
     | Auto
     | Length
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = None,
     inset: Relative | BoxInset = '0% + 5pt',
     outset: Relative | BoxOutset = {},
@@ -770,7 +951,6 @@ def _gradient_linear(
         >>> gradient.linear(rgb(255, 255, 255), rgb(0, 0, 0))
         '#gradient.linear(rgb(255, 255, 255), rgb(0, 0, 0))'
     """
-    assert len(stops) >= 2
     assert relative == 'auto' or relative in {'"self"', '"parent"'}
 
     return pre_series(_gradient_linear, *stops, space=space, relative=relative)
@@ -804,6 +984,12 @@ def _gradient_radial(
 
     Returns:
         A color gradient.
+
+    Examples:
+        >>> gradient.radial(
+        ...     color.map('viridis'), focal_center=('10%', '40%'), focal_radius='5%'
+        ... )
+        '#gradient.radial(..color.map.viridis, focal-center: (10%, 40%), focal-radius: 5%)'
     """
     assert relative == 'auto' or relative in {'"self"', '"parent"'}
 
@@ -843,6 +1029,10 @@ def _gradient_conic(
 
     Returns:
         A color gradient.
+
+    Examples:
+        >>> gradient.conic(color.map('viridis'), angle='90deg', center=('10%', '40%'))
+        '#gradient.conic(..color.map.viridis, angle: 90deg, center: (10%, 40%))'
     """
     assert relative == 'auto' or relative in {'"self"', '"parent"'}
 
@@ -871,6 +1061,10 @@ def _gradient_sharp(
 
     Returns:
         A color gradient.
+
+    Examples:
+        >>> gradient.sharp(gradient.linear(color.map('rainbow')), 5, smoothness='50%')
+        '#gradient.linear(..color.map.rainbow).sharp(5, smoothness: 50%)'
     """
     return instance(_gradient_sharp, self, steps, smoothness=smoothness)
 
@@ -971,6 +1165,68 @@ def _gradient_angle(self: Gradient, /):
 
 
 @implement(
+    'center', 'https://typst.app/docs/reference/visualize/gradient/#definitions-center'
+)
+def _gradient_center(self: Gradient, /):
+    """Interface of `gradient.center` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-center) for more information.
+
+    Args:
+        self: A color gradient.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_gradient_center, self)
+
+
+@implement(
+    'radius', 'https://typst.app/docs/reference/visualize/gradient/#definitions-radius'
+)
+def _gradient_radius(self: Gradient, /):
+    """Interface of `gradient.radius` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-radius) for more information.
+
+    Args:
+        self: A color gradient.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_gradient_radius, self)
+
+
+@implement(
+    'focal-center',
+    'https://typst.app/docs/reference/visualize/gradient/#definitions-focal-center',
+)
+def _gradient_focal_center(self: Gradient, /):
+    """Interface of `gradient.focal-center` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-focal-center) for more information.
+
+    Args:
+        self: A color gradient.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_gradient_focal_center, self)
+
+
+@implement(
+    'focal-radius',
+    'https://typst.app/docs/reference/visualize/gradient/#definitions-focal-radius',
+)
+def _gradient_focal_radius(self: Gradient, /):
+    """Interface of `gradient.focal-radius` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-focal-radius) for more information.
+
+    Args:
+        self: A color gradient.
+
+    Returns:
+        Executable typst code.
+    """
+    return instance(_gradient_focal_radius, self)
+
+
+@implement(
     'sample', 'https://typst.app/docs/reference/visualize/gradient/#definitions-sample'
 )
 def _gradient_sample(self: Gradient, t: Angle | Ratio, /) -> Color:
@@ -1012,6 +1268,10 @@ def _gradient_samples(self: Gradient, /, *ts: Angle | Ratio):
 @attach_func(_gradient_space, 'space')
 @attach_func(_gradient_relative, 'relative')
 @attach_func(_gradient_angle, 'angle')
+@attach_func(_gradient_center, 'center')
+@attach_func(_gradient_radius, 'radius')
+@attach_func(_gradient_focal_center, 'focal_center')
+@attach_func(_gradient_focal_radius, 'focal_radius')
 @attach_func(_gradient_sample, 'sample')
 @attach_func(_gradient_samples, 'samples')
 @implement('gradient', 'https://typst.app/docs/reference/visualize/gradient/')
@@ -1028,6 +1288,10 @@ def gradient():
     return '#gradient'
 
 
+@deprecated(
+    version='1.1.1',
+    reason='The `image.decode` is deprecated, directly pass bytes to `image` instead.',
+)
 @implement(
     'image.decode',
     'https://typst.app/docs/reference/visualize/image/#definitions-decode',
@@ -1069,27 +1333,33 @@ def _image_decode(
 @attach_func(_image_decode, 'decode')
 @implement('image', 'https://typst.app/docs/reference/visualize/image/')
 def image(
-    path: str,
+    source: str,  # TODO: Consider support `bytes` in the future.
     /,
     *,
-    format: Auto | Literal['"png"', '"jpg"', '"gif"', '"svg"'] = 'auto',  # noqa
+    format: Auto
+    | Literal['"png"', '"jpg"', '"gif"', '"svg"']  # noqa
+    | dict[str, Any] = 'auto',
     width: Auto | Relative = 'auto',
     height: Auto | Relative | Fraction = 'auto',
     alt: None | str = None,
     fit: Literal['"cover"', '"contain"', '"stretch"'] = '"cover"',  # noqa
+    scaling: Auto | Literal['"smooth"', '"pixelated"'] = 'auto',  # noqa
+    icc: Auto | str = 'auto',  # TODO: Consider support `bytes` in the future.
 ):
     """Interface of `image` in typst. See [the documentation](https://typst.app/docs/reference/visualize/image/) for more information.
 
     Args:
-        path: Path to an image file.
+        source: A path to an image file or raw bytes making up an image in one of the supported formats.
         format: The image's format. Defaults to 'auto'.
         width: The width of the image. Defaults to 'auto'.
         height: The height of the image. Defaults to 'auto'.
         alt: A text describing the image. Defaults to None.
         fit: How the image should adjust itself to a given area (the area is defined by the width and height fields). Defaults to '"cover"'.
+        scaling: A hint to viewers how they should scale the image. Defaults to 'auto'.
+        icc: An ICC profile for the image. Defaults to 'auto'.
 
     Raises:
-        AssertionError: If `format` or `fit` is invalid.
+        AssertionError: If `format` or `fit` or `scaling` is invalid.
 
     Returns:
         Executable typst code.
@@ -1102,15 +1372,18 @@ def image(
     """
     assert format == 'auto' or format in {'"png"', '"jpg"', '"gif"', '"svg"'}
     assert fit in {'"cover"', '"contain"', '"stretch"'}
+    assert scaling == 'auto' or scaling in {'"smooth"', '"pixelated"'}
 
     return normal(
         image,
-        path,
+        source,
         format=format,
         width=width,
         height=height,
         alt=alt,
         fit=fit,
+        scaling=scaling,
+        icc=icc,
     )
 
 
@@ -1125,7 +1398,7 @@ def line(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = '1pt + black',
 ):
     """Interface of `line` in typst. See [the documentation](https://typst.app/docs/reference/visualize/line/) for more information.
@@ -1153,10 +1426,13 @@ def line(
     return normal(line, start=start, end=end, length=length, angle=angle, stroke=stroke)
 
 
+@deprecated(
+    version='1.1.1', reason='The `path` function is deprecated, use `curve` instead.'
+)
 @implement('path', 'https://typst.app/docs/reference/visualize/path/')
 def path(
     *vertices: tuple[Ratio, Ratio] | Sequence[tuple[Ratio, Ratio]],
-    fill: None | Color | Gradient | Pattern = None,
+    fill: None | Color | Gradient | Tiling = None,
     fill_rule: Literal['"non-zero"', '"evenodd"'] = '"non-zero"',  # noqa
     stroke: None
     | Auto
@@ -1164,7 +1440,7 @@ def path(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
     closed: bool = False,
 ):
@@ -1212,7 +1488,7 @@ def pattern(
     size: Auto | tuple[Length, Length] = 'auto',
     spacing: tuple[Length, Length] = ('0pt', '0pt'),
     relative: Auto | Literal['"self"', '"parent"'] = 'auto',  # noqa
-) -> Pattern:
+) -> Tiling:
     """Interface of `pattern` in typst. See [the documentation](https://typst.app/docs/reference/visualize/pattern/) for more information.
 
     Args:
@@ -1238,14 +1514,14 @@ def pattern(
 )
 def _polygon_regular(
     *,
-    fill: None | Color | Gradient | Pattern = None,
+    fill: None | Color | Gradient | Tiling = None,
     stroke: None
     | Auto
     | Length
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = None,
     size: Length = '1em',
     vertices: int = 3,
@@ -1270,7 +1546,7 @@ def _polygon_regular(
 @implement('polygon', 'https://typst.app/docs/reference/visualize/polygon/')
 def polygon(
     *vertices: tuple[Relative, Relative] | Sequence[tuple[Relative, Relative]],
-    fill: None | Color | Gradient | Pattern = None,
+    fill: None | Color | Gradient | Tiling = None,
     fill_rule: Literal['"non-zero"', '"evenodd"'] = '"non-zero"',  # noqa
     stroke: None
     | Auto
@@ -1278,7 +1554,7 @@ def polygon(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
 ):
     """Interface of `polygon` in typst. See [the documentation](https://typst.app/docs/reference/visualize/polygon/) for more information.
@@ -1308,14 +1584,14 @@ def rect(
     *,
     width: Auto | Relative = 'auto',
     height: Auto | Relative | Fraction = 'auto',
-    fill: None | Color | Gradient | Pattern = None,
+    fill: None | Color | Gradient | Tiling = None,
     stroke: None
     | Auto
     | Length
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
     radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = '0% + 5pt',
@@ -1357,14 +1633,14 @@ def square(
     size: Auto | Length = 'auto',
     width: Auto | Relative = 'auto',
     height: Auto | Relative | Fraction = 'auto',
-    fill: None | Color | Gradient | Pattern = None,
+    fill: None | Color | Gradient | Tiling = None,
     stroke: None
     | Auto
     | Length
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = 'auto',
     radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = '0% + 5pt',
@@ -1415,6 +1691,7 @@ __all__ = [
     'rgb',
     'cmyk',
     'color',
+    'curve',
     'ellipse',
     'gradient',
     'image',

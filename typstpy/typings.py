@@ -67,8 +67,6 @@ Length = str
 """A size or distance, possibly expressed with contextual units. See [the documentation](https://typst.app/docs/reference/layout/length/) for more information."""
 Location = str
 """Identifies an element in the document. See [the documentation](https://typst.app/docs/reference/introspection/location/) for more information."""
-Pattern = str
-"""A repeating pattern fill. See [the documentation](https://typst.app/docs/reference/visualize/pattern/) for more information."""
 Ratio = str
 """A ratio of a whole. See [the documentation](https://typst.app/docs/reference/layout/ratio/) for more information."""
 Relative = str
@@ -77,6 +75,8 @@ Selector = str
 """A filter for selecting elements within the document. See [the documentation](https://typst.app/docs/reference/foundations/selector/) for more information."""
 Stroke = str
 """Defines how to draw a line. See [the documentation](https://typst.app/docs/reference/visualize/stroke/) for more information."""
+Tiling = str
+"""A repeating tiling fill. See [the documentation](https://typst.app/docs/reference/visualize/tiling/) for more information."""
 
 
 # endregion
@@ -357,7 +357,7 @@ __all__ = [
     'Label',
     'Length',
     'Location',
-    'Pattern',
+    'Tiling',
     'Ratio',
     'Relative',
     'Selector',

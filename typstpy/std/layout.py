@@ -19,12 +19,12 @@ from typstpy.typings import (
     Length,
     PageMargin,
     PaperSizes,
-    Pattern,
     Ratio,
     RectangleRadius,
     RectangleStroke,
     Relative,
     Stroke,
+    Tiling,
 )
 
 
@@ -61,8 +61,8 @@ def block(
     width: Auto | Relative = 'auto',
     height: Auto | Relative | Fraction = 'auto',
     breakable: bool = True,
-    fill: None | Color | Gradient | Pattern = None,
-    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
+    fill: None | Color | Gradient | Tiling = None,
+    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
     radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = {},
     outset: Relative | BoxOutset = {},
@@ -130,8 +130,8 @@ def box(
     width: Auto | Relative | Fraction = 'auto',
     height: Auto | Relative = 'auto',
     baseline: Relative = '0% + 0pt',
-    fill: None | Color | Gradient | Pattern = None,
-    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
+    fill: None | Color | Gradient | Tiling = None,
+    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
     radius: Relative | RectangleRadius = {},
     inset: Relative | BoxInset = {},
     outset: Relative | BoxOutset = {},
@@ -236,10 +236,10 @@ def _grid_cell(
     y: Auto | int = 'auto',
     colspan: int = 1,
     rowspan: int = 1,
-    fill: None | Auto | Color | Gradient | Pattern = 'auto',
+    fill: None | Auto | Color | Gradient | Tiling = 'auto',
     align: Auto | Alignment = 'auto',
     inset: Auto | Relative | BoxInset = 'auto',
-    stroke: None | Length | Color | Gradient | Stroke | Pattern | RectangleStroke = {},
+    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
     breakable: Auto | bool = 'auto',
 ):
     """Interface of `grid.cell` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-cell) for more information.
@@ -258,6 +258,10 @@ def _grid_cell(
 
     Returns:
         Executable typst code.
+
+    Examples:
+        >>> grid.cell(lorem(20), x=3, y=3)
+        '#grid.cell(lorem(20), x: 3, y: 3)'
     """
     return normal(
         _grid_cell,
@@ -287,7 +291,7 @@ def _grid_hline(
     | Color
     | Gradient
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke = '1pt + black',
     position: Alignment = 'top',
 ):
@@ -316,7 +320,7 @@ def _grid_vline(
     x: Auto | int = 'auto',
     start: int = 0,
     end: None | int = None,
-    stroke: None | Length | Color | Gradient | Stroke | Pattern = '1pt + black',
+    stroke: None | Length | Color | Gradient | Stroke | Tiling = '1pt + black',
     position: Alignment = 'start',
 ):
     """Interface of `grid.vline` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-vline) for more information.
@@ -387,7 +391,7 @@ def grid(
     | Relative
     | Fraction
     | Iterable[Relative | Fraction] = tuple(),
-    fill: None | Color | Gradient | Iterable[Color] | Pattern | Function = None,
+    fill: None | Color | Gradient | Iterable[Color] | Tiling | Function = None,
     align: Auto | Iterable[Alignment] | Alignment | Function = 'auto',
     stroke: None
     | Length
@@ -395,7 +399,7 @@ def grid(
     | Gradient
     | Iterable[Stroke]
     | Stroke
-    | Pattern
+    | Tiling
     | RectangleStroke
     | Function = None,
     inset: Relative | Iterable[Relative] | BoxInset | Function = {},
@@ -564,7 +568,7 @@ def page(
     margin: Auto | Relative | PageMargin = 'auto',
     binding: Auto | Alignment = 'auto',
     columns: int = 1,
-    fill: None | Auto | Color | Gradient | Pattern = 'auto',
+    fill: None | Auto | Color | Gradient | Tiling = 'auto',
     numbering: None | str | Function = None,
     number_align: Alignment = 'center + bottom',
     header: None | Auto | Content = 'auto',
