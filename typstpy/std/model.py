@@ -1,3 +1,5 @@
+# pylint: disable = W0102, W0611, R0913, R0914, R1735, C0302
+
 from typing import Any, Iterable, Literal, Optional
 
 from typstpy._constants import VALID_CITATION_STYLES

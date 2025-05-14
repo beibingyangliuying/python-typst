@@ -1,3 +1,5 @@
+# pylint: disable = W0102, W0611, R0913, R0914
+
 from typing import Iterable
 
 from typstpy._constants import VALID_PAPER_SIZES

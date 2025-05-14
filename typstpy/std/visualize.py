@@ -1,6 +1,8 @@
+# pylint: disable = W0102, W0611, R0913, R0914, R1735, C0302
+
 from typing import Any, Optional, Sequence, overload
 
-from deprecated import deprecated
+from deprecated import deprecated  # type: ignore[import-untyped]
 
 from typstpy._core import (
     attach_func,
