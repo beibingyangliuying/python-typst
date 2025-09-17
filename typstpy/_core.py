@@ -1,24 +1,18 @@
-# pylint: disable = R0903
-
 import inspect
 import warnings
 from collections.abc import Callable, Iterable, Mapping
 from functools import singledispatch
 from io import StringIO
-from typing import ClassVar, Optional, Protocol, Self
+from typing import ClassVar, Self
 from weakref import WeakKeyDictionary, WeakSet
 
 from attrs import frozen
-from cytoolz.curried import curry, keyfilter  # type: ignore[import-untyped]
-
-from typstpy.typings import Content
-
-TypstFunc = Callable[..., Content]
+from cytoolz.curried import curry, keyfilter
 
 # region render
 
 
-def _render_key(key: str):
+def _render_key(key):
     return key.replace('_', '-')
 
 
@@ -43,12 +37,12 @@ def _(obj: str):
 def _(obj: Mapping):
     if not obj:
         return '(:)'
-    return f'({', '.join(f'{_render_key(k)}: {_render_value(v)}' for k, v in obj.items())})'
+    return f'({", ".join(f"{_render_key(k)}: {_render_value(v)}" for k, v in obj.items())})'
 
 
 @_render_value.register
 def _(obj: Iterable):
-    return f"({', '.join(_render_value(v) for v in obj)})"
+    return f'({", ".join(_render_value(v) for v in obj)})'
 
 
 @_render_value.register
@@ -62,7 +56,7 @@ def _(obj: Callable):
     return implement.original_name
 
 
-def _strip_brace(value: str):
+def _strip_brace(value):
     return value[1:-1]
 
 
@@ -70,7 +64,7 @@ def _strip_brace(value: str):
 # region decorators
 
 
-def attach_func(attached: TypstFunc, name: Optional[str] = None):
+def attach_func(attached, name=None):
     """Attach a typst function to another typst function.
 
     Args:
@@ -84,7 +78,7 @@ def attach_func(attached: TypstFunc, name: Optional[str] = None):
         The decorator function.
     """
 
-    def wrapper(func: TypstFunc):
+    def wrapper(func):
         _name = name if name else func.__name__
         if _name.startswith('_'):
             raise ValueError(f'Invalid name: {_name}')
@@ -96,23 +90,24 @@ def attach_func(attached: TypstFunc, name: Optional[str] = None):
 
 @frozen
 class _Implement:
-    permanent: ClassVar[WeakKeyDictionary[TypstFunc, Self]] = WeakKeyDictionary()
-    temporary: ClassVar[WeakSet[TypstFunc]] = WeakSet()
+    permanent: ClassVar[WeakKeyDictionary[Callable, Self]] = WeakKeyDictionary()
+    temporary: ClassVar[WeakSet[Callable]] = WeakSet()
 
     original_name: str
-    hyperlink: str
+    hyperlink: str | None = None
+    version: str | None = None
 
     @staticmethod
     def implement_table():
         with StringIO() as stream:
             _print = curry(print, file=stream, sep='\n')
             _print(
-                "| Package's function name | Typst's function name | Documentation on typst |",
-                '| --- | --- | --- |',
+                "| Package's function name | Typst's function name | Documentation on typst | Version |",
+                '| --- | --- | --- | --- |',
             )
             _print(
                 *(
-                    f'| {k.__module__[len('typstpy.'):]}.{k.__name__} | {v.original_name} | [{v.hyperlink}]({v.hyperlink}) |'
+                    f'| {k.__module__[len("typstpy.") :]}.{k.__name__} | {v.original_name} | [{v.hyperlink}]({v.hyperlink}) | {v.version} |'
                     for k, v in _Implement.permanent.items()
                 ),
             )
@@ -120,7 +115,7 @@ class _Implement:
 
     @staticmethod
     def code_examples():
-        def extract_examples(func: TypstFunc):
+        def extract_examples(func):
             docstring = inspect.getdoc(func)
             if not docstring:
                 return None
@@ -147,7 +142,7 @@ class _Implement:
                     continue
 
                 print(
-                    f'`{func.__module__[len('typstpy.'):]}.{func.__name__}`:',
+                    f'`{func.__module__[len("typstpy.") :]}.{func.__name__}`:',
                     '\n```python',
                     examples,
                     '```\n',
@@ -157,26 +152,29 @@ class _Implement:
             return stream.getvalue()
 
 
-def implement(original_name: str, hyperlink: str = ''):
+def implement(original_name, *, hyperlink=None, version=None):
     """Register a typst function and attach it with `where` and `with_` functions.
 
     Args:
         original_name: The original function name in typst.
-        hyperlink: The hyperlink of the documentation in typst. Defaults to ''.
+        hyperlink: The hyperlink of the documentation in typst. Defaults to None.
+        version: The current supported version. Defaults to None.
 
     Returns:
         The decorator function.
     """
 
-    def wrapper(func: TypstFunc):
-        _Implement.permanent[func] = _Implement(original_name, hyperlink)
+    def wrapper(func):
+        _Implement.permanent[func] = _Implement(original_name, hyperlink, version)
 
-        def where(**kwargs) -> Content:
+        def where(**kwargs):
+            """Returns a selector that filters for elements belonging to this function whose fields have the values of the given arguments."""
             assert kwargs.keys() <= func.__kwdefaults__.keys()
 
             return f'#{original_name}.where({_strip_brace(_render_value(kwargs))})'
 
-        def with_(*args, **kwargs) -> Content:
+        def with_(*args, **kwargs):
+            """Returns a new function that has the given arguments pre-applied."""
             assert (not kwargs) or (kwargs.keys() <= func.__kwdefaults__.keys())
 
             params = []
@@ -185,7 +183,7 @@ def implement(original_name: str, hyperlink: str = ''):
             if kwargs:
                 params.append(_strip_brace(_render_value(kwargs)))
 
-            return f'#{original_name}.with({', '.join(params)})'
+            return f'#{original_name}.with({", ".join(params)})'
 
         attach_func(where, 'where')(func)
         attach_func(with_, 'with_')(func)
@@ -194,7 +192,7 @@ def implement(original_name: str, hyperlink: str = ''):
     return wrapper
 
 
-def temporary(func: TypstFunc):
+def temporary(func):
     """Mark a function that is generated from function factory in module `customizations`.
 
     Args:
@@ -211,7 +209,7 @@ def temporary(func: TypstFunc):
 # region protocols
 
 
-def set_(func: TypstFunc, /, **kwargs) -> Content:
+def set_(func, /, **kwargs):
     """Represent `set` rule in typst.
 
     Args:
@@ -228,11 +226,7 @@ def set_(func: TypstFunc, /, **kwargs) -> Content:
     return f'#set {_render_value(func)}({_strip_brace(_render_value(kwargs))})'
 
 
-def show_(
-    element: Content | TypstFunc | None,
-    appearance: Content | TypstFunc,
-    /,
-) -> Content:
+def show_(element, appearance, /):
     """Represent `show` rule in typst.
 
     Args:
@@ -245,11 +239,10 @@ def show_(
     Returns:
         Executable typst code.
     """
+    return f'#show {"" if element is None else _render_value(element)}: {_render_value(appearance)}'
 
-    return f'#show {'' if element is None else _render_value(element)}: {_render_value(appearance)}'
 
-
-def import_(path: str, /, *names: str) -> Content:
+def import_(path, /, *names):
     """Represent `import` operation in typst.
 
     Args:
@@ -261,17 +254,13 @@ def import_(path: str, /, *names: str) -> Content:
     return f'#import {path}: {_strip_brace(_render_value(names))}'
 
 
-class Normal(Protocol):
-    def __call__(self, body, /, *args, **kwargs) -> Content: ...
-
-
 def normal(
-    func: Normal,
+    func,
     body='',
     /,
     *args,
     **kwargs,
-) -> Content:
+):
     """Represent the protocol of `normal`.
 
     Args:
@@ -281,7 +270,7 @@ def normal(
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__  # type: ignore[attr-defined]
+    defaults = func.__kwdefaults__
     if defaults:
         kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
     elif func not in _Implement.temporary:
@@ -298,11 +287,7 @@ def normal(
     return f'#{_render_value(func)}(' + ', '.join(params) + ')'
 
 
-class Positional(Protocol):
-    def __call__(self, *args) -> Content: ...
-
-
-def positional(func: Positional, *args) -> Content:
+def positional(func, *args):
     """Represent the protocol of `positional`.
 
     Args:
@@ -314,11 +299,7 @@ def positional(func: Positional, *args) -> Content:
     return f'#{_render_value(func)}{_render_value(args)}'
 
 
-class Instance(Protocol):
-    def __call__(self, instance: Content, /, *args, **kwargs) -> Content: ...
-
-
-def instance(func: Instance, instance: Content, /, *args, **kwargs) -> Content:
+def instance(func, instance, /, *args, **kwargs):
     """Represent the protocol of `pre_instance`.
 
     Args:
@@ -328,7 +309,7 @@ def instance(func: Instance, instance: Content, /, *args, **kwargs) -> Content:
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__  # type: ignore[attr-defined]
+    defaults = func.__kwdefaults__
     if defaults:
         kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
     elif func not in _Implement.temporary:
@@ -343,11 +324,7 @@ def instance(func: Instance, instance: Content, /, *args, **kwargs) -> Content:
     return f'{instance}.{_render_value(func)}(' + ', '.join(params) + ')'
 
 
-class Series(Protocol):
-    def __call__(self, *children, **kwargs) -> Content: ...
-
-
-def pre_series(func: Series, *children, **kwargs) -> Content:
+def pre_series(func, *children, **kwargs):
     """Represent the protocol of `pre_series`, which means that `children` will be prepended.
 
     Args:
@@ -356,7 +333,7 @@ def pre_series(func: Series, *children, **kwargs) -> Content:
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__  # type: ignore[attr-defined]
+    defaults = func.__kwdefaults__
     if defaults:
         kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
     elif func not in _Implement.temporary:
@@ -373,7 +350,7 @@ def pre_series(func: Series, *children, **kwargs) -> Content:
     return f'#{_render_value(func)}(' + ', '.join(params) + ')'
 
 
-def post_series(func: Series, *children, **kwargs) -> Content:
+def post_series(func, *children, **kwargs):
     """Represent the protocol of `post_series`, which means that `children` will be postfixed.
 
     Args:
@@ -382,7 +359,7 @@ def post_series(func: Series, *children, **kwargs) -> Content:
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__  # type: ignore[attr-defined]
+    defaults = func.__kwdefaults__
     if defaults:
         kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
     elif func not in _Implement.temporary:

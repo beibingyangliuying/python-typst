@@ -1,54 +1,33 @@
-# pylint: disable = W0102, W0611, R0913, R0914, R1735, C0302
-
-from typing import Any, Iterable, Literal
-
 from typstpy._core import attach_func, implement, normal, positional
 from typstpy.std.visualize import luma, rgb
-from typstpy.typings import (
-    Alignment,
-    Auto,
-    Color,
-    Content,
-    Direction,
-    Gradient,
-    Length,
-    Ratio,
-    RectangleRadius,
-    RectangleStroke,
-    Relative,
-    SmartquoteQuotes,
-    Stroke,
-    TextCosts,
-    Tiling,
+
+
+@implement(
+    'highlight',
+    hyperlink='https://typst.app/docs/reference/text/highlight/',
+    version='0.13.x',
 )
-
-
-@implement('highlight', 'https://typst.app/docs/reference/text/highlight/')
 def highlight(
-    body: Content,
+    body,
     /,
     *,
-    fill: None | Color | Gradient | Tiling = rgb('"#fffd11a1"'),
-    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
-    top_edge: Length
-    | Literal[
-        '"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'
-    ] = '"ascender"',
-    bottom_edge: Length
-    | Literal['"baseline"', '"descender"', '"bounds"'] = '"descender"',
-    extent: Length = '0pt',
-    radius: Relative | RectangleRadius = {},
-):
+    fill=rgb('"#fffd11a1"'),
+    stroke=dict(),
+    top_edge='"ascender"',
+    bottom_edge='"descender"',
+    extent='0pt',
+    radius=dict(),
+):  # Support version: 0.13.x
     """Interface of `highlight` in typst. See [the documentation](https://typst.app/docs/reference/text/highlight/) for more information.
 
     Args:
         body: The content that should be highlighted.
         fill: The color to highlight the text with. Defaults to rgb('"#fffd11a1"').
-        stroke: The highlight's border color. Defaults to {}.
+        stroke: The highlight's border color. Defaults to dict().
         top_edge: The top end of the background rectangle. Defaults to '"ascender"'.
         bottom_edge: The bottom end of the background rectangle. Defaults to '"descender"'.
         extent: The amount by which to extend the background to the sides beyond (or within if negative) the content. Defaults to '0pt'.
-        radius: How much to round the highlight's corners. Defaults to {}.
+        radius: How much to round the highlight's corners. Defaults to dict().
 
     Raises:
         AssertionError: If `top_edge` or `bottom_edge` is invalid.
@@ -91,8 +70,12 @@ def highlight(
     )
 
 
-@implement('linebreak', 'https://typst.app/docs/reference/text/linebreak/')
-def linebreak(*, justify: bool = False):
+@implement(
+    'linebreak',
+    hyperlink='https://typst.app/docs/reference/text/linebreak/',
+    version='0.13.x',
+)
+def linebreak(*, justify=False):
     """Interface of `linebreak` in typst. See [the documentation](https://typst.app/docs/reference/text/linebreak/) for more information.
 
     Args:
@@ -110,8 +93,12 @@ def linebreak(*, justify: bool = False):
     return normal(linebreak, justify=justify)
 
 
-@implement('lorem', 'https://typst.app/docs/reference/text/lorem/')
-def lorem(words: int, /):
+@implement(
+    'lorem',
+    hyperlink='https://typst.app/docs/reference/text/lorem/',
+    version='0.13.x',
+)
+def lorem(words, /):
     """Interface of `lorem` in typst. See [the documentation](https://typst.app/docs/reference/text/lorem/) for more information.
 
     Args:
@@ -127,8 +114,12 @@ def lorem(words: int, /):
     return normal(lorem, words)
 
 
-@implement('lower', 'https://typst.app/docs/reference/text/lower/')
-def lower(text: str | Content, /) -> str | Content:
+@implement(
+    'lower',
+    hyperlink='https://typst.app/docs/reference/text/lower/',
+    version='0.13.x',
+)
+def lower(text, /):
     """Interface of `lower` in typst. See [the documentation](https://typst.app/docs/reference/text/lower/) for more information.
 
     Args:
@@ -148,22 +139,20 @@ def lower(text: str | Content, /) -> str | Content:
     return normal(lower, text)
 
 
-@implement('overline', 'https://typst.app/docs/reference/text/overline/')
+@implement(
+    'overline',
+    hyperlink='https://typst.app/docs/reference/text/overline/',
+    version='0.13.x',
+)
 def overline(
-    body: Content,
+    body,
     /,
     *,
-    stroke: Auto
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Tiling
-    | RectangleStroke = 'auto',
-    offset: Auto | Length = 'auto',
-    extent: Length = '0pt',
-    evade: bool = True,
-    background: bool = False,
+    stroke='auto',
+    offset='auto',
+    extent='0pt',
+    evade=True,
+    background=False,
 ):
     """Interface of `overline` in typst. See [the documentation](https://typst.app/docs/reference/text/overline/) for more information.
 
@@ -204,8 +193,12 @@ def overline(
     )
 
 
-@implement('raw.line', 'https://typst.app/docs/reference/text/raw/#definitions-line')
-def _raw_line(number: int, count: int, text: str, body: Content, /):
+@implement(
+    'raw.line',
+    hyperlink='https://typst.app/docs/reference/text/raw/#definitions-line',
+    version='0.13.x',
+)
+def _raw_line(number, count, text, body, /):
     """Interface of `raw.line` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/#definitions-line) for more information.
 
     Args:
@@ -225,17 +218,21 @@ def _raw_line(number: int, count: int, text: str, body: Content, /):
 
 
 @attach_func(_raw_line, 'line')
-@implement('raw', 'https://typst.app/docs/reference/text/raw/')
+@implement(
+    'raw',
+    hyperlink='https://typst.app/docs/reference/text/raw/',
+    version='0.13.x',
+)
 def raw(
-    text: str,
+    text,
     /,
     *,
-    block: bool = False,
-    lang: None | str = None,
-    align: Alignment = 'start',
-    syntaxes: str | Iterable[str] = tuple(),
-    theme: None | Auto | str = 'auto',
-    tab_size: int = 2,
+    block=False,
+    lang=None,
+    align='start',
+    syntaxes=tuple(),
+    theme='auto',
+    tab_size=2,
 ):
     """Interface of `raw` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/) for more information.
 
@@ -273,8 +270,12 @@ def raw(
     )
 
 
-@implement('smallcaps', 'https://typst.app/docs/reference/text/smallcaps/')
-def smallcaps(body: Content, /, *, all: bool = False):
+@implement(
+    'smallcaps',
+    hyperlink='https://typst.app/docs/reference/text/smallcaps/',
+    version='0.13.x',
+)
+def smallcaps(body, /, *, all=False):
     """Interface of `smallcaps` in typst. See [the documentation](https://typst.app/docs/reference/text/smallcaps/) for more information.
 
     Args:
@@ -295,13 +296,17 @@ def smallcaps(body: Content, /, *, all: bool = False):
     return normal(smallcaps, body, all=all)
 
 
-@implement('smartquote', 'https://typst.app/docs/reference/text/smartquote/')
+@implement(
+    'smartquote',
+    hyperlink='https://typst.app/docs/reference/text/smartquote/',
+    version='0.13.x',
+)
 def smartquote(
     *,
-    double: bool = True,
-    enabled: bool = True,
-    alternative: bool = False,
-    quotes: Auto | str | Iterable[str] | SmartquoteQuotes = 'auto',
+    double=True,
+    enabled=True,
+    alternative=False,
+    quotes='auto',
 ):
     """Interface of `smartquote` in typst. See [the documentation](https://typst.app/docs/reference/text/smartquote/) for more information.
 
@@ -317,8 +322,8 @@ def smartquote(
     Examples:
         >>> smartquote(double=False, enabled=False, alternative=True, quotes='"()"')
         '#smartquote(double: false, enabled: false, alternative: true, quotes: "()")'
-        >>> smartquote(quotes=('"()"', '"{}"'))
-        '#smartquote(quotes: ("()", "{}"))'
+        >>> smartquote(quotes=('"()"', '"dict()"'))
+        '#smartquote(quotes: ("()", "dict()"))'
     """
     return normal(
         smartquote,
@@ -329,21 +334,19 @@ def smartquote(
     )
 
 
-@implement('strike', 'https://typst.app/docs/reference/text/strike/')
+@implement(
+    'strike',
+    hyperlink='https://typst.app/docs/reference/text/strike/',
+    version='0.13.x',
+)
 def strike(
-    body: Content,
+    body,
     /,
     *,
-    stroke: Auto
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Tiling
-    | RectangleStroke = 'auto',
-    offset: Auto | Length = 'auto',
-    extent: Length = '0pt',
-    background: bool = False,
+    stroke='auto',
+    offset='auto',
+    extent='0pt',
+    background=False,
 ):
     """Interface of `strike` in typst. See [the documentation](https://typst.app/docs/reference/text/strike/) for more information.
 
@@ -381,14 +384,18 @@ def strike(
     )
 
 
-@implement('sub', 'https://typst.app/docs/reference/text/sub/')
+@implement(
+    'sub',
+    hyperlink='https://typst.app/docs/reference/text/sub/',
+    version='0.13.x',
+)
 def subscript(
-    body: Content,
+    body,
     /,
     *,
-    typographic: bool = True,
-    baseline: Length = '0.2em',
-    size: Length = '0.6em',
+    typographic=True,
+    baseline='0.2em',
+    size='0.6em',
 ):
     """Interface of `sub` in typst. See [the documentation](https://typst.app/docs/reference/text/sub/) for more information.
 
@@ -406,7 +413,9 @@ def subscript(
         '#sub("Hello, World!")'
         >>> subscript('[Hello, World!]')
         '#sub([Hello, World!])'
-        >>> subscript('[Hello, World!]', typographic=False, baseline='0.3em', size='0.7em')
+        >>> subscript(
+        ...     '[Hello, World!]', typographic=False, baseline='0.3em', size='0.7em'
+        ... )
         '#sub([Hello, World!], typographic: false, baseline: 0.3em, size: 0.7em)'
     """
     return normal(
@@ -418,14 +427,18 @@ def subscript(
     )
 
 
-@implement('super', 'https://typst.app/docs/reference/text/super/')
+@implement(
+    'super',
+    hyperlink='https://typst.app/docs/reference/text/super/',
+    version='0.13.x',
+)
 def superscript(
-    body: Content,
+    body,
     /,
     *,
-    typographic: bool = True,
-    baseline: Length = '-0.5em',
-    size: Length = '0.6em',
+    typographic=True,
+    baseline='-0.5em',
+    size='0.6em',
 ):
     """Interface of `super` in typst. See [the documentation](https://typst.app/docs/reference/text/super/) for more information.
 
@@ -457,57 +470,46 @@ def superscript(
     )
 
 
-@implement('text', 'https://typst.app/docs/reference/text/text/')
+@implement(
+    'text',
+    hyperlink='https://typst.app/docs/reference/text/text/',
+    version='0.13.x',
+)
 def text(
-    body: str | Content,
+    body,
     /,
     *,
-    font: str | Iterable[str] = '"libertinus serif"',
-    fallback: bool = True,
-    style: Literal['"normal"', '"italic"', '"oblique"'] = '"normal"',
-    weight: int
-    | Literal[
-        '"thin"',
-        '"extralight"',
-        '"light"',
-        '"regular"',
-        '"medium"',
-        '"semibold"',
-        '"bold"',
-        '"extrabold"',
-        '"black"',
-    ] = '"regular"',
-    stretch: Ratio = '100%',
-    size: Length = '11pt',
-    fill: Color | Gradient | Tiling = luma('0%'),
-    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = None,
-    tracking: Length = '0pt',
-    spacing: Relative = '100% + 0pt',
-    cjk_latin_spacing: None | Auto = 'auto',
-    overhang: bool = True,
-    top_edge: Literal[
-        '"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'
-    ] = '"cap-height"',
-    bottom_edge: Literal['"baseline"', '"descender"', '"bounds"'] = '"baseline"',
-    lang: str = '"en"',
-    region: None | str = None,
-    script: Auto | str = 'auto',
-    dir: Auto | Direction = 'auto',
-    hyphenate: Auto | bool = 'auto',
-    costs: TextCosts = dict(
-        hyphenation='100%', runt='100%', widow='100%', orphan='100%'
-    ),
-    kerning: bool = True,
-    alternates: bool = False,
-    stylistic_set: None | int | Iterable[int] = tuple(),
-    ligatures: bool = True,
-    discretionary_ligatures: bool = False,
-    historical_ligatures: bool = False,
-    number_type: Auto | Literal['"lining"', '"old-style"'] = 'auto',
-    number_width: Auto | Literal['"proportional"', '"tabular"'] = 'auto',
-    slashed_zero: bool = False,
-    fractions: bool = False,
-    features: Iterable[str] | dict[str, Any] = {},
+    font='"libertinus serif"',
+    fallback=True,
+    style='"normal"',
+    weight='"regular"',
+    stretch='100%',
+    size='11pt',
+    fill=luma('0%'),
+    stroke=None,
+    tracking='0pt',
+    spacing='100% + 0pt',
+    cjk_latin_spacing='auto',
+    overhang=True,
+    top_edge='"cap-height"',
+    bottom_edge='"baseline"',
+    lang='"en"',
+    region=None,
+    script='auto',
+    dir='auto',
+    hyphenate='auto',
+    costs=dict(hyphenation='100%', runt='100%', widow='100%', orphan='100%'),
+    kerning=True,
+    alternates=False,
+    stylistic_set=tuple(),
+    ligatures=True,
+    discretionary_ligatures=False,
+    historical_ligatures=False,
+    number_type='auto',
+    number_width='auto',
+    slashed_zero=False,
+    fractions=False,
+    features=dict(),
 ):
     """Interface of `text` in typst. See [the documentation](https://typst.app/docs/reference/text/text/) for more information.
 
@@ -543,7 +545,7 @@ def text(
         number_width: The width of numbers / figures. Defaults to 'auto'.
         slashed_zero: Whether to have a slash through the zero glyph. Defaults to False.
         fractions: Whether to turn numbers into fractions. Defaults to False.
-        features: Raw OpenType features to apply. Defaults to {}.
+        features: Raw OpenType features to apply. Defaults to dict().
 
     Raises:
         AssertionError: If `style` or `weight` or `top_edge` or `bottom_edge` or `number_type` or `number_width` is invalid.
@@ -619,22 +621,20 @@ def text(
     )
 
 
-@implement('underline', 'https://typst.app/docs/reference/text/underline/')
+@implement(
+    'underline',
+    hyperlink='https://typst.app/docs/reference/text/underline/',
+    version='0.13.x',
+)
 def underline(
-    body: Content,
+    body,
     /,
     *,
-    stroke: Auto
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Tiling
-    | RectangleStroke = 'auto',
-    offset: Auto | Length = 'auto',
-    extent: Length = '0pt',
-    evade: bool = True,
-    background: bool = False,
+    stroke='auto',
+    offset='auto',
+    extent='0pt',
+    evade=True,
+    background=False,
 ):
     """Interface of `underline` in typst. See [the documentation](https://typst.app/docs/reference/text/underline/) for more information.
 
@@ -675,8 +675,12 @@ def underline(
     )
 
 
-@implement('upper', 'https://typst.app/docs/reference/text/upper/')
-def upper(text: str | Content, /) -> str | Content:
+@implement(
+    'upper',
+    hyperlink='https://typst.app/docs/reference/text/upper/',
+    version='0.13.x',
+)
+def upper(text, /):
     """Interface of `upper` in typst. See [the documentation](https://typst.app/docs/reference/text/upper/) for more information.
 
     Args:

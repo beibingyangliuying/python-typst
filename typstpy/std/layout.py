@@ -1,37 +1,15 @@
-# pylint: disable = W0102, W0611, R0913, R0914
-
-from typing import Iterable
-
 from typstpy._constants import VALID_PAPER_SIZES
 from typstpy._core import attach_func, implement, normal, positional, post_series
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import rect  # noqa
-from typstpy.typings import (
-    Alignment,
-    Angle,
-    Auto,
-    BoxInset,
-    BoxOutset,
-    Color,
-    Content,
-    Direction,
-    Fraction,
-    Function,
-    Gradient,
-    Length,
-    PageMargin,
-    PaperSizes,
-    Ratio,
-    RectangleRadius,
-    RectangleStroke,
-    Relative,
-    Stroke,
-    Tiling,
+
+
+@implement(
+    'align',
+    hyperlink='https://typst.app/docs/reference/layout/align/',
+    version='0.13.x',
 )
-
-
-@implement('align', 'https://typst.app/docs/reference/layout/align/')
-def align(body: Content, alignment: Alignment = 'start + top', /):
+def align(body, alignment='start + top', /):
     """Interface of `align` in typst. See [the documentation](https://typst.app/docs/reference/layout/align/) for more information.
 
     Args:
@@ -55,24 +33,28 @@ def align(body: Content, alignment: Alignment = 'start + top', /):
     )
 
 
-@implement('block', 'https://typst.app/docs/reference/layout/block/')
+@implement(
+    'block',
+    hyperlink='https://typst.app/docs/reference/layout/block/',
+    version='0.13.x',
+)
 def block(
-    body: None | Content = '',
+    body='',
     /,
     *,
-    width: Auto | Relative = 'auto',
-    height: Auto | Relative | Fraction = 'auto',
-    breakable: bool = True,
-    fill: None | Color | Gradient | Tiling = None,
-    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
-    radius: Relative | RectangleRadius = {},
-    inset: Relative | BoxInset = {},
-    outset: Relative | BoxOutset = {},
-    spacing: Relative | Fraction = '1.2em',
-    above: Auto | Relative | Fraction = 'auto',
-    below: Auto | Relative | Fraction = 'auto',
-    clip: bool = False,
-    sticky: bool = False,
+    width='auto',
+    height='auto',
+    breakable=True,
+    fill=None,
+    stroke=dict(),
+    radius=dict(),
+    inset=dict(),
+    outset=dict(),
+    spacing='1.2em',
+    above='auto',
+    below='auto',
+    clip=False,
+    sticky=False,
 ):
     """Interface of `block` in typst. See [the documentation](https://typst.app/docs/reference/layout/block/) for more information.
 
@@ -82,10 +64,10 @@ def block(
         height: The block's height. Defaults to 'auto'.
         breakable: Whether the block can be broken and continue on the next page. Defaults to True.
         fill: The block's background color. Defaults to None.
-        stroke: The block's border color. Defaults to {}.
-        radius: How much to round the block's corners. Defaults to {}.
-        inset: How much to round the block's corners. Defaults to {}.
-        outset: How much to round the block's corners. Defaults to {}.
+        stroke: The block's border color. Defaults to dict().
+        radius: How much to round the block's corners. Defaults to dict().
+        inset: How much to round the block's corners. Defaults to dict().
+        outset: How much to round the block's corners. Defaults to dict().
         spacing: The spacing around the block. Defaults to '1.2em'.
         above: The spacing between this block and its predecessor. Defaults to 'auto'.
         below: The spacing between this block and its successor. Defaults to 'auto'.
@@ -124,20 +106,22 @@ def block(
     )
 
 
-@implement('box', 'https://typst.app/docs/reference/layout/box/')
+@implement(
+    'box', hyperlink='https://typst.app/docs/reference/layout/box/', version='0.13.x'
+)
 def box(
-    body: None | Content = '',
+    body='',
     /,
     *,
-    width: Auto | Relative | Fraction = 'auto',
-    height: Auto | Relative = 'auto',
-    baseline: Relative = '0% + 0pt',
-    fill: None | Color | Gradient | Tiling = None,
-    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
-    radius: Relative | RectangleRadius = {},
-    inset: Relative | BoxInset = {},
-    outset: Relative | BoxOutset = {},
-    clip: bool = False,
+    width='auto',
+    height='auto',
+    baseline='0% + 0pt',
+    fill=None,
+    stroke=dict(),
+    radius=dict(),
+    inset=dict(),
+    outset=dict(),
+    clip=False,
 ):
     """Interface of `box` in typst. See [the documentation](https://typst.app/docs/reference/layout/box/) for more information.
 
@@ -147,10 +131,10 @@ def box(
         height: The height of the box. Defaults to 'auto'.
         baseline: An amount to shift the box's baseline by. Defaults to '0% + 0pt'.
         fill: The box's background color. Defaults to None.
-        stroke: The box's border color. Defaults to {}.
-        radius: How much to round the box's corners. Defaults to {}.
-        inset: How much to pad the box's content. Defaults to {}.
-        outset: How much to expand the box's size without affecting the layout. Defaults to {}.
+        stroke: The box's border color. Defaults to dict().
+        radius: How much to round the box's corners. Defaults to dict().
+        inset: How much to pad the box's content. Defaults to dict().
+        outset: How much to expand the box's size without affecting the layout. Defaults to dict().
         clip: Whether to clip the content inside the box. Defaults to False.
 
     Returns:
@@ -181,8 +165,12 @@ def box(
     )
 
 
-@implement('colbreak', 'https://typst.app/docs/reference/layout/colbreak/')
-def colbreak(*, weak: bool = False):
+@implement(
+    'colbreak',
+    hyperlink='https://typst.app/docs/reference/layout/colbreak/',
+    version='0.13.x',
+)
+def colbreak(*, weak=False):
     """Interface of `colbreak` in typst. See [the documentation](https://typst.app/docs/reference/layout/colbreak/) for more information.
 
     Args:
@@ -200,8 +188,12 @@ def colbreak(*, weak: bool = False):
     return normal(colbreak, weak=weak)
 
 
-@implement('columns', 'https://typst.app/docs/reference/layout/columns/')
-def columns(body: Content, count: int = 2, /, *, gutter: Relative = '4% + 0pt'):
+@implement(
+    'columns',
+    hyperlink='https://typst.app/docs/reference/layout/columns/',
+    version='0.13.x',
+)
+def columns(body, count=2, /, *, gutter='4% + 0pt'):
     """Interface of `columns` in typst. See [the documentation](https://typst.app/docs/reference/layout/columns/) for more information.
 
     Args:
@@ -222,27 +214,29 @@ def columns(body: Content, count: int = 2, /, *, gutter: Relative = '4% + 0pt'):
     """
     return normal(
         columns,
-        *([body] if count == 2 else [body, count]),  # type: ignore
+        *([body] if count == 2 else [body, count]),  # type: ignore[list-item]
         gutter=gutter,
     )
 
 
 @implement(
-    'grid.cell', 'https://typst.app/docs/reference/layout/grid/#definitions-cell'
+    'grid.cell',
+    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-cell',
+    version='0.13.x',
 )
 def _grid_cell(
-    body: Content,
+    body,
     /,
     *,
-    x: Auto | int = 'auto',
-    y: Auto | int = 'auto',
-    colspan: int = 1,
-    rowspan: int = 1,
-    fill: None | Auto | Color | Gradient | Tiling = 'auto',
-    align: Auto | Alignment = 'auto',
-    inset: Auto | Relative | BoxInset = 'auto',
-    stroke: None | Length | Color | Gradient | Stroke | Tiling | RectangleStroke = {},
-    breakable: Auto | bool = 'auto',
+    x='auto',
+    y='auto',
+    colspan=1,
+    rowspan=1,
+    fill='auto',
+    align='auto',
+    inset='auto',
+    stroke=dict(),
+    breakable='auto',
 ):
     """Interface of `grid.cell` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-cell) for more information.
 
@@ -255,7 +249,7 @@ def _grid_cell(
         fill: The cell's fill override. Defaults to 'auto'.
         align: The cell's alignment override. Defaults to 'auto'.
         inset: The cell's inset override. Defaults to 'auto'.
-        stroke: The cell's stroke override. Defaults to {}.
+        stroke: The cell's stroke override. Defaults to dict().
         breakable: Whether rows spanned by this cell can be placed in different pages. Defaults to 'auto'.
 
     Returns:
@@ -281,21 +275,17 @@ def _grid_cell(
 
 
 @implement(
-    'grid.hline', 'https://typst.app/docs/reference/layout/grid/#definitions-hline'
+    'grid.hline',
+    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-hline',
+    version='0.13.x',
 )
 def _grid_hline(
     *,
-    y: Auto | int = 'auto',
-    start: int = 0,
-    end: None | int = None,
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Stroke
-    | Tiling
-    | RectangleStroke = '1pt + black',
-    position: Alignment = 'top',
+    y='auto',
+    start=0,
+    end=None,
+    stroke='1pt + black',
+    position='top',
 ):
     """Interface of `grid.hline` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-hline) for more information.
 
@@ -315,15 +305,17 @@ def _grid_hline(
 
 
 @implement(
-    'grid.vline', 'https://typst.app/docs/reference/layout/grid/#definitions-vline'
+    'grid.vline',
+    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-vline',
+    version='0.13.x',
 )
 def _grid_vline(
     *,
-    x: Auto | int = 'auto',
-    start: int = 0,
-    end: None | int = None,
-    stroke: None | Length | Color | Gradient | Stroke | Tiling = '1pt + black',
-    position: Alignment = 'start',
+    x='auto',
+    start=0,
+    end=None,
+    stroke='1pt + black',
+    position='start',
 ):
     """Interface of `grid.vline` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-vline) for more information.
 
@@ -343,9 +335,11 @@ def _grid_vline(
 
 
 @implement(
-    'grid.header', 'https://typst.app/docs/reference/layout/grid/#definitions-header'
+    'grid.header',
+    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-header',
+    version='0.13.x',
 )
-def _grid_header(*children: Content, repeat: bool = True):
+def _grid_header(*children, repeat=True):
     """Interface of `grid.header` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-header) for more information.
 
     Args:
@@ -358,9 +352,11 @@ def _grid_header(*children: Content, repeat: bool = True):
 
 
 @implement(
-    'grid.footer', 'https://typst.app/docs/reference/layout/grid/#definitions-footer'
+    'grid.footer',
+    hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-footer',
+    version='0.13.x',
 )
-def _grid_footer(*children: Content, repeat: bool = True):
+def _grid_footer(*children, repeat=True):
     """Interface of `grid.footer` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-footer) for more information.
 
     Args:
@@ -377,34 +373,22 @@ def _grid_footer(*children: Content, repeat: bool = True):
 @attach_func(_grid_vline, 'vline')
 @attach_func(_grid_header, 'header')
 @attach_func(_grid_footer, 'footer')
-@implement('grid', 'https://typst.app/docs/reference/layout/grid/')
+@implement(
+    'grid',
+    hyperlink='https://typst.app/docs/reference/layout/grid/',
+    version='0.13.x',
+)
 def grid(
-    *children: Content,
-    columns: Auto | int | Relative | Fraction | Iterable[Relative | Fraction] = tuple(),
-    rows: Auto | int | Relative | Fraction | Iterable[Relative | Fraction] = tuple(),
-    gutter: Auto | int | Relative | Fraction | Iterable[Relative | Fraction] = tuple(),
-    column_gutter: Auto
-    | int
-    | Relative
-    | Fraction
-    | Iterable[Relative | Fraction] = tuple(),
-    row_gutter: Auto
-    | int
-    | Relative
-    | Fraction
-    | Iterable[Relative | Fraction] = tuple(),
-    fill: None | Color | Gradient | Iterable[Color] | Tiling | Function = None,
-    align: Auto | Iterable[Alignment] | Alignment | Function = 'auto',
-    stroke: None
-    | Length
-    | Color
-    | Gradient
-    | Iterable[Stroke]
-    | Stroke
-    | Tiling
-    | RectangleStroke
-    | Function = None,
-    inset: Relative | Iterable[Relative] | BoxInset | Function = {},
+    *children,
+    columns=tuple(),
+    rows=tuple(),
+    gutter=tuple(),
+    column_gutter=tuple(),
+    row_gutter=tuple(),
+    fill=None,
+    align='auto',
+    stroke=None,
+    inset=dict(),
 ):
     """Interface of `grid` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/) for more information.
 
@@ -417,7 +401,7 @@ def grid(
         fill: How to fill the cells. Defaults to None.
         align: How to align the cells' content. Defaults to 'auto'.
         stroke: How to stroke the cells. Defaults to None.
-        inset: How much to pad the cells' content. Defaults to {}.
+        inset: How much to pad the cells' content. Defaults to dict().
 
     Returns:
         Executable typst code.
@@ -441,8 +425,12 @@ def grid(
     )
 
 
-@implement('hide', 'https://typst.app/docs/reference/layout/hide/')
-def hide(body: Content, /):
+@implement(
+    'hide',
+    hyperlink='https://typst.app/docs/reference/layout/hide/',
+    version='0.13.x',
+)
+def hide(body, /):
     """Interface of `hide` in typst. See [the documentation](https://typst.app/docs/reference/layout/hide/) for more information.
 
     Args:
@@ -458,8 +446,12 @@ def hide(body: Content, /):
     return normal(hide, body)
 
 
-@implement('layout', 'https://typst.app/docs/reference/layout/layout/')
-def layout(func: Function, /):
+@implement(
+    'layout',
+    hyperlink='https://typst.app/docs/reference/layout/layout/',
+    version='0.13.x',
+)
+def layout(func, /):
     """Interface of `layout` in typst. See [the documentation](https://typst.app/docs/reference/layout/layout/) for more information.
 
     Args:
@@ -471,10 +463,12 @@ def layout(func: Function, /):
     return normal(layout, func)
 
 
-@implement('measure', 'https://typst.app/docs/reference/layout/measure/')
-def measure(
-    body: Content, /, *, width: Auto | Length = 'auto', height: Auto | Length = 'auto'
-):
+@implement(
+    'measure',
+    hyperlink='https://typst.app/docs/reference/layout/measure/',
+    version='0.13.x',
+)
+def measure(body, /, *, width='auto', height='auto'):
     """Interface of `measure` in typst. See [the documentation](https://typst.app/docs/reference/layout/measure/) for more information.
 
     Args:
@@ -488,8 +482,12 @@ def measure(
     return normal(measure, body, width=width, height=height)
 
 
-@implement('move', 'https://typst.app/docs/reference/layout/move/')
-def move(body: Content, /, *, dx: Relative = '0% + 0pt', dy: Relative = '0% + 0pt'):
+@implement(
+    'move',
+    hyperlink='https://typst.app/docs/reference/layout/move/',
+    version='0.13.x',
+)
+def move(body, /, *, dx='0% + 0pt', dy='0% + 0pt'):
     """Interface of `move` in typst. See [the documentation](https://typst.app/docs/reference/layout/move/) for more information.
 
     Args:
@@ -507,18 +505,22 @@ def move(body: Content, /, *, dx: Relative = '0% + 0pt', dy: Relative = '0% + 0p
     return normal(move, body, dx=dx, dy=dy)
 
 
-@implement('pad', 'https://typst.app/docs/reference/layout/pad/')
+@implement(
+    'pad',
+    hyperlink='https://typst.app/docs/reference/layout/pad/',
+    version='0.13.x',
+)
 def pad(
-    body: Content,
+    body,
     /,
     *,
-    left: Relative = '0% + 0pt',
-    top: Relative = '0% + 0pt',
-    right: Relative = '0% + 0pt',
-    bottom: Relative = '0% + 0pt',
-    x: Relative = '0% + 0pt',
-    y: Relative = '0% + 0pt',
-    rest: Relative = '0% + 0pt',
+    left='0% + 0pt',
+    top='0% + 0pt',
+    right='0% + 0pt',
+    bottom='0% + 0pt',
+    x='0% + 0pt',
+    y='0% + 0pt',
+    rest='0% + 0pt',
 ):
     """Interface of `pad` in typst. See [the documentation](https://typst.app/docs/reference/layout/pad/) for more information.
 
@@ -558,27 +560,31 @@ def pad(
     )
 
 
-@implement('page', 'https://typst.app/docs/reference/layout/page/')
+@implement(
+    'page',
+    hyperlink='https://typst.app/docs/reference/layout/page/',
+    version='0.13.x',
+)
 def page(
-    body: Content,
+    body,
     /,
     *,
-    paper: PaperSizes = '"a4"',
-    width: Auto | Length = '595.28pt',
-    height: Auto | Length = '841.89pt',
-    flipped: bool = False,
-    margin: Auto | Relative | PageMargin = 'auto',
-    binding: Auto | Alignment = 'auto',
-    columns: int = 1,
-    fill: None | Auto | Color | Gradient | Tiling = 'auto',
-    numbering: None | str | Function = None,
-    number_align: Alignment = 'center + bottom',
-    header: None | Auto | Content = 'auto',
-    header_ascent: Relative = '30% + 0pt',
-    footer: None | Auto | Content = 'auto',
-    footer_ascent: Relative = '30% + 0pt',
-    background: None | Content = None,
-    foreground: None | Content = None,
+    paper='"a4"',
+    width='595.28pt',
+    height='841.89pt',
+    flipped=False,
+    margin='auto',
+    binding='auto',
+    columns=1,
+    fill='auto',
+    numbering=None,
+    number_align='center + bottom',
+    header='auto',
+    header_ascent='30% + 0pt',
+    footer='auto',
+    footer_ascent='30% + 0pt',
+    background=None,
+    foreground=None,
 ):
     """Interface of `page` in typst. See [the documentation](https://typst.app/docs/reference/layout/page/) for more information.
 
@@ -637,8 +643,12 @@ def page(
     )
 
 
-@implement('pagebreak', 'https://typst.app/docs/reference/layout/pagebreak/')
-def pagebreak(*, weak: bool = False, to: None | str = None):
+@implement(
+    'pagebreak',
+    hyperlink='https://typst.app/docs/reference/layout/pagebreak/',
+    version='0.13.x',
+)
+def pagebreak(*, weak=False, to=None):
     """Interface of `pagebreak` in typst. See [the documentation](https://typst.app/docs/reference/layout/pagebreak/) for more information.
 
     Args:
@@ -660,7 +670,9 @@ def pagebreak(*, weak: bool = False, to: None | str = None):
 
 
 @implement(
-    'place.flush', 'https://typst.app/docs/reference/layout/place/#definitions-flush'
+    'place.flush',
+    hyperlink='https://typst.app/docs/reference/layout/place/#definitions-flush',
+    version='0.13.x',
 )
 def _place_flush():
     """Interface of `place.flush` in typst. See [the documentation](https://typst.app/docs/reference/layout/place/#definitions-flush) for more information.
@@ -676,17 +688,21 @@ def _place_flush():
 
 
 @attach_func(_place_flush, 'flush')
-@implement('place', 'https://typst.app/docs/reference/layout/place/')
+@implement(
+    'place',
+    hyperlink='https://typst.app/docs/reference/layout/place/',
+    version='0.13.x',
+)
 def place(
-    body: Content,
-    alignment: Auto | Alignment = 'start',
+    body,
+    alignment='start',
     /,
     *,
-    scope: str = '"column"',
-    float: bool = False,
-    clearance: Length = '1.5em',
-    dx: Relative = '0% + 0pt',
-    dy: Relative = '0% + 0pt',
+    scope='"column"',
+    float=False,
+    clearance='1.5em',
+    dx='0% + 0pt',
+    dy='0% + 0pt',
 ):
     """Interface of `place` in typst. See [the documentation](https://typst.app/docs/reference/layout/place/) for more information.
 
@@ -719,8 +735,12 @@ def place(
     )
 
 
-@implement('repeat', 'https://typst.app/docs/reference/layout/repeat/')
-def repeat(body: Content, /, *, gap: Length = '0pt', justify: bool = True):
+@implement(
+    'repeat',
+    hyperlink='https://typst.app/docs/reference/layout/repeat/',
+    version='0.13.x',
+)
+def repeat(body, /, *, gap='0pt', justify=True):
     """Interface of `repeat` in typst. See [the documentation](https://typst.app/docs/reference/layout/repeat/) for more information.
 
     Args:
@@ -740,14 +760,18 @@ def repeat(body: Content, /, *, gap: Length = '0pt', justify: bool = True):
     return normal(repeat, body, gap=gap, justify=justify)
 
 
-@implement('rotate', 'https://typst.app/docs/reference/layout/rotate/')
+@implement(
+    'rotate',
+    hyperlink='https://typst.app/docs/reference/layout/rotate/',
+    version='0.13.x',
+)
 def rotate(
-    body: Content,
-    angle: Angle = '0deg',
+    body,
+    angle='0deg',
     /,
     *,
-    origin: Alignment = 'center + horizon',
-    reflow: bool = False,
+    origin='center + horizon',
+    reflow=False,
 ):
     """Interface of `rotate` in typst. See [the documentation](https://typst.app/docs/reference/layout/rotate/) for more information.
 
@@ -774,16 +798,20 @@ def rotate(
     )
 
 
-@implement('scale', 'https://typst.app/docs/reference/layout/scale/')
+@implement(
+    'scale',
+    hyperlink='https://typst.app/docs/reference/layout/scale/',
+    version='0.13.x',
+)
 def scale(
-    body: Content,
-    factor: Auto | Length | Ratio = '100%',
+    body,
+    factor='100%',
     /,
     *,
-    x: Auto | Length | Ratio = '100%',
-    y: Auto | Length | Ratio = '100%',
-    origin: Alignment = 'center + horizon',
-    reflow: bool = False,
+    x='100%',
+    y='100%',
+    origin='center + horizon',
+    reflow=False,
 ):
     """Interface of `scale` in typst. See [the documentation](https://typst.app/docs/reference/layout/scale/) for more information.
 
@@ -816,15 +844,17 @@ def scale(
     )
 
 
-@implement('skew', 'https://typst.app/docs/reference/layout/skew/')
+@implement(
+    'skew', hyperlink='https://typst.app/docs/reference/layout/skew/', version='0.13.x'
+)
 def skew(
-    body: Content,
+    body,
     /,
     *,
-    ax: Angle = '0deg',
-    ay: Angle = '0deg',
-    origin: Alignment = 'center + horizon',
-    reflow: bool = False,
+    ax='0deg',
+    ay='0deg',
+    origin='center + horizon',
+    reflow=False,
 ):
     """Interface of `skew` in typst. See [the documentation](https://typst.app/docs/reference/layout/skew/) for more information.
 
@@ -841,12 +871,18 @@ def skew(
     Examples:
         >>> skew(lorem(20), ax='10deg', ay='20deg')
         '#skew(lorem(20), ax: 10deg, ay: 20deg)'
+        >>> skew(
+        ...     lorem(20), ax='10deg', ay='20deg', origin='left + horizon', reflow=True
+        ... )
+        '#skew(lorem(20), ax: 10deg, ay: 20deg, origin: left + horizon, reflow: true)'
     """
     return normal(skew, body, ax=ax, ay=ay, origin=origin, reflow=reflow)
 
 
-@implement('h', 'https://typst.app/docs/reference/layout/h/')
-def hspace(amount: Relative | Fraction, /, *, weak: bool = False):
+@implement(
+    'h', hyperlink='https://typst.app/docs/reference/layout/h/', version='0.13.x'
+)
+def hspace(amount, /, *, weak=False):
     """Interface of `h` in typst. See [the documentation](https://typst.app/docs/reference/layout/h/) for more information.
 
     Args:
@@ -865,8 +901,10 @@ def hspace(amount: Relative | Fraction, /, *, weak: bool = False):
     return normal(hspace, amount, weak=weak)
 
 
-@implement('v', 'https://typst.app/docs/reference/layout/v/')
-def vspace(amount: Relative | Fraction, /, *, weak: bool = False):
+@implement(
+    'v', hyperlink='https://typst.app/docs/reference/layout/v/', version='0.13.x'
+)
+def vspace(amount, /, *, weak=False):
     """Interface of `v` in typst. See [the documentation](https://typst.app/docs/reference/layout/v/) for more information.
 
     Args:
@@ -885,11 +923,15 @@ def vspace(amount: Relative | Fraction, /, *, weak: bool = False):
     return normal(vspace, amount, weak=weak)
 
 
-@implement('stack', 'https://typst.app/docs/reference/layout/stack/')
+@implement(
+    'stack',
+    hyperlink='https://typst.app/docs/reference/layout/stack/',
+    version='0.13.x',
+)
 def stack(
-    *children: Relative | Fraction | Content,
-    dir: Direction = 'ttb',
-    spacing: None | Relative | Fraction = None,
+    *children,
+    dir='ttb',
+    spacing=None,
 ):
     """Interface of `stack` in typst. See [the documentation](https://typst.app/docs/reference/layout/stack/) for more information.
 
@@ -901,9 +943,13 @@ def stack(
         Executable typst code.
 
     Examples:
-        >>> stack(rect(width='40pt'), rect(width='120pt'), rect(width='90pt'), dir='btt')
+        >>> stack(
+        ...     rect(width='40pt'), rect(width='120pt'), rect(width='90pt'), dir='btt'
+        ... )
         '#stack(dir: btt, rect(width: 40pt), rect(width: 120pt), rect(width: 90pt))'
-        >>> stack((rect(width='40pt'), rect(width='120pt'), rect(width='90pt')), dir='btt')
+        >>> stack(
+        ...     (rect(width='40pt'), rect(width='120pt'), rect(width='90pt')), dir='btt'
+        ... )
         '#stack(dir: btt, ..(rect(width: 40pt), rect(width: 120pt), rect(width: 90pt)))'
     """
     return post_series(stack, *children, dir=dir, spacing=spacing)

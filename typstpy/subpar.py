@@ -1,12 +1,10 @@
-# pylint: disable = W0102, W0611, R0913, R0914
-
 # Version: 0.2.0
 
 from typstpy._core import implement, pre_series
 from typstpy.std import figure, image  # noqa
 
 
-@implement('subpar.grid', 'https://typst.app/universe/package/subpar')
+@implement('subpar.grid', hyperlink='https://typst.app/universe/package/subpar')
 def grid(
     *children,
     columns='auto',
@@ -15,7 +13,7 @@ def grid(
     column_gutter='auto',
     row_gutter='auto',
     align='bottom',
-    inset={},
+    inset=dict(),
     kind='image',
     numbering='"1"',
     numbering_sub='"(a)"',
@@ -41,7 +39,7 @@ def grid(
         column_gutter: _description_. Defaults to 'auto'.
         row_gutter: _description_. Defaults to 'auto'.
         align: _description_. Defaults to 'bottom'.
-        inset: _description_. Defaults to {}.
+        inset: _description_. Defaults to dict().
         kind: _description_. Defaults to 'image'.
         numbering: _description_. Defaults to '"1"'.
         numbering_sub: _description_. Defaults to '"(a)"'.
@@ -99,3 +97,6 @@ def grid(
         show_sub=show_sub,
         show_sub_caption=show_sub_caption,
     )
+
+
+__all__ = ['grid']

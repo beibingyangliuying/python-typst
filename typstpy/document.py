@@ -3,18 +3,16 @@ from typing import final
 
 from attrs import field, frozen
 
-from typstpy.typings import Content
-
 
 @final
 @frozen
 class Document:
-    _contents: list[Content] = field(factory=list, init=False)
-    _import_statements: list[Content] = field(factory=list, init=False)
-    _set_rules: list[Content] = field(factory=list, init=False)
-    _show_rules: list[Content] = field(factory=list, init=False)
+    _contents = field(factory=list, init=False)
+    _import_statements = field(factory=list, init=False)
+    _set_rules = field(factory=list, init=False)
+    _show_rules = field(factory=list, init=False)
 
-    def add_content(self, content: Content, /):
+    def add_content(self, content, /):
         """Add a content to the document.
 
         Args:
@@ -22,7 +20,7 @@ class Document:
         """
         self._contents.append(content)
 
-    def add_import(self, statement: Content, /):
+    def add_import(self, statement, /):
         """Import names to the document.
 
         Args:
@@ -33,7 +31,7 @@ class Document:
         """
         self._import_statements.append(statement)
 
-    def add_set_rule(self, set_rule: Content, /):
+    def add_set_rule(self, set_rule, /):
         """Add a set rule to the document.
 
         Args:
@@ -44,7 +42,7 @@ class Document:
         """
         self._set_rules.append(set_rule)
 
-    def add_show_rule(self, show_rule: Content, /):
+    def add_show_rule(self, show_rule, /):
         """Add a show rule to the document.
 
         Args:

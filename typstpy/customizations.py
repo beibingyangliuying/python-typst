@@ -1,15 +1,12 @@
-from typing import Any
-
-from typstpy._core import Instance, Normal, Positional, Series, implement, temporary
+from typstpy._core import implement, temporary
 from typstpy._core import instance as _instance
 from typstpy._core import normal as _normal
 from typstpy._core import positional as _positional
 from typstpy._core import post_series as _post_series
 from typstpy._core import pre_series as _pre_series
-from typstpy.typings import Content
 
 
-def normal(original_name: str, /) -> Normal:
+def normal(original_name, /):
     """Function factory, create function that represent the protocol of `normal`.
 
     Args:
@@ -35,13 +32,13 @@ def normal(original_name: str, /) -> Normal:
 
     @temporary
     @implement(original_name)
-    def wrapped(body: Any = '', /, *args: Any, **kwargs: Any) -> Content:
+    def wrapped(body='', /, *args, **kwargs):
         return _normal(wrapped, body, *args, **kwargs)
 
     return wrapped
 
 
-def instance(original_name: str, /) -> Instance:
+def instance(original_name, /):
     """Function factory, create function that represent the protocol of `instance`.
 
     Args:
@@ -59,13 +56,13 @@ def instance(original_name: str, /) -> Instance:
 
     @temporary
     @implement(original_name)
-    def wrapped(instance: Content, /, *args: Any, **kwargs: Any) -> Content:
+    def wrapped(instance, /, *args, **kwargs):
         return _instance(wrapped, instance, *args, **kwargs)
 
     return wrapped
 
 
-def positional(original_name: str, /) -> Positional:
+def positional(original_name, /):
     """Function factory, create function that represent the protocol of `positional`.
 
     Args:
@@ -82,13 +79,13 @@ def positional(original_name: str, /) -> Positional:
 
     @temporary
     @implement(original_name)
-    def wrapped(*args: Any) -> Content:
+    def wrapped(*args):
         return _positional(wrapped, *args)
 
     return wrapped
 
 
-def post_series(original_name: str, /) -> Series:
+def post_series(original_name, /):
     """Function factory, create function that represent the protocol of `Series`.
 
     Args:
@@ -116,13 +113,13 @@ def post_series(original_name: str, /) -> Series:
 
     @temporary
     @implement(original_name)
-    def wrapped(*children: Any, **kwargs: Any) -> Content:
+    def wrapped(*children, **kwargs):
         return _post_series(wrapped, *children, **kwargs)
 
     return wrapped
 
 
-def pre_series(original_name: str, /) -> Series:
+def pre_series(original_name, /):
     """Function factory, create function that represent the protocol of `Series`.
 
     Args:
@@ -145,7 +142,7 @@ def pre_series(original_name: str, /) -> Series:
 
     @temporary
     @implement(original_name)
-    def wrapped(*children: Any, **kwargs: Any) -> Content:
+    def wrapped(*children, **kwargs):
         return _pre_series(wrapped, *children, **kwargs)
 
     return wrapped
