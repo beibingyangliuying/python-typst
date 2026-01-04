@@ -1,6 +1,6 @@
 """
 Implement functions from the typst standard library.
-Current support version: 0.13.x.
+Current support version: 0.14.2.
 Libraries that won't be realized: `Foundations`, `Math`, `Symbols`, `Introspection`, `Data Loading`.
 """
 

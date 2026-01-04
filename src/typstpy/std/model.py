@@ -264,12 +264,13 @@ def _figure_caption(
 @implement(
     'figure',
     hyperlink='https://typst.app/docs/reference/model/figure/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def figure(
     body,
     /,
     *,
+    alt=None,
     placement=None,
     scope='"column"',
     caption=None,
@@ -278,11 +279,12 @@ def figure(
     numbering='"1"',
     gap='0.65em',
     outlined=True,
-):  # Support version: 0.13.x
+):
     """Interface of `figure` in typst. See [the documentation](https://typst.app/docs/reference/model/figure/) for more information.
 
     Args:
         body: The content of the figure.
+        alt: An alternative description for the figure, used for accessibility. Defaults to None.
         placement: The figure's placement on the page. Defaults to None.
         scope: Relative to which containing scope the figure is placed. Defaults to '"column"'.
         caption: The figure's caption. Defaults to None.
@@ -317,6 +319,7 @@ def figure(
         numbering=numbering,
         gap=gap,
         outlined=outlined,
+        alt=alt,
     )
 
 
@@ -765,7 +768,7 @@ def _par_line(
 
 @attach_func(_par_line, 'line')
 @implement(
-    'par', hyperlink='https://typst.app/docs/reference/model/par/', version='0.13.x'
+    'par', hyperlink='https://typst.app/docs/reference/model/par/', version='0.14.2'
 )
 def par(
     body,
@@ -774,6 +777,10 @@ def par(
     leading='0.65em',
     spacing='1.2em',
     justify=False,
+    justification_limits=dict(  # 新增参数，默认值为 Typst 的默认设置
+        spacing=dict(min='66.67% + 0pt', max='150% + 0pt'),
+        tracking=dict(min='0pt', max='0pt'),
+    ),
     linebreaks='auto',
     first_line_indent=dict(amount='0pt', all=False),
     hanging_indent='0pt',
@@ -785,6 +792,7 @@ def par(
         leading: The spacing between lines. Defaults to '0.65em'.
         spacing: The spacing between paragraphs. Defaults to '1.2em'.
         justify: Whether to justify text in its line. Defaults to False.
+        justification_limits: How much the spacing between words and characters may be adjusted during justification. Defaults to dict(spacing=dict(min='66.67% + 0pt', max='150% + 0pt'), tracking=dict(min='0pt', max='0pt')).
         linebreaks: How to determine line breaks. Defaults to 'auto'.
         first_line_indent: The indent the first line of a paragraph should have. Defaults to dict(amount='0pt', all=False).
         hanging_indent: The indent all but the first line of a paragraph should have. Defaults to '0pt'.
@@ -819,6 +827,7 @@ def par(
         leading=leading,
         spacing=spacing,
         justify=justify,
+        justification_limits=justification_limits,
         linebreaks=linebreaks,
         first_line_indent=first_line_indent,
         hanging_indent=hanging_indent,
@@ -1054,18 +1063,19 @@ def _table_vline(
 @implement(
     'table.header',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-header',
-    version='0.13.x',
+    version='0.14.2',
 )
-def _table_header(*children, repeat=True):
+def _table_header(*children, repeat=True, level=1):
     """Interface of `table.header` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-header) for more information.
 
     Args:
         repeat: Whether this header should be repeated across pages. Defaults to True.
+        level: The level of the header. Must not be zero. Defaults to 1.
 
     Returns:
         Executable typst code.
     """
-    return post_series(_table_header, *children, repeat=repeat)
+    return post_series(_table_header, *children, repeat=repeat, level=level)
 
 
 @implement(
@@ -1156,6 +1166,29 @@ def table(
 
 
 @implement(
+    'title',
+    hyperlink='https://typst.app/docs/reference/model/title/',
+    version='0.14.2',
+)
+def title(body='auto', /):
+    """Interface of `title` in typst. See [the documentation](https://typst.app/docs/reference/model/title/) for more information.
+
+    Args:
+        body: The content of the title. Defaults to 'auto'.
+
+    Returns:
+        Executable typst code.
+
+    Examples:
+        >>> title()
+        '#title()'
+        >>> title('[My Thesis]')
+        '#title([My Thesis])'
+    """
+    return normal(title, body if body != 'auto' else '')
+
+
+@implement(
     'terms.item',
     hyperlink='https://typst.app/docs/reference/model/terms/#definitions-item',
     version='0.13.x',
@@ -1241,5 +1274,6 @@ __all__ = [
     'ref',
     'strong',
     'table',
+    'title',
     'terms',
 ]

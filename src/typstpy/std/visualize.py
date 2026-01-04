@@ -1392,7 +1392,7 @@ def _image_decode(
 @implement(
     'image',
     hyperlink='https://typst.app/docs/reference/visualize/image/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def image(
     source,
@@ -1430,7 +1430,14 @@ def image(
         >>> image('"image.png"', fit='"contain"')
         '#image("image.png", fit: "contain")'
     """
-    assert format == 'auto' or format in {'"png"', '"jpg"', '"gif"', '"svg"'}
+    assert format == 'auto' or format in {
+        '"png"',
+        '"jpg"',
+        '"gif"',
+        '"svg"',
+        '"pdf"',
+        '"webp"',
+    }
     assert fit in {'"cover"', '"contain"', '"stretch"'}
     assert scaling == 'auto' or scaling in {'"smooth"', '"pixelated"'}
 

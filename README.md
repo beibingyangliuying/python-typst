@@ -15,6 +15,8 @@ Any contributions are welcome.
 
 ## Change logs
 
+- _1.3.0_:
+  - Support for typst version: 0.14.2.
 - _1.2.1_:
   - Clear type annotations.
   - Improved support for the typst 0.13.1 version.
@@ -143,7 +145,7 @@ The examples are:
 | std.visualize._gradient_samples | samples | [https://typst.app/docs/reference/visualize/gradient/#definitions-samples](https://typst.app/docs/reference/visualize/gradient/#definitions-samples) | 0.13.x |
 | std.visualize.gradient | gradient | [https://typst.app/docs/reference/visualize/gradient/](https://typst.app/docs/reference/visualize/gradient/) | 0.13.x |
 | std.visualize._image_decode | image.decode | [https://typst.app/docs/reference/visualize/image/#definitions-decode](https://typst.app/docs/reference/visualize/image/#definitions-decode) | 0.13.x |
-| std.visualize.image | image | [https://typst.app/docs/reference/visualize/image/](https://typst.app/docs/reference/visualize/image/) | 0.13.x |
+| std.visualize.image | image | [https://typst.app/docs/reference/visualize/image/](https://typst.app/docs/reference/visualize/image/) | 0.14.2 |
 | std.visualize.line | line | [https://typst.app/docs/reference/visualize/line/](https://typst.app/docs/reference/visualize/line/) | 0.13.x |
 | std.visualize.path | path | [https://typst.app/docs/reference/visualize/path/](https://typst.app/docs/reference/visualize/path/) | 0.13.x |
 | std.visualize.pattern | pattern | [https://typst.app/docs/reference/visualize/pattern/](https://typst.app/docs/reference/visualize/pattern/) | 0.13.x |
@@ -201,7 +203,7 @@ The examples are:
 | std.model.document | document | [https://typst.app/docs/reference/model/document/](https://typst.app/docs/reference/model/document/) | 0.13.x |
 | std.model.emph | emph | [https://typst.app/docs/reference/model/emph/](https://typst.app/docs/reference/model/emph/) | 0.13.x |
 | std.model._figure_caption | figure.caption | [https://typst.app/docs/reference/model/figure/#definitions-caption](https://typst.app/docs/reference/model/figure/#definitions-caption) | 0.13.x |
-| std.model.figure | figure | [https://typst.app/docs/reference/model/figure/](https://typst.app/docs/reference/model/figure/) | 0.13.x |
+| std.model.figure | figure | [https://typst.app/docs/reference/model/figure/](https://typst.app/docs/reference/model/figure/) | 0.14.2 |
 | std.model._footnote_entry | footnote.entry | [https://typst.app/docs/reference/model/footnote/#definitions-entry](https://typst.app/docs/reference/model/footnote/#definitions-entry) | 0.13.x |
 | std.model.footnote | footnote | [https://typst.app/docs/reference/model/footnote/](https://typst.app/docs/reference/model/footnote/) | 0.13.x |
 | std.model.heading | heading | [https://typst.app/docs/reference/model/heading/](https://typst.app/docs/reference/model/heading/) | 0.13.x |
@@ -217,7 +219,7 @@ The examples are:
 | std.model._outline_page | page | [https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-page](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-page) | 0.13.x |
 | std.model.outline | outline | [https://typst.app/docs/reference/model/outline/](https://typst.app/docs/reference/model/outline/) | 0.13.x |
 | std.model._par_line | par.line | [https://typst.app/docs/reference/model/par/#definitions-line](https://typst.app/docs/reference/model/par/#definitions-line) | 0.13.x |
-| std.model.par | par | [https://typst.app/docs/reference/model/par/](https://typst.app/docs/reference/model/par/) | 0.13.x |
+| std.model.par | par | [https://typst.app/docs/reference/model/par/](https://typst.app/docs/reference/model/par/) | 0.14.2 |
 | std.model.parbreak | parbreak | [https://typst.app/docs/reference/model/parbreak/](https://typst.app/docs/reference/model/parbreak/) | 0.13.x |
 | std.model.quote | quote | [https://typst.app/docs/reference/model/quote/](https://typst.app/docs/reference/model/quote/) | 0.13.x |
 | std.model.ref | ref | [https://typst.app/docs/reference/model/ref/](https://typst.app/docs/reference/model/ref/) | 0.13.x |
@@ -225,9 +227,10 @@ The examples are:
 | std.model._table_cell | table.cell | [https://typst.app/docs/reference/model/table/#definitions-cell](https://typst.app/docs/reference/model/table/#definitions-cell) | 0.13.x |
 | std.model._table_hline | table.hline | [https://typst.app/docs/reference/model/table/#definitions-hline](https://typst.app/docs/reference/model/table/#definitions-hline) | 0.13.x |
 | std.model._table_vline | table.vline | [https://typst.app/docs/reference/model/table/#definitions-vline](https://typst.app/docs/reference/model/table/#definitions-vline) | 0.13.x |
-| std.model._table_header | table.header | [https://typst.app/docs/reference/model/table/#definitions-header](https://typst.app/docs/reference/model/table/#definitions-header) | 0.13.x |
+| std.model._table_header | table.header | [https://typst.app/docs/reference/model/table/#definitions-header](https://typst.app/docs/reference/model/table/#definitions-header) | 0.14.2 |
 | std.model._table_footer | table.footer | [https://typst.app/docs/reference/model/table/#definitions-footer](https://typst.app/docs/reference/model/table/#definitions-footer) | 0.13.x |
 | std.model.table | table | [https://typst.app/docs/reference/model/table/](https://typst.app/docs/reference/model/table/) | 0.13.x |
+| std.model.title | title | [https://typst.app/docs/reference/model/title/](https://typst.app/docs/reference/model/title/) | 0.14.2 |
 | std.model._terms_item | terms.item | [https://typst.app/docs/reference/model/terms/#definitions-item](https://typst.app/docs/reference/model/terms/#definitions-item) | 0.13.x |
 | std.model.terms | terms | [https://typst.app/docs/reference/model/terms/](https://typst.app/docs/reference/model/terms/) | 0.13.x |
 | subpar.grid | subpar.grid | [https://typst.app/universe/package/subpar](https://typst.app/universe/package/subpar) | None |
@@ -1254,6 +1257,15 @@ The examples are:
 ...     align=['center', 'center', 'center'],
 ... )
 '#table(columns: (1fr, 2fr, 3fr), rows: (1fr, 2fr, 3fr), gutter: (1fr, 2fr, 3fr), column-gutter: (1fr, 2fr, 3fr), row-gutter: (1fr, 2fr, 3fr), fill: red, align: (center, center, center), [1], [2], [3])'
+```
+
+`std.model.title`:
+
+```python
+>>> title()
+'#title()'
+>>> title('[My Thesis]')
+'#title([My Thesis])'
 ```
 
 `std.model._terms_item`:
