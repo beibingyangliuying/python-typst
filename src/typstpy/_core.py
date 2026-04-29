@@ -271,9 +271,7 @@ def normal(
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = {
-            key: value for key, value in kwargs.items() if value != defaults[key]
-        }
+        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
     elif func not in _Implement.temporary:
         assert not kwargs
 
@@ -312,9 +310,7 @@ def instance(func, instance, /, *args, **kwargs):
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = {
-            key: value for key, value in kwargs.items() if value != defaults[key]
-        }
+        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
     elif func not in _Implement.temporary:
         assert not kwargs
 
@@ -338,9 +334,7 @@ def pre_series(func, *children, **kwargs):
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = {
-            key: value for key, value in kwargs.items() if value != defaults[key]
-        }
+        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
     elif func not in _Implement.temporary:
         assert not kwargs
 
@@ -366,9 +360,7 @@ def post_series(func, *children, **kwargs):
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = {
-            key: value for key, value in kwargs.items() if value != defaults[key]
-        }
+        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
     elif func not in _Implement.temporary:
         assert not kwargs
 
