@@ -1,13 +1,12 @@
 import inspect
 import warnings
 from collections.abc import Callable, Iterable, Mapping
-from functools import singledispatch
+from functools import partial, singledispatch
 from io import StringIO
 from typing import ClassVar, Self
 from weakref import WeakKeyDictionary, WeakSet
 
 from attrs import frozen
-from cytoolz.curried import curry, keyfilter
 
 # region render
 
@@ -100,7 +99,7 @@ class _Implement:
     @staticmethod
     def implement_table():
         with StringIO() as stream:
-            _print = curry(print, file=stream, sep='\n')
+            _print = partial(print, file=stream, sep='\n')
             _print(
                 "| Package's function name | Typst's function name | Documentation on typst | Version |",
                 '| --- | --- | --- | --- |',
@@ -272,7 +271,9 @@ def normal(
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+        kwargs = {
+            key: value for key, value in kwargs.items() if value != defaults[key]
+        }
     elif func not in _Implement.temporary:
         assert not kwargs
 
@@ -311,7 +312,9 @@ def instance(func, instance, /, *args, **kwargs):
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+        kwargs = {
+            key: value for key, value in kwargs.items() if value != defaults[key]
+        }
     elif func not in _Implement.temporary:
         assert not kwargs
 
@@ -335,7 +338,9 @@ def pre_series(func, *children, **kwargs):
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+        kwargs = {
+            key: value for key, value in kwargs.items() if value != defaults[key]
+        }
     elif func not in _Implement.temporary:
         assert not kwargs
 
@@ -361,7 +366,9 @@ def post_series(func, *children, **kwargs):
     """
     defaults = func.__kwdefaults__
     if defaults:
-        kwargs = keyfilter(lambda x: kwargs[x] != defaults[x], kwargs)
+        kwargs = {
+            key: value for key, value in kwargs.items() if value != defaults[key]
+        }
     elif func not in _Implement.temporary:
         assert not kwargs
 
