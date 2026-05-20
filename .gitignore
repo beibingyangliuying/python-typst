@@ -215,7 +215,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-.vscode/
 *.typ
 *.png
 *.bib
+opencode.json
+activate_venv.ps1
