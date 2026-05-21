@@ -496,9 +496,11 @@ def _numbered_list_item(body, /, *, number=None):
 
     Examples:
         >>> numbered_list.item('[Hello, World!]', number=2)
-        '#enum.item([Hello, World!], number: 2)'
+        '#enum.item(2, [Hello, World!])'
     """
-    return normal(_numbered_list_item, body, number=number)
+    if number is None:
+        return normal(_numbered_list_item, body)
+    return normal(_numbered_list_item, number, body)
 
 
 @attach_func(_numbered_list_item, 'item')

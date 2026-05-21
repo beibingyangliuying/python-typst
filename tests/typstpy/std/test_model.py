@@ -5,6 +5,7 @@ from typstpy.std.model import (
     bullet_list,
     cite,
     figure,
+    numbered_list,
     par,
     ref,
     table,
@@ -21,6 +22,7 @@ def test_model_attached_functions_render_typst_calls():
     assert terms.item('"term"', '"description"') == (
         '#terms.item("term", "description")'
     )
+    assert numbered_list.item('[Hi]', number=2) == '#enum.item(2, [Hi])'
 
 
 def test_table_does_not_spread_single_plain_child():

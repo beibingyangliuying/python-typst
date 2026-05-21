@@ -1160,7 +1160,7 @@ The examples are:
 
 ```python
 >>> numbered_list.item('[Hello, World!]', number=2)
-'#enum.item([Hello, World!], number: 2)'
+'#enum.item(2, [Hello, World!])'
 ```
 
 `std.model.numbered_list`:
