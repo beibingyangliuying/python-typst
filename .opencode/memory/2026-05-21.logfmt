@@ -3,3 +3,5 @@ ts=2026-05-21T02:10:11.257Z type=decision scope=project content="typstpy behavio
 ts=2026-05-21T02:46:13.790Z type=decision scope=module:_core content="Alternative B for typstpy keeps spread inference internal rather than exposing a public spread API; doctests should document changed behavior."
 ts=2026-05-21T02:46:13.790Z type=decision scope=project content="typstpy now targets Python >=3.11, uses Pyright basic for type checking, and includes py.typed for typed package consumers."
 ts=2026-05-21T02:46:13.790Z type=pattern scope=project content="Public parameter validation in typstpy should use explicit ValueError or TypeError, not assert."
+ts=2026-05-21T04:33:27.469Z type=decision scope=project content="Development scripts live under scripts/; README generation defaults to stdout and clipboard use is explicit via --clipboard."
+ts=2026-05-21T04:33:27.469Z type=decision scope=project content="The Typst fixture is generated from _Implement registry docstring examples with python scripts/generate_typst_fixture.py --write tests/fixtures/test.typ; Typst CLI tests skip when typst is unavailable."
