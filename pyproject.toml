@@ -1,23 +1,39 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "typstpy"
 version = "1.3.1-alpha.0"
 description = "Python interface to generate executable Typst code."
 authors = [{ name = "chenjunhan", email = "beibingyangliuying@foxmail.com" }]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
 dependencies = [
-    "attrs>=25.3.0",
     "deprecated>=1.2.18",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+typstpy = ["py.typed"]
 
 [dependency-groups]
 dev = [
     "ipykernel>=6.30.1",
+    "pyright>=1.1.407",
     "pyperclip>=1.9.0",
     "pytest>=9.0.3",
     "pytest-cov>=7.1.0",
 ]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+reportUnsupportedDunderAll = "none"
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "D202"]
@@ -28,5 +44,6 @@ docstring-code-format = true
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules --cov=src --cov-report=xml --cov-report=term-missing"
+pythonpath = ["src"]
 testpaths = ["src", "tests"]
 python_files = "test_*.py"

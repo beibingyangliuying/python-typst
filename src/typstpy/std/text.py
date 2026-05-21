@@ -1,4 +1,4 @@
-from typstpy._core import attach_func, implement, normal, positional
+from typstpy._core import _validate_value, attach_func, implement, normal, positional
 from typstpy.std.visualize import luma, rgb
 
 
@@ -30,7 +30,7 @@ def highlight(
         radius: How much to round the highlight's corners. Defaults to dict().
 
     Raises:
-        AssertionError: If `top_edge` or `bottom_edge` is invalid.
+        ValueError: If `top_edge` or `bottom_edge` is invalid.
 
     Returns:
         Executable typst code.
@@ -49,14 +49,18 @@ def highlight(
         ... )
         '#highlight("Hello, world!", fill: rgb("#ffffff"), stroke: rgb("#000000"), top-edge: "bounds", bottom-edge: "bounds")'
     """
-    assert top_edge in {
-        '"ascender"',
-        '"cap-height"',
-        '"x-height"',
-        '"baseline"',
-        '"bounds"',
-    }
-    assert bottom_edge in {'"baseline"', '"descender"', '"bounds"'}
+    _validate_value(
+        highlight,
+        'top_edge',
+        top_edge,
+        {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
+    )
+    _validate_value(
+        highlight,
+        'bottom_edge',
+        bottom_edge,
+        {'"baseline"', '"descender"', '"bounds"'},
+    )
 
     return normal(
         highlight,
@@ -306,7 +310,7 @@ def smartquote(
     double=True,
     enabled=True,
     alternative=False,
-    quotes='auto',
+    quotes: str | tuple[str, str] = 'auto',
 ):
     """Interface of `smartquote` in typst. See [the documentation](https://typst.app/docs/reference/text/smartquote/) for more information.
 
@@ -548,7 +552,7 @@ def text(
         features: Raw OpenType features to apply. Defaults to dict().
 
     Raises:
-        AssertionError: If `style` or `weight` or `top_edge` or `bottom_edge` or `number_type` or `number_width` is invalid.
+        ValueError: If `style` or `weight` or `top_edge` or `bottom_edge` or `number_type` or `number_width` is invalid.
 
     Returns:
         Executable typst code.
@@ -561,28 +565,45 @@ def text(
         >>> text('[Hello, World!]', font='"Times New Roman"')
         '#text([Hello, World!], font: "Times New Roman")'
     """
-    assert style in {'"normal"', '"italic"', '"oblique"'}
-    assert isinstance(weight, int) or weight in {
-        '"thin"',
-        '"extralight"',
-        '"light"',
-        '"regular"',
-        '"medium"',
-        '"semibold"',
-        '"bold"',
-        '"extrabold"',
-        '"black"',
-    }
-    assert top_edge in {
-        '"ascender"',
-        '"cap-height"',
-        '"x-height"',
-        '"baseline"',
-        '"bounds"',
-    }
-    assert bottom_edge in {'"baseline"', '"descender"', '"bounds"'}
-    assert number_type == 'auto' or number_type in {'"lining"', '"old-style"'}
-    assert number_width == 'auto' or number_width in {'"proportional"', '"tabular"'}
+    _validate_value(text, 'style', style, {'"normal"', '"italic"', '"oblique"'})
+    if not isinstance(weight, int):
+        _validate_value(
+            text,
+            'weight',
+            weight,
+            {
+                '"thin"',
+                '"extralight"',
+                '"light"',
+                '"regular"',
+                '"medium"',
+                '"semibold"',
+                '"bold"',
+                '"extrabold"',
+                '"black"',
+            },
+        )
+    _validate_value(
+        text,
+        'top_edge',
+        top_edge,
+        {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
+    )
+    _validate_value(
+        text,
+        'bottom_edge',
+        bottom_edge,
+        {'"baseline"', '"descender"', '"bounds"'},
+    )
+    if number_type != 'auto':
+        _validate_value(text, 'number_type', number_type, {'"lining"', '"old-style"'})
+    if number_width != 'auto':
+        _validate_value(
+            text,
+            'number_width',
+            number_width,
+            {'"proportional"', '"tabular"'},
+        )
 
     return normal(
         text,

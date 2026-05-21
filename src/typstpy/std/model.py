@@ -1,5 +1,6 @@
 from typstpy._constants import VALID_CITATION_STYLES
 from typstpy._core import (
+    _validate_value,
     attach_func,
     implement,
     instance,
@@ -34,7 +35,7 @@ def bibliography(
         style: The bibliography style. Defaults to '"ieee"'.
 
     Raises:
-        AssertionError: If `style` is invalid.
+        ValueError: If `style` is invalid.
 
     Returns:
         Executable typst code.
@@ -43,7 +44,7 @@ def bibliography(
         >>> bibliography('"bibliography.bib"', style='"cell"')
         '#bibliography("bibliography.bib", style: "cell")'
     """
-    assert style in VALID_CITATION_STYLES
+    _validate_value(bibliography, 'style', style, VALID_CITATION_STYLES)
 
     return normal(
         bibliography,
@@ -138,7 +139,7 @@ def cite(
         style: The citation style. Defaults to 'auto'.
 
     Raises:
-        AssertionError: If `form` or `style` is invalid.
+        ValueError: If `form` or `style` is invalid.
 
     Returns:
         Executable typst code.
@@ -153,14 +154,15 @@ def cite(
         >>> cite('<label>', style='"annual-reviews"')
         '#cite(<label>, style: "annual-reviews")'
     """
-    assert form is None or form in {
-        '"normal"',
-        '"prose"',
-        '"full"',
-        '"author"',
-        '"year"',
-    }
-    assert style == 'auto' or style in VALID_CITATION_STYLES
+    if form is not None:
+        _validate_value(
+            cite,
+            'form',
+            form,
+            {'"normal"', '"prose"', '"full"', '"author"', '"year"'},
+        )
+    if style != 'auto':
+        _validate_value(cite, 'style', style, VALID_CITATION_STYLES)
 
     return normal(
         cite,
@@ -295,7 +297,7 @@ def figure(
         outlined: Whether the figure should appear in an outline of figures. Defaults to True.
 
     Raises:
-        AssertionError: If `scope` is invalid.
+        ValueError: If `scope` is invalid.
 
     Returns:
         Executable typst code.
@@ -306,7 +308,7 @@ def figure(
         >>> figure(image('"image.png"'), caption='[Hello, World!]')
         '#figure(image("image.png"), caption: [Hello, World!])'
     """
-    assert scope in {'"column"', '"parent"'}
+    _validate_value(figure, 'scope', scope, {'"column"', '"parent"'})
 
     return normal(
         figure,
@@ -749,12 +751,14 @@ def _par_line(
         numbering_scope: Controls when to reset line numbering. Defaults to '"document"'.
 
     Raises:
-        AssertionError: If `numbering_scope` is invalid.
+        ValueError: If `numbering_scope` is invalid.
 
     Returns:
         Executable typst code.
     """
-    assert numbering_scope in {'"document"', '"page"'}
+    _validate_value(
+        _par_line, 'numbering_scope', numbering_scope, {'"document"', '"page"'}
+    )
 
     return positional(
         _par_line,
@@ -798,7 +802,7 @@ def par(
         hanging_indent: The indent all but the first line of a paragraph should have. Defaults to '0pt'.
 
     Raises:
-        AssertionError: If `linebreaks` is invalid.
+        ValueError: If `linebreaks` is invalid.
 
     Returns:
         Executable typst code.
@@ -819,7 +823,8 @@ def par(
         ... )
         '#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'
     """
-    assert linebreaks == 'auto' or linebreaks in {'"simple"', '"optimized"'}
+    if linebreaks != 'auto':
+        _validate_value(par, 'linebreaks', linebreaks, {'"simple"', '"optimized"'})
 
     return normal(
         par,
@@ -909,7 +914,7 @@ def ref(
         form: The kind of reference to produce. Defaults to '"normal"'.
 
     Raises:
-        AssertionError: If `form` is invalid.
+        ValueError: If `form` is invalid.
 
     Returns:
         Executable typst code.
@@ -920,7 +925,7 @@ def ref(
         >>> ref('<label>', supplement='[Hello, World!]')
         '#ref(<label>, supplement: [Hello, World!])'
     """
-    assert form in {'"normal"', '"page"'}
+    _validate_value(ref, 'form', form, {'"normal"', '"page"'})
 
     return normal(ref, target, supplement=supplement, form=form)
 
@@ -1134,6 +1139,8 @@ def table(
         Executable typst code.
 
     Examples:
+        >>> table('[1]')
+        '#table([1])'
         >>> table('[1]', '[2]', '[3]')
         '#table([1], [2], [3])'
         >>> table(
@@ -1237,6 +1244,8 @@ def terms(
         Executable typst code.
 
     Examples:
+        >>> terms(('[1]', lorem(20)))
+        '#terms(([1], lorem(20)))'
         >>> terms(('[1]', lorem(20)), ('[1]', lorem(20)))
         '#terms(([1], lorem(20)), ([1], lorem(20)))'
         >>> terms(('[1]', lorem(20)), ('[1]', lorem(20)), tight=False)

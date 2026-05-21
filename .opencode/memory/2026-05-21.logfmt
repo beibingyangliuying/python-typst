@@ -1,0 +1,5 @@
+ts=2026-05-21T02:10:11.257Z type=decision scope=module:_core content="In Alternative B, do not expose a public spread API; pre_series/post_series spread behavior should be inferred internally by _core."
+ts=2026-05-21T02:10:11.257Z type=decision scope=project content="typstpy behavior changes must update the corresponding docstring doctests because doctests are planned to be collected into tests/fixtures/test.typ and compiled with Typst for validation."
+ts=2026-05-21T02:46:13.790Z type=decision scope=module:_core content="Alternative B for typstpy keeps spread inference internal rather than exposing a public spread API; doctests should document changed behavior."
+ts=2026-05-21T02:46:13.790Z type=decision scope=project content="typstpy now targets Python >=3.11, uses Pyright basic for type checking, and includes py.typed for typed package consumers."
+ts=2026-05-21T02:46:13.790Z type=pattern scope=project content="Public parameter validation in typstpy should use explicit ValueError or TypeError, not assert."

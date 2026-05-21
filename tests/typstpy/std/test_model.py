@@ -23,6 +23,14 @@ def test_model_attached_functions_render_typst_calls():
     )
 
 
+def test_table_does_not_spread_single_plain_child():
+    assert table('[1]') == '#table([1])'
+
+
+def test_terms_keeps_single_term_pair_as_one_child():
+    assert terms(('[term]', '[description]')) == '#terms(([term], [description]))'
+
+
 @pytest.mark.parametrize(
     'call',
     [
@@ -34,5 +42,5 @@ def test_model_attached_functions_render_typst_calls():
     ],
 )
 def test_model_functions_reject_invalid_arguments(call):
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         call()

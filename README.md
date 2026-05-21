@@ -15,6 +15,10 @@ Any contributions are welcome.
 
 ## Change logs
 
+- _1.3.1-alpha.0_:
+  - Improve internal series spread handling for single children.
+  - Use explicit exceptions instead of assertions for public argument validation.
+  - Fix `import_` without names and `show_(None, ...)` rendering.
 - _1.3.0_:
   - Support for typst version: 0.14.2.
 - _1.2.1_:
@@ -1035,6 +1039,8 @@ The examples are:
 `std.layout.stack`:
 
 ```python
+>>> stack(rect(width='40pt'), dir='btt')
+'#stack(dir: btt, rect(width: 40pt))'
 >>> stack(
 ...     rect(width='40pt'), rect(width='120pt'), rect(width='90pt'), dir='btt'
 ... )
@@ -1242,6 +1248,8 @@ The examples are:
 `std.model.table`:
 
 ```python
+>>> table('[1]')
+'#table([1])'
 >>> table('[1]', '[2]', '[3]')
 '#table([1], [2], [3])'
 >>> table(
@@ -1278,6 +1286,8 @@ The examples are:
 `std.model.terms`:
 
 ```python
+>>> terms(('[1]', lorem(20)))
+'#terms(([1], lorem(20)))'
 >>> terms(('[1]', lorem(20)), ('[1]', lorem(20)))
 '#terms(([1], lorem(20)), ([1], lorem(20)))'
 >>> terms(('[1]', lorem(20)), ('[1]', lorem(20)), tight=False)

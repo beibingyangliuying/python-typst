@@ -20,3 +20,5 @@ def test_attached_functions_are_available_from_std_exports():
     assert std.figure.caption('[Hi]') == '#figure.caption([Hi])'
     assert std.grid.cell('[Hi]') == '#grid.cell([Hi])'
     assert std.table.cell('[Hi]') == '#table.cell([Hi])'
+    assert std.color.rgb(255, 255, 255) == '#rgb(255, 255, 255)'
+    assert std.color.luma('50%') == '#luma(50%)'

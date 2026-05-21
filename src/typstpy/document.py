@@ -1,18 +1,18 @@
 from io import StringIO
 from typing import final
 
-from attrs import field, frozen
-
 
 @final
-@frozen
 class Document:
-    _contents = field(factory=list, init=False)
-    _import_statements = field(factory=list, init=False)
-    _set_rules = field(factory=list, init=False)
-    _show_rules = field(factory=list, init=False)
+    """Mutable builder for Typst document source sections."""
 
-    def add_content(self, content, /):
+    def __init__(self):
+        self._contents: list[str] = []
+        self._import_statements: list[str] = []
+        self._set_rules: list[str] = []
+        self._show_rules: list[str] = []
+
+    def add_content(self, content: str, /) -> None:
         """Add a content to the document.
 
         Args:
@@ -20,7 +20,7 @@ class Document:
         """
         self._contents.append(content)
 
-    def add_import(self, statement, /):
+    def add_import(self, statement: str, /) -> None:
         """Import names to the document.
 
         Args:
@@ -31,7 +31,7 @@ class Document:
         """
         self._import_statements.append(statement)
 
-    def add_set_rule(self, set_rule, /):
+    def add_set_rule(self, set_rule: str, /) -> None:
         """Add a set rule to the document.
 
         Args:
@@ -42,7 +42,7 @@ class Document:
         """
         self._set_rules.append(set_rule)
 
-    def add_show_rule(self, show_rule, /):
+    def add_show_rule(self, show_rule: str, /) -> None:
         """Add a show rule to the document.
 
         Args:
@@ -53,7 +53,7 @@ class Document:
         """
         self._show_rules.append(show_rule)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Incorporate import statements, set rules, show rules and contents into a single string.
 
         Returns:

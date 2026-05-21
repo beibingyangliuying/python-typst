@@ -22,5 +22,5 @@ def test_text_functions_render_representative_outputs():
     ],
 )
 def test_text_functions_reject_invalid_arguments(call):
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         call()

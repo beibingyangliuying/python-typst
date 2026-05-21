@@ -1,5 +1,12 @@
 from typstpy._constants import VALID_PAPER_SIZES
-from typstpy._core import attach_func, implement, normal, positional, post_series
+from typstpy._core import (
+    _validate_value,
+    attach_func,
+    implement,
+    normal,
+    positional,
+    post_series,
+)
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import rect  # noqa
 
@@ -608,7 +615,7 @@ def page(
         foreground: Content in the page's foreground. Defaults to None.
 
     Raises:
-        AssertionError: If `paper` is invalid.
+        ValueError: If `paper` is invalid.
 
     Returns:
         Executable typst code.
@@ -619,7 +626,7 @@ def page(
         >>> page(lorem(20), paper='"a0"', width='8.5in', height='11in')
         '#page(lorem(20), paper: "a0", width: 8.5in, height: 11in)'
     """
-    assert paper in VALID_PAPER_SIZES
+    _validate_value(page, 'paper', paper, VALID_PAPER_SIZES)
 
     return normal(
         page,
@@ -943,6 +950,8 @@ def stack(
         Executable typst code.
 
     Examples:
+        >>> stack(rect(width='40pt'), dir='btt')
+        '#stack(dir: btt, rect(width: 40pt))'
         >>> stack(
         ...     rect(width='40pt'), rect(width='120pt'), rect(width='90pt'), dir='btt'
         ... )

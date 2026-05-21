@@ -1,12 +1,11 @@
 import inspect
 import warnings
 from collections.abc import Callable, Iterable, Mapping
+from dataclasses import dataclass
 from functools import partial, singledispatch
 from io import StringIO
 from typing import ClassVar, Self
 from weakref import WeakKeyDictionary, WeakSet
-
-from attrs import frozen
 
 # region render
 
@@ -49,7 +48,8 @@ def _(obj: Callable):
     implement = _Implement.permanent.get(obj, None)
     if implement is None:
         warnings.warn(
-            f'The function {obj} has not been registered. Use `implement` decorator to register it and set the correct original name.'
+            f'The function {obj} has not been registered. Use `implement` decorator to register it and set the correct original name.',
+            stacklevel=2,
         )
         return obj.__name__
     return implement.original_name
@@ -78,7 +78,7 @@ def attach_func(attached, name=None):
     """
 
     def wrapper(func):
-        _name = name if name else func.__name__
+        _name = name if name else attached.__name__
         if _name.startswith('_'):
             raise ValueError(f'Invalid name: {_name}')
         setattr(func, _name, attached)
@@ -87,7 +87,7 @@ def attach_func(attached, name=None):
     return wrapper
 
 
-@frozen
+@dataclass(frozen=True)
 class _Implement:
     permanent: ClassVar[WeakKeyDictionary[Callable, Self]] = WeakKeyDictionary()
     temporary: ClassVar[WeakSet[Callable]] = WeakSet()
@@ -107,7 +107,10 @@ class _Implement:
             _print(
                 *(
                     f'| {k.__module__[len("typstpy.") :]}.{k.__name__} | {v.original_name} | [{v.hyperlink}]({v.hyperlink}) | {v.version} |'
-                    for k, v in _Implement.permanent.items()
+                    for k, v in sorted(
+                        _Implement.permanent.items(),
+                        key=lambda item: (item[0].__module__, item[0].__name__),
+                    )
                 ),
             )
             return stream.getvalue()
@@ -135,7 +138,10 @@ class _Implement:
             return '\n'.join(i.lstrip() for i in examples.splitlines())
 
         with StringIO() as stream:
-            for func in _Implement.permanent:
+            for func in sorted(
+                _Implement.permanent,
+                key=lambda item: (item.__module__, item.__name__),
+            ):
                 examples = extract_examples(func)
                 if examples is None:
                     continue
@@ -149,6 +155,82 @@ class _Implement:
                     file=stream,
                 )
             return stream.getvalue()
+
+
+_SPREADABLE_CODE_PREFIXES = ('#color.map.',)
+_SPREAD_SINGLE_SEQUENCE_FUNCTIONS = frozenset(
+    {
+        'color.mix',
+        'enum',
+        'gradient.conic',
+        'gradient.linear',
+        'gradient.radial',
+        'grid',
+        'list',
+        'stack',
+        'subpar.grid',
+        'table',
+    }
+)
+
+
+def _function_label(func):
+    implement = _Implement.permanent.get(func, None)
+    if implement is not None:
+        return implement.original_name
+    return getattr(func, '__name__', repr(func))
+
+
+def _keyword_defaults(func):
+    return func.__kwdefaults__ or {}
+
+
+def _raise_unknown_fields(func, kwargs):
+    defaults = _keyword_defaults(func)
+    invalid = sorted(set(kwargs) - set(defaults))
+    if invalid:
+        fields = ', '.join(invalid)
+        raise TypeError(f'{_function_label(func)} does not accept field(s): {fields}')
+
+
+def _validate_value(func, name, value, allowed):
+    if value not in allowed:
+        choices = ', '.join(repr(choice) for choice in sorted(allowed, key=repr))
+        raise ValueError(
+            f'{_function_label(func)} got invalid {name}={value!r}; expected one of: {choices}'
+        )
+
+
+def _filter_default_kwargs(func, kwargs):
+    defaults = _keyword_defaults(func)
+    if func not in _Implement.temporary:
+        _raise_unknown_fields(func, kwargs)
+    if not defaults:
+        return kwargs
+    return {
+        key: value
+        for key, value in kwargs.items()
+        if key not in defaults or value != defaults[key]
+    }
+
+
+def _should_spread_single_child(func, child):
+    if isinstance(child, str) and child.startswith(_SPREADABLE_CODE_PREFIXES):
+        return True
+    if isinstance(child, list | tuple):
+        return _function_label(func) in _SPREAD_SINGLE_SEQUENCE_FUNCTIONS
+    return False
+
+
+def _render_series_children(func, children):
+    if not children:
+        return []
+    if len(children) == 1:
+        child = children[0]
+        if _should_spread_single_child(func, child):
+            return [f'..{_render_value(child)}']
+        return [_render_value(child)]
+    return [_strip_brace(_render_value(children))]
 
 
 def implement(original_name, *, hyperlink=None, version=None):
@@ -168,13 +250,16 @@ def implement(original_name, *, hyperlink=None, version=None):
 
         def where(**kwargs):
             """Returns a selector that filters for elements belonging to this function whose fields have the values of the given arguments."""
-            assert kwargs.keys() <= func.__kwdefaults__.keys()
+            if func not in _Implement.temporary:
+                _raise_unknown_fields(func, kwargs)
 
-            return f'#{original_name}.where({_strip_brace(_render_value(kwargs))})'
+            params = _strip_brace(_render_value(kwargs)) if kwargs else ''
+            return f'#{original_name}.where({params})'
 
         def with_(*args, **kwargs):
             """Returns a new function that has the given arguments pre-applied."""
-            assert (not kwargs) or (kwargs.keys() <= func.__kwdefaults__.keys())
+            if func not in _Implement.temporary:
+                _raise_unknown_fields(func, kwargs)
 
             params = []
             if args:
@@ -220,9 +305,11 @@ def set_(func, /, **kwargs):
     Returns:
         Executable typst code.
     """
-    assert kwargs.keys() <= func.__kwdefaults__.keys()
+    if func not in _Implement.temporary:
+        _raise_unknown_fields(func, kwargs)
 
-    return f'#set {_render_value(func)}({_strip_brace(_render_value(kwargs))})'
+    params = _strip_brace(_render_value(kwargs)) if kwargs else ''
+    return f'#set {_render_value(func)}({params})'
 
 
 def show_(element, appearance, /):
@@ -237,8 +324,14 @@ def show_(element, appearance, /):
 
     Returns:
         Executable typst code.
+
+    Examples:
+        >>> show_(None, 'it => it')
+        '#show: it => it'
     """
-    return f'#show {"" if element is None else _render_value(element)}: {_render_value(appearance)}'
+    if element is None:
+        return f'#show: {_render_value(appearance)}'
+    return f'#show {_render_value(element)}: {_render_value(appearance)}'
 
 
 def import_(path, /, *names):
@@ -249,7 +342,15 @@ def import_(path, /, *names):
 
     Returns:
         Executable typst code.
+
+    Examples:
+        >>> import_('"module.typ"')
+        '#import "module.typ"'
+        >>> import_('"module.typ"', 'foo', 'bar')
+        '#import "module.typ": foo, bar'
     """
+    if not names:
+        return f'#import {path}'
     return f'#import {path}: {_strip_brace(_render_value(names))}'
 
 
@@ -269,11 +370,7 @@ def normal(
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__
-    if defaults:
-        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
-    elif func not in _Implement.temporary:
-        assert not kwargs
+    kwargs = _filter_default_kwargs(func, kwargs)
 
     params = []
     if body != '':
@@ -308,11 +405,7 @@ def instance(func, instance, /, *args, **kwargs):
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__
-    if defaults:
-        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
-    elif func not in _Implement.temporary:
-        assert not kwargs
+    kwargs = _filter_default_kwargs(func, kwargs)
 
     params = []
     if args:
@@ -332,17 +425,9 @@ def pre_series(func, *children, **kwargs):
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__
-    if defaults:
-        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
-    elif func not in _Implement.temporary:
-        assert not kwargs
+    kwargs = _filter_default_kwargs(func, kwargs)
 
-    params = []
-    if len(children) != 1:
-        params.append(_strip_brace(_render_value(children)))
-    else:
-        params.append(f'..{_render_value(children[0])}')
+    params = _render_series_children(func, children)
     if kwargs:
         params.append(_strip_brace(_render_value(kwargs)))
 
@@ -358,19 +443,12 @@ def post_series(func, *children, **kwargs):
     Returns:
         Executable typst code.
     """
-    defaults = func.__kwdefaults__
-    if defaults:
-        kwargs = {key: value for key, value in kwargs.items() if value != defaults[key]}
-    elif func not in _Implement.temporary:
-        assert not kwargs
+    kwargs = _filter_default_kwargs(func, kwargs)
 
     params = []
     if kwargs:
         params.append(_strip_brace(_render_value(kwargs)))
-    if len(children) != 1:
-        params.append(_strip_brace(_render_value(children)))
-    else:
-        params.append(f'..{_render_value(children[0])}')
+    params.extend(_render_series_children(func, children))
 
     return f'#{_render_value(func)}(' + ', '.join(params) + ')'
 

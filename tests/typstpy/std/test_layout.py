@@ -13,6 +13,10 @@ def test_stack_uses_post_series_order():
     assert stack('[a]', '[b]', dir='btt') == '#stack(dir: btt, [a], [b])'
 
 
+def test_stack_does_not_spread_single_plain_child():
+    assert stack('[a]') == '#stack([a])'
+
+
 def test_page_rejects_unknown_paper_size():
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         page('[Body]', paper='"not-a-paper"')

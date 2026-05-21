@@ -34,9 +34,33 @@ def test_pre_series_factory_places_children_before_keywords():
     )
 
 
+def test_pre_series_factory_does_not_spread_single_plain_child():
+    subpar_grid = pre_series('subpar.grid')
+
+    assert subpar_grid('[]') == '#subpar.grid([])'
+
+
+def test_pre_series_factory_spreads_single_sequence_for_known_series_function():
+    subpar_grid = pre_series('subpar.grid')
+
+    assert subpar_grid(('[]', '[]')) == '#subpar.grid(..([], []))'
+
+
 def test_post_series_factory_places_keywords_before_children():
     table = post_series('table')
 
     assert table('[1]', '[2]', columns=['1fr', '2fr']) == (
         '#table(columns: (1fr, 2fr), [1], [2])'
     )
+
+
+def test_post_series_factory_does_not_spread_single_plain_child():
+    table = post_series('table')
+
+    assert table('[1]') == '#table([1])'
+
+
+def test_post_series_factory_spreads_single_sequence_for_known_series_function():
+    table = post_series('table')
+
+    assert table(('[1]', '[2]')) == '#table(..([1], [2]))'

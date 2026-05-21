@@ -1,6 +1,7 @@
 import pytest
 
 from typstpy._core import (
+    attach_func,
     implement,
     import_,
     instance,
@@ -44,12 +45,24 @@ def test_set_show_and_import_rules_render_typst_code():
     assert show_(heading, set_(text, fill='red')) == (
         '#show heading: set text(fill: red)'
     )
-    assert show_(None, 'it => it') == '#show : it => it'
+    assert show_(None, 'it => it') == '#show: it => it'
     assert import_('"module.typ"', 'foo', 'bar') == '#import "module.typ": foo, bar'
+    assert import_('"module.typ"') == '#import "module.typ"'
+
+
+def test_attach_func_default_name_uses_attached_function_name():
+    def child():
+        return '#child'
+
+    @attach_func(child)
+    def parent():
+        return '#parent'
+
+    assert parent.child is child
 
 
 def test_set_rejects_unknown_function_fields():
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         set_(heading, outline=True)
 
 
@@ -63,7 +76,7 @@ def test_implemented_functions_have_distinct_where_and_with_helpers():
 
 @pytest.mark.parametrize('helper', [heading.where, heading.with_])
 def test_where_and_with_reject_unknown_function_fields(helper):
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         helper(outline=True)
 
 
@@ -88,5 +101,13 @@ def test_pre_series_protocol_places_children_before_keywords():
     assert demo_pre('[a]', '[b]', gap='1em') == '#demo.pre([a], [b], gap: 1em)'
 
 
+def test_pre_series_protocol_does_not_spread_single_plain_child():
+    assert demo_pre('[a]') == '#demo.pre([a])'
+
+
 def test_post_series_protocol_places_keywords_before_children():
     assert demo_post('[a]', '[b]', gap='1em') == '#demo.post(gap: 1em, [a], [b])'
+
+
+def test_post_series_protocol_does_not_spread_single_plain_child():
+    assert demo_post('[a]') == '#demo.post([a])'

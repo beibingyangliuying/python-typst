@@ -3,6 +3,7 @@ from typing import overload
 from deprecated import deprecated
 
 from typstpy._core import (
+    _validate_value,
     attach_func,
     implement,
     instance,
@@ -42,7 +43,7 @@ def circle(
         outset: How much to expand the circle's size without affecting the layout. Defaults to dict().
 
     Raises:
-        AssertionError: If `radius` is not '0pt' and either `width` or `height` is not 'auto'.
+        ValueError: If `radius` is not '0pt' and either `width` or `height` is not 'auto'.
 
     Returns:
         Executable typst code.
@@ -55,7 +56,10 @@ def circle(
         >>> circle('[Hello, world!]', width='100%', height='100%')
         '#circle([Hello, world!], width: 100%, height: 100%)'
     """
-    assert (width == 'auto' and height == 'auto') if radius != '0pt' else True
+    if radius != '0pt' and (width != 'auto' or height != 'auto'):
+        raise ValueError(
+            'circle requires width and height to be auto when radius is not 0pt'
+        )
 
     return normal(
         circle,
@@ -82,7 +86,7 @@ def _color_map(name, /):
         name: The name of the color map.
 
     Raises:
-        AssertionError: If `name` is invalid.
+        ValueError: If `name` is invalid.
 
     Returns:
         A color in a specific color space.
@@ -91,22 +95,27 @@ def _color_map(name, /):
         >>> color.map('turbo')
         '#color.map.turbo'
     """
-    assert name in {
-        'turbo',
-        'cividis',
-        'rainbow',
-        'spectral',
-        'viridis',
-        'inferno',
-        'magma',
-        'plasma',
-        'rocket',
-        'mako',
-        'vlag',
-        'icefire',
-        'flare',
-        'crest',
-    }
+    _validate_value(
+        _color_map,
+        'name',
+        name,
+        {
+            'turbo',
+            'cividis',
+            'rainbow',
+            'spectral',
+            'viridis',
+            'inferno',
+            'magma',
+            'plasma',
+            'rocket',
+            'mako',
+            'vlag',
+            'icefire',
+            'flare',
+            'crest',
+        },
+    )
     return f'#color.map.{name}'
 
 
@@ -269,7 +278,7 @@ def rgb(*args):
     """Interface of `rgb` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-rgb) for more information.
 
     Raises:
-        AssertionError: If the number of arguments is not 1, 3, or 4.
+        TypeError: If the number of arguments is not 1, 3, or 4.
 
     Returns:
         A color in a specific color space.
@@ -282,7 +291,8 @@ def rgb(*args):
         >>> rgb('"#ffffff"')
         '#rgb("#ffffff")'
     """
-    assert len(args) in (1, 3, 4)
+    if len(args) not in (1, 3, 4):
+        raise TypeError('rgb expects either 1, 3, or 4 positional arguments')
 
     return positional(rgb, *args)  # type: ignore
 
@@ -808,7 +818,7 @@ def _curve_close(*, mode='"smooth"'):
         mode: How to close the curve.
 
     Raises:
-        AssertionError: If `mode` is invalid.
+        ValueError: If `mode` is invalid.
 
     Returns:
         Executable typst code.
@@ -819,7 +829,7 @@ def _curve_close(*, mode='"smooth"'):
         >>> curve.close(mode='"straight"')
         '#curve.close(mode: "straight")'
     """
-    assert mode in {'"smooth"', '"straight"'}
+    _validate_value(_curve_close, 'mode', mode, {'"smooth"', '"straight"'})
 
     return normal(_curve_close, '', mode=mode)
 
@@ -848,7 +858,7 @@ def curve(
         stroke: How to stroke the curve. Defaults to 'auto'.
 
     Raises:
-        AssertionError: If `fill_rule` is invalid.
+        ValueError: If `fill_rule` is invalid.
 
     Returns:
         Executable typst code.
@@ -863,7 +873,7 @@ def curve(
         ... )
         '#curve(stroke: blue, curve.move((0pt, 50pt)), curve.line((100pt, 50pt)), curve.cubic(none, (90pt, 0pt), (50pt, 0pt)), curve.close())'
     """
-    assert fill_rule in {'"non-zero"', '"even-odd"'}
+    _validate_value(curve, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
 
     return post_series(
         curve, *components, fill=fill, fill_rule=fill_rule, stroke=stroke
@@ -935,7 +945,7 @@ def _gradient_linear(
         relative: The relative placement of the gradient. Defaults to 'auto'.
 
     Raises:
-        AssertionError: If the number of `stops` is less than 2 or relative is invalid.
+        ValueError: If `relative` is invalid.
 
     Returns:
         A color gradient.
@@ -944,7 +954,8 @@ def _gradient_linear(
         >>> gradient.linear(rgb(255, 255, 255), rgb(0, 0, 0))
         '#gradient.linear(rgb(255, 255, 255), rgb(0, 0, 0))'
     """
-    assert relative == 'auto' or relative in {'"self"', '"parent"'}
+    if relative != 'auto':
+        _validate_value(_gradient_linear, 'relative', relative, {'"self"', '"parent"'})
 
     return pre_series(_gradient_linear, *stops, space=space, relative=relative)
 
@@ -974,7 +985,7 @@ def _gradient_radial(
         focal_radius: The radius of the focal circle of the gradient. Defaults to '0%'.
 
     Raises:
-        AssertionError: If `relative` is invalid.
+        ValueError: If `relative` is invalid.
 
     Returns:
         A color gradient.
@@ -985,7 +996,8 @@ def _gradient_radial(
         ... )
         '#gradient.radial(..color.map.viridis, focal-center: (10%, 40%), focal-radius: 5%)'
     """
-    assert relative == 'auto' or relative in {'"self"', '"parent"'}
+    if relative != 'auto':
+        _validate_value(_gradient_radial, 'relative', relative, {'"self"', '"parent"'})
 
     return pre_series(
         _gradient_radial,
@@ -1020,7 +1032,7 @@ def _gradient_conic(
         center: The center of the last circle of the gradient. Defaults to ('50%', '50%').
 
     Raises:
-        AssertionError: If `relative` is invalid.
+        ValueError: If `relative` is invalid.
 
     Returns:
         A color gradient.
@@ -1029,7 +1041,8 @@ def _gradient_conic(
         >>> gradient.conic(color.map('viridis'), angle='90deg', center=('10%', '40%'))
         '#gradient.conic(..color.map.viridis, angle: 90deg, center: (10%, 40%))'
     """
-    assert relative == 'auto' or relative in {'"self"', '"parent"'}
+    if relative != 'auto':
+        _validate_value(_gradient_conic, 'relative', relative, {'"self"', '"parent"'})
 
     return pre_series(
         _gradient_conic,
@@ -1375,13 +1388,16 @@ def _image_decode(
         fit: How the image should adjust itself to a given area. Defaults to '"cover"'.
 
     Raises:
-        AssertionError: If `format` or `fit` is invalid.
+        ValueError: If `format` or `fit` is invalid.
 
     Returns:
         Executable typst code.
     """
-    assert format == 'auto' or format in {'"png"', '"jpg"', '"gif"', '"svg"'}
-    assert fit in {'"cover"', '"contain"', '"stretch"'}
+    if format != 'auto':
+        _validate_value(
+            _image_decode, 'format', format, {'"png"', '"jpg"', '"gif"', '"svg"'}
+        )
+    _validate_value(_image_decode, 'fit', fit, {'"cover"', '"contain"', '"stretch"'})
 
     return normal(
         _image_decode, data, format=format, width=width, height=height, alt=alt, fit=fit
@@ -1419,7 +1435,7 @@ def image(
         icc: An ICC profile for the image. Defaults to 'auto'.
 
     Raises:
-        AssertionError: If `format` or `fit` or `scaling` is invalid.
+        ValueError: If `format` or `fit` or `scaling` is invalid.
 
     Returns:
         Executable typst code.
@@ -1430,16 +1446,16 @@ def image(
         >>> image('"image.png"', fit='"contain"')
         '#image("image.png", fit: "contain")'
     """
-    assert format == 'auto' or format in {
-        '"png"',
-        '"jpg"',
-        '"gif"',
-        '"svg"',
-        '"pdf"',
-        '"webp"',
-    }
-    assert fit in {'"cover"', '"contain"', '"stretch"'}
-    assert scaling == 'auto' or scaling in {'"smooth"', '"pixelated"'}
+    if format != 'auto':
+        _validate_value(
+            image,
+            'format',
+            format,
+            {'"png"', '"jpg"', '"gif"', '"svg"', '"pdf"', '"webp"'},
+        )
+    _validate_value(image, 'fit', fit, {'"cover"', '"contain"', '"stretch"'})
+    if scaling != 'auto':
+        _validate_value(image, 'scaling', scaling, {'"smooth"', '"pixelated"'})
 
     return normal(
         image,
@@ -1516,7 +1532,7 @@ def path(
         closed: Whether to close this path with one last bezier curve. Defaults to False.
 
     Raises:
-        AssertionError: If `fill_rule` is invalid.
+        ValueError: If `fill_rule` is invalid.
 
     Returns:
         Executable typst code.
@@ -1542,7 +1558,7 @@ def path(
         ... )
         '#path(fill: red, stroke: blue, (0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
     """
-    assert fill_rule in {'"non-zero"', '"evenodd"'}
+    _validate_value(path, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
 
     return post_series(
         path, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke, closed=closed
@@ -1575,12 +1591,13 @@ def pattern(
         relative: The relative placement of the pattern. Defaults to 'auto'.
 
     Raises:
-        AssertionError: If `relative` is invalid.
+        ValueError: If `relative` is invalid.
 
     Returns:
         A repeating pattern fill.
     """
-    assert relative == 'auto' or relative in {'"self"', '"parent"'}
+    if relative != 'auto':
+        _validate_value(pattern, 'relative', relative, {'"self"', '"parent"'})
 
     return normal(pattern, body, size=size, spacing=spacing, relative=relative)
 
@@ -1633,12 +1650,12 @@ def polygon(
         stroke: How to stroke the polygon. Defaults to 'auto'.
 
     Raises:
-        AssertionError: If `fill_rule` is invalid.
+        ValueError: If `fill_rule` is invalid.
 
     Returns:
         Executable typst code.
     """
-    assert fill_rule in {'"non-zero"', '"evenodd"'}
+    _validate_value(polygon, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
 
     return post_series(
         polygon, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke
@@ -1722,12 +1739,15 @@ def square(
         outset: How much to expand the square's size without affecting the layout. Defaults to dict().
 
     Raises:
-        AssertionError: If `size` is not 'auto' when either `width` or `height` is not 'auto'.
+        ValueError: If `size` is not 'auto' when either `width` or `height` is not 'auto'.
 
     Returns:
         Executable typst code.
     """
-    assert (width == 'auto' and height == 'auto') if size != 'auto' else True
+    if size != 'auto' and (width != 'auto' or height != 'auto'):
+        raise ValueError(
+            'square requires width and height to be auto when size is not auto'
+        )
 
     return normal(
         square,
@@ -1775,7 +1795,8 @@ def tiling(
         ... )
         '#tiling([#place(line(start: (0%, 0%), end: (100%, 100%))), #place(line(start: (0%, 100%), end: (100%, 0%)))], size: (30pt, 30pt))'
     """
-    assert relative == 'auto' or relative in {'"self"', '"parent"'}
+    if relative != 'auto':
+        _validate_value(tiling, 'relative', relative, {'"self"', '"parent"'})
 
     return normal(tiling, body, size=size, spacing=spacing, relative=relative)
 
@@ -1798,4 +1819,5 @@ __all__ = [
     'polygon',
     'rect',
     'square',
+    'tiling',
 ]

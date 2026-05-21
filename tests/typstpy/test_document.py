@@ -25,6 +25,15 @@ def test_document_with_only_content_has_no_prefix_spacing():
     assert str(doc) == '[Body]'
 
 
+def test_document_add_methods_mutate_in_place_and_return_none():
+    doc = Document()
+
+    assert doc.add_import('#import "module.typ"') is None
+    assert doc.add_set_rule('#set text(fill: red)') is None
+    assert doc.add_show_rule('#show heading: it => it') is None
+    assert doc.add_content('[Body]') is None
+
+
 def test_document_renders_sections_in_typst_order_with_blank_lines():
     doc = Document()
     doc.add_import('#import "module.typ": foo')
@@ -59,13 +68,13 @@ def test_document_renders_complete_typst_source():
 
     expected = dedent(
         """
-        #import "@preview/cetz:0.3.1": 
+        #import "@preview/cetz:0.3.1"
 
         #set heading(outlined: true)
 
         #show heading: set text(fill: red)
         #show figure.caption: emph
-        #show : it => it
+        #show: it => it
 
         #heading(lorem(20))
 

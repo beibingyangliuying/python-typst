@@ -96,6 +96,8 @@ def post_series(original_name, /):
 
     Examples:
         >>> table = post_series('table')
+        >>> table('[1]')
+        '#table([1])'
         >>> table(
         ...     '[1]',
         ...     '[2]',
@@ -130,6 +132,8 @@ def pre_series(original_name, /):
 
     Examples:
         >>> subpar_grid = pre_series('subpar.grid')
+        >>> subpar_grid('[]')
+        '#subpar.grid([])'
         >>> subpar_grid(
         ...     '[]',
         ...     '[]',
