@@ -4,7 +4,6 @@ import ast
 import contextlib
 import doctest
 import importlib
-import inspect
 import io
 import sys
 import warnings
@@ -17,16 +16,7 @@ SRC_ROOT = PROJECT_ROOT / 'src'
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from typstpy._core import _Implement  # noqa: E402
-
-
-@dataclass(frozen=True)
-class ExampleBlock:
-    """Doctest examples extracted from one registered typstpy function."""
-
-    qualname: str
-    func: Callable[..., Any]
-    source: str
+from typstpy._docs import collect_example_blocks  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -49,60 +39,6 @@ class SkippedExample:
     reason: str
 
 
-def ensure_registry_loaded() -> None:
-    """Import modules whose decorators populate the implementation registry."""
-    import typstpy.std  # noqa: F401
-    import typstpy.subpar  # noqa: F401
-
-
-def iter_registered_functions() -> list[Callable[..., Any]]:
-    """Return registered functions in deterministic order."""
-    ensure_registry_loaded()
-    return sorted(
-        _Implement.permanent,
-        key=lambda func: (func.__module__, func.__name__),
-    )
-
-
-def function_qualname(func: Callable[..., Any]) -> str:
-    """Return a project-relative qualified name for a registered function."""
-    module = func.__module__
-    if module.startswith('typstpy.'):
-        module = module[len('typstpy.') :]
-    return f'{module}.{func.__name__}'
-
-
-def extract_examples(func: Callable[..., Any]) -> str | None:
-    """Extract the Google-style Examples section from a function docstring."""
-    docstring = inspect.getdoc(func)
-    if not docstring:
-        return None
-
-    sign_start = 'Examples:'
-    if sign_start not in docstring:
-        return None
-    index_start = docstring.index(sign_start) + len(sign_start) + 1
-
-    sign_end = 'See also:'
-    index_end = docstring.index(sign_end) if sign_end in docstring else None
-
-    examples = (
-        docstring[index_start:index_end] if index_end else docstring[index_start:]
-    )
-    return '\n'.join(line.lstrip() for line in examples.splitlines())
-
-
-def iter_example_blocks() -> list[ExampleBlock]:
-    """Return doctest example blocks from all registered functions."""
-    blocks: list[ExampleBlock] = []
-    for func in iter_registered_functions():
-        source = extract_examples(func)
-        if source is None:
-            continue
-        blocks.append(ExampleBlock(function_qualname(func), func, source))
-    return blocks
-
-
 def _module_namespace(func: Callable[..., Any]) -> dict[str, Any]:
     module = importlib.import_module(func.__module__)
     return dict(module.__dict__)
@@ -123,7 +59,7 @@ def collect_typst_examples() -> tuple[list[TypstExample], list[SkippedExample]]:
     collected: list[TypstExample] = []
     skipped: list[SkippedExample] = []
 
-    for block in iter_example_blocks():
+    for block in collect_example_blocks():
         namespace = _module_namespace(block.func)
         for index, example in enumerate(parser.get_examples(block.source), start=1):
             source = example.source.strip()

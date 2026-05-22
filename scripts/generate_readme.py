@@ -2,13 +2,54 @@ from __future__ import annotations
 
 import argparse
 import sys
+from io import StringIO
+from pathlib import Path
 
-try:
-    from ._example_collect import ensure_registry_loaded
-except ImportError:  # pragma: no cover - supports direct script execution.
-    from _example_collect import ensure_registry_loaded
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_ROOT = PROJECT_ROOT / 'src'
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 
-from typstpy._core import _Implement
+from typstpy._docs import (  # noqa: E402
+    ExampleBlock,
+    ImplementRecord,
+    collect_example_blocks,
+    collect_implement_records,
+    ensure_registry_loaded,
+)
+
+
+def render_implement_table(records: list[ImplementRecord]) -> str:
+    """Render implementation metadata as a README Markdown table."""
+    with StringIO() as stream:
+        print(
+            "| Package's function name | Typst's function name | Documentation on typst | Version |",
+            '| --- | --- | --- | --- |',
+            sep='\n',
+            file=stream,
+        )
+        for record in records:
+            print(
+                f'| {record.qualname} | {record.original_name} | '
+                f'[{record.hyperlink}]({record.hyperlink}) | {record.version} |',
+                file=stream,
+            )
+        return stream.getvalue()
+
+
+def render_code_examples(blocks: list[ExampleBlock]) -> str:
+    """Render extracted Examples sections as README Markdown code blocks."""
+    with StringIO() as stream:
+        for block in blocks:
+            print(
+                f'`{block.qualname}`:',
+                '\n```python',
+                block.source,
+                '```\n',
+                sep='\n',
+                file=stream,
+            )
+        return stream.getvalue()
 
 
 def build_content(section: str) -> str:
@@ -16,9 +57,9 @@ def build_content(section: str) -> str:
     ensure_registry_loaded()
     parts = []
     if section in {'all', 'table'}:
-        parts.append(_Implement.implement_table())
+        parts.append(render_implement_table(collect_implement_records()))
     if section in {'all', 'examples'}:
-        parts.append(_Implement.code_examples())
+        parts.append(render_code_examples(collect_example_blocks()))
     return '\n'.join(parts)
 
 

@@ -1,9 +1,7 @@
-import inspect
 import warnings
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
-from functools import partial, singledispatch
-from io import StringIO
+from functools import singledispatch
 from typing import ClassVar, Self
 from weakref import WeakKeyDictionary, WeakSet
 
@@ -95,66 +93,6 @@ class _Implement:
     original_name: str
     hyperlink: str | None = None
     version: str | None = None
-
-    @staticmethod
-    def implement_table():
-        with StringIO() as stream:
-            _print = partial(print, file=stream, sep='\n')
-            _print(
-                "| Package's function name | Typst's function name | Documentation on typst | Version |",
-                '| --- | --- | --- | --- |',
-            )
-            _print(
-                *(
-                    f'| {k.__module__[len("typstpy.") :]}.{k.__name__} | {v.original_name} | [{v.hyperlink}]({v.hyperlink}) | {v.version} |'
-                    for k, v in sorted(
-                        _Implement.permanent.items(),
-                        key=lambda item: (item[0].__module__, item[0].__name__),
-                    )
-                ),
-            )
-            return stream.getvalue()
-
-    @staticmethod
-    def code_examples():
-        def extract_examples(func):
-            docstring = inspect.getdoc(func)
-            if not docstring:
-                return None
-
-            sign_start = 'Examples:'
-            if sign_start not in docstring:
-                return None
-            index_start = docstring.index(sign_start) + len(sign_start) + 1
-
-            sign_end = 'See also:'
-            index_end = docstring.index(sign_end) if sign_end in docstring else None
-
-            examples = (
-                docstring[index_start:index_end]
-                if index_end
-                else docstring[index_start:]
-            )
-            return '\n'.join(i.lstrip() for i in examples.splitlines())
-
-        with StringIO() as stream:
-            for func in sorted(
-                _Implement.permanent,
-                key=lambda item: (item.__module__, item.__name__),
-            ):
-                examples = extract_examples(func)
-                if examples is None:
-                    continue
-
-                print(
-                    f'`{func.__module__[len("typstpy.") :]}.{func.__name__}`:',
-                    '\n```python',
-                    examples,
-                    '```\n',
-                    sep='\n',
-                    file=stream,
-                )
-            return stream.getvalue()
 
 
 _SPREADABLE_CODE_PREFIXES = ('#color.map.',)
