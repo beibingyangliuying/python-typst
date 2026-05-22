@@ -6,7 +6,7 @@ from typing import final
 class Document:
     """Mutable builder for Typst document source sections."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._contents: list[str] = []
         self._import_statements: list[str] = []
         self._set_rules: list[str] = []

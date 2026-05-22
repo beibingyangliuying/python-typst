@@ -1,4 +1,4 @@
-from collections.abc import Callable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from typing import ClassVar, Self
 from weakref import WeakKeyDictionary, WeakSet
@@ -14,18 +14,20 @@ class _Implement:
     version: str | None = None
 
 
-def _function_label(func):
+def _function_label(func: Callable[..., object]) -> str:
     implement = _Implement.permanent.get(func, None)
     if implement is not None:
         return implement.original_name
     return getattr(func, '__name__', repr(func))
 
 
-def _keyword_defaults(func):
+def _keyword_defaults(func: Callable[..., object]) -> dict[str, object]:
     return func.__kwdefaults__ or {}
 
 
-def _raise_unknown_fields(func, kwargs):
+def _raise_unknown_fields(
+    func: Callable[..., object], kwargs: Mapping[str, object]
+) -> None:
     defaults = _keyword_defaults(func)
     invalid = sorted(set(kwargs) - set(defaults))
     if invalid:
@@ -33,7 +35,9 @@ def _raise_unknown_fields(func, kwargs):
         raise TypeError(f'{_function_label(func)} does not accept field(s): {fields}')
 
 
-def _validate_value(func, name, value, allowed):
+def _validate_value(
+    func: Callable[..., object], name: str, value: object, allowed: Iterable[object]
+) -> None:
     if value not in allowed:
         choices = ', '.join(repr(choice) for choice in sorted(allowed, key=repr))
         raise ValueError(

@@ -40,6 +40,14 @@ def test_image_renders_representative_output():
     )
 
 
+@pytest.mark.parametrize(
+    'source', [b'image', bytearray(b'image'), memoryview(b'image')]
+)
+def test_image_rejects_python_bytes_like_objects(source):
+    with pytest.raises(TypeError, match='bytes-like objects cannot be rendered'):
+        image(source)
+
+
 def test_visualize_functions_render_updated_typst_calls():
     assert circle('[Hi]', width='100%') == '#circle([Hi], width: 100%)'
     assert square('[Hi]', width='100%') == '#square([Hi], width: 100%)'

@@ -39,6 +39,16 @@ class SkippedExample:
     reason: str
 
 
+@dataclass(frozen=True)
+class FailedExample:
+    """A doctest example that failed while being executed."""
+
+    qualname: str
+    index: int
+    source: str
+    error: str
+
+
 def _module_namespace(func: Callable[..., Any]) -> dict[str, Any]:
     module = importlib.import_module(func.__module__)
     return dict(module.__dict__)
@@ -53,11 +63,14 @@ def _run_source(source: str, namespace: dict[str, Any]) -> Any:
     return eval(compile(expression, '<doctest>', 'eval'), namespace)
 
 
-def collect_typst_examples() -> tuple[list[TypstExample], list[SkippedExample]]:
+def collect_typst_examples() -> tuple[
+    list[TypstExample], list[SkippedExample], list[FailedExample]
+]:
     """Execute registered doctests and collect Typst code string results."""
     parser = doctest.DocTestParser()
     collected: list[TypstExample] = []
     skipped: list[SkippedExample] = []
+    failed: list[FailedExample] = []
 
     for block in collect_example_blocks():
         namespace = _module_namespace(block.func)
@@ -70,10 +83,8 @@ def collect_typst_examples() -> tuple[list[TypstExample], list[SkippedExample]]:
                 ):
                     warnings.simplefilter('ignore', DeprecationWarning)
                     result = _run_source(example.source, namespace)
-            except Exception as exc:  # noqa: BLE001 - report and skip broken examples.
-                skipped.append(
-                    SkippedExample(block.qualname, index, source, f'raised {exc!r}')
-                )
+            except Exception as exc:  # noqa: BLE001 - report doctest failures.
+                failed.append(FailedExample(block.qualname, index, source, repr(exc)))
                 continue
 
             if result is None:
@@ -92,4 +103,4 @@ def collect_typst_examples() -> tuple[list[TypstExample], list[SkippedExample]]:
                 continue
             collected.append(TypstExample(block.qualname, index, source, result))
 
-    return collected, skipped
+    return collected, skipped, failed

@@ -1418,7 +1418,7 @@ def gradient():
 
 @deprecated(
     version='1.1.1',
-    reason='The `image.decode` is deprecated, directly pass bytes to `image` instead.',
+    reason='The `image.decode` is deprecated in Typst; typstpy does not render Python bytes directly.',
 )
 # * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/image/#definitions-decode; deprecated per Typst 0.15; parameters match.
 @implement(
@@ -1436,7 +1436,7 @@ def _image_decode(
     alt=None,
     fit='"cover"',
     scaling='auto',
-):
+) -> str:
     """Interface of `image.decode` in typst. See [the documentation](https://typst.app/docs/reference/visualize/image/#definitions-decode) for more information.
 
     Args:
@@ -1496,11 +1496,11 @@ def image(
     fit='"cover"',
     scaling='auto',
     icc='auto',
-):
+) -> str:
     """Interface of `image` in typst. See [the documentation](https://typst.app/docs/reference/visualize/image/) for more information.
 
     Args:
-        source: A path to an image file or raw bytes making up an image in one of the supported formats.
+        source: A Typst source string for an image path or expression, such as '"image.png"'. Python bytes-like objects are not supported.
         format: The image's format. Defaults to 'auto'.
         width: The width of the image. Defaults to 'auto'.
         height: The height of the image. Defaults to 'auto'.
@@ -1511,6 +1511,7 @@ def image(
         icc: An ICC profile for the image. Defaults to 'auto'.
 
     Raises:
+        TypeError: If `source` is a Python bytes-like object.
         ValueError: If `format` or `fit` or `scaling` is invalid.
 
     Returns:

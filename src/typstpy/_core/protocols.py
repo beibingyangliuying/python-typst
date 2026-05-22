@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from .registry import (
     _function_label,
     _Implement,
@@ -23,7 +25,9 @@ _SPREAD_SINGLE_SEQUENCE_FUNCTIONS = frozenset(
 )
 
 
-def _filter_default_kwargs(func, kwargs):
+def _filter_default_kwargs(
+    func: Callable[..., object], kwargs: dict[str, object]
+) -> dict[str, object]:
     defaults = _keyword_defaults(func)
     if func not in _Implement.temporary:
         _raise_unknown_fields(func, kwargs)
@@ -36,7 +40,7 @@ def _filter_default_kwargs(func, kwargs):
     }
 
 
-def _should_spread_single_child(func, child):
+def _should_spread_single_child(func: Callable[..., object], child: object) -> bool:
     if isinstance(child, str) and child.startswith(_SPREADABLE_CODE_PREFIXES):
         return True
     if isinstance(child, list | tuple):
@@ -44,7 +48,9 @@ def _should_spread_single_child(func, child):
     return False
 
 
-def _render_series_children(func, children):
+def _render_series_children(
+    func: Callable[..., object], children: tuple[object, ...]
+) -> list[str]:
     if not children:
         return []
     if len(children) == 1:
@@ -55,14 +61,14 @@ def _render_series_children(func, children):
     return [_strip_brace(_render_value(children))]
 
 
-def set_(func, /, **kwargs):
+def set_(func: Callable[..., object], /, **kwargs: object) -> str:
     """Represent `set` rule in typst.
 
     Args:
         func: The typst function.
 
     Raises:
-        ValueError: If there are invalid keyword-only parameters.
+        TypeError: If there are invalid keyword-only parameters.
 
     Returns:
         Executable typst code.
@@ -74,15 +80,12 @@ def set_(func, /, **kwargs):
     return f'#set {_render_value(func)}({params})'
 
 
-def show_(element, appearance, /):
+def show_(element: object, appearance: object, /) -> str:
     """Represent `show` rule in typst.
 
     Args:
         element: The typst function or content. If None, it means `show everything` rule.
         appearance: The typst function or content.
-
-    Raises:
-        ValueError: If the target is invalid.
 
     Returns:
         Executable typst code.
@@ -96,7 +99,7 @@ def show_(element, appearance, /):
     return f'#show {_render_value(element)}: {_render_value(appearance)}'
 
 
-def import_(path, /, *names):
+def import_(path: object, /, *names: object) -> str:
     """Represent `import` operation in typst.
 
     Args:
@@ -117,12 +120,12 @@ def import_(path, /, *names):
 
 
 def normal(
-    func,
-    body='',
+    func: Callable[..., object],
+    body: object = '',
     /,
-    *args,
-    **kwargs,
-):
+    *args: object,
+    **kwargs: object,
+) -> str:
     """Represent the protocol of `normal`.
 
     Args:
@@ -145,7 +148,7 @@ def normal(
     return f'#{_render_value(func)}(' + ', '.join(params) + ')'
 
 
-def positional(func, *args):
+def positional(func: Callable[..., object], *args: object) -> str:
     """Represent the protocol of `positional`.
 
     Args:
@@ -157,7 +160,7 @@ def positional(func, *args):
     return f'#{_render_value(func)}{_render_value(args)}'
 
 
-def _call(func, *args, **kwargs):
+def _call(func: Callable[..., object], *args: object, **kwargs: object) -> str:
     """Render a function call with explicit positional argument order."""
     kwargs = _filter_default_kwargs(func, kwargs)
 
@@ -170,7 +173,9 @@ def _call(func, *args, **kwargs):
     return f'#{_render_value(func)}(' + ', '.join(params) + ')'
 
 
-def instance(func, instance, /, *args, **kwargs):
+def instance(
+    func: Callable[..., object], instance: object, /, *args: object, **kwargs: object
+) -> str:
     """Represent the protocol of `pre_instance`.
 
     Args:
@@ -191,7 +196,7 @@ def instance(func, instance, /, *args, **kwargs):
     return f'{instance}.{_render_value(func)}(' + ', '.join(params) + ')'
 
 
-def pre_series(func, *children, **kwargs):
+def pre_series(func: Callable[..., object], *children: object, **kwargs: object) -> str:
     """Represent the protocol of `pre_series`, which means that `children` will be prepended.
 
     Args:
@@ -209,7 +214,9 @@ def pre_series(func, *children, **kwargs):
     return f'#{_render_value(func)}(' + ', '.join(params) + ')'
 
 
-def post_series(func, *children, **kwargs):
+def post_series(
+    func: Callable[..., object], *children: object, **kwargs: object
+) -> str:
     """Represent the protocol of `post_series`, which means that `children` will be postfixed.
 
     Args:

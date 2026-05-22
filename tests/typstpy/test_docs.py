@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from scripts.generate_readme import render_code_examples, render_implement_table
+from pathlib import Path
+
+from scripts.generate_readme import (
+    GENERATED_END,
+    GENERATED_START,
+    build_content,
+    render_code_examples,
+    render_implement_table,
+    replace_generated_section,
+)
 from typstpy._docs import ExampleBlock, ImplementRecord, extract_examples
 
 
@@ -81,3 +90,24 @@ def test_readme_renderers_use_structured_docs_data() -> None:
         '| std.demo | demo | [https://example.test/demo](https://example.test/demo) | 0.x |\n'
     )
     assert examples == "`std.demo`:\n\n```python\n>>> demo()\n'#demo()'\n```\n\n"
+
+
+def test_replace_generated_section_adds_markers_to_existing_readme() -> None:
+    readme = '# Demo\n\nIntro.\n\n## Current Supports\n\nold\n'
+    generated = f'{GENERATED_START}\n\n## Current Supports\n\nnew\n\n{GENERATED_END}\n'
+
+    assert replace_generated_section(readme, generated) == (
+        '# Demo\n\nIntro.\n\n'
+        f'{GENERATED_START}\n\n## Current Supports\n\nnew\n\n{GENERATED_END}\n'
+    )
+
+
+def test_readme_generated_section_is_up_to_date() -> None:
+    root = Path(__file__).parents[2]
+    readme = (root / 'README.md').read_text(encoding='utf-8')
+    start = readme.find(GENERATED_START)
+    end = readme.find(GENERATED_END)
+
+    assert start != -1 and end != -1
+    end += len(GENERATED_END)
+    assert readme[start:end] == build_content('all', markers=True).rstrip()

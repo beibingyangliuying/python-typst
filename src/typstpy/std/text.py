@@ -1,5 +1,12 @@
+from types import MappingProxyType
+
 from typstpy._core import _validate_value, attach_func, implement, normal, positional
 from typstpy.std.visualize import luma, rgb
+
+_DEFAULT_TEXT_COSTS = MappingProxyType(
+    {'hyphenation': '100%', 'runt': '100%', 'widow': '100%', 'orphan': '100%'}
+)
+_EMPTY_MAPPING = MappingProxyType({})
 
 
 @implement(
@@ -506,7 +513,7 @@ def text(
     script='auto',
     dir='auto',
     hyphenate='auto',
-    costs=dict(hyphenation='100%', runt='100%', widow='100%', orphan='100%'),
+    costs=_DEFAULT_TEXT_COSTS,
     kerning=True,
     alternates=False,
     stylistic_set=tuple(),
@@ -517,8 +524,8 @@ def text(
     number_width='auto',
     slashed_zero=False,
     fractions=False,
-    features=dict(),
-):
+    features=_EMPTY_MAPPING,
+) -> str:
     """Interface of `text` in typst. See [the documentation](https://typst.app/docs/reference/text/text/) for more information.
 
     Args:

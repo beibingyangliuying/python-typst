@@ -1,3 +1,5 @@
+from types import MappingProxyType
+
 from typstpy._core import (
     _call,
     _validate_value,
@@ -12,8 +14,16 @@ from typstpy.std.layout import hspace, repeat
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import image, line  # noqa
 
+_DEFAULT_PAR_JUSTIFICATION_LIMITS = MappingProxyType(
+    {
+        'spacing': MappingProxyType({'min': '66.67% + 0pt', 'max': '150% + 0pt'}),
+        'tracking': MappingProxyType({'min': '0pt', 'max': '0pt'}),
+    }
+)
+_DEFAULT_PAR_FIRST_LINE_INDENT = MappingProxyType({'amount': '0pt', 'all': False})
 
-# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/bibliography/; parameters match; style validation intentionally relaxed to accept strings, CSL paths, and raw bytes.
+
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/bibliography/; parameters match; style validation intentionally relaxed to accept strings and CSL paths.
 @implement(
     'bibliography',
     hyperlink='https://typst.app/docs/reference/model/bibliography/',
@@ -113,7 +123,7 @@ def bullet_list(
     )
 
 
-# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/cite/; form accepts none per official docs; style validation intentionally relaxed to accept strings, CSL paths, and raw bytes.
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/cite/; form accepts none per official docs; style validation intentionally relaxed to accept strings and CSL paths.
 @implement(
     'cite',
     hyperlink='https://typst.app/docs/reference/model/cite/',
@@ -780,14 +790,11 @@ def par(
     leading='0.65em',
     spacing='1.2em',
     justify=False,
-    justification_limits=dict(  # 新增参数，默认值为 Typst 的默认设置
-        spacing=dict(min='66.67% + 0pt', max='150% + 0pt'),
-        tracking=dict(min='0pt', max='0pt'),
-    ),
+    justification_limits=_DEFAULT_PAR_JUSTIFICATION_LIMITS,
     linebreaks='auto',
-    first_line_indent=dict(amount='0pt', all=False),
+    first_line_indent=_DEFAULT_PAR_FIRST_LINE_INDENT,
     hanging_indent='0pt',
-):
+) -> str:
     """Interface of `par` in typst. See [the documentation](https://typst.app/docs/reference/model/par/) for more information.
 
     Args:
@@ -795,9 +802,9 @@ def par(
         leading: The spacing between lines. Defaults to '0.65em'.
         spacing: The spacing between paragraphs. Defaults to '1.2em'.
         justify: Whether to justify text in its line. Defaults to False.
-        justification_limits: How much the spacing between words and characters may be adjusted during justification. Defaults to dict(spacing=dict(min='66.67% + 0pt', max='150% + 0pt'), tracking=dict(min='0pt', max='0pt')).
+        justification_limits: How much the spacing between words and characters may be adjusted during justification. Defaults to Typst's standard spacing and tracking limits.
         linebreaks: How to determine line breaks. Defaults to 'auto'.
-        first_line_indent: The indent the first line of a paragraph should have. Defaults to dict(amount='0pt', all=False).
+        first_line_indent: The indent the first line of a paragraph should have. Defaults to Typst's standard first-line indent mapping.
         hanging_indent: The indent all but the first line of a paragraph should have. Defaults to '0pt'.
 
     Raises:

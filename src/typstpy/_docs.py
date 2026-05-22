@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import inspect
 import re
 from collections.abc import Callable, Iterable
@@ -9,6 +10,10 @@ from typing import Any
 from typstpy._core import _Implement
 
 _SECTION_HEADING_RE = re.compile(r'[A-Za-z][A-Za-z0-9 _-]*:')
+
+
+def _is_documented_module(module: str) -> bool:
+    return module == 'typstpy.subpar' or module.startswith('typstpy.std.')
 
 
 @dataclass(frozen=True)
@@ -36,17 +41,44 @@ def ensure_registry_loaded() -> None:
     import typstpy.subpar  # noqa: F401
 
 
+def _iter_public_function_paths() -> Iterable[tuple[Callable[..., Any], str]]:
+    for module_name, prefix in (('typstpy.std', 'std'), ('typstpy.subpar', 'subpar')):
+        module = importlib.import_module(module_name)
+        for name in getattr(
+            module, '__all__', ()
+        ):  # pragma: no branch - modules define it.
+            obj = getattr(module, name, None)
+            if callable(obj) and obj in _Implement.permanent:
+                yield obj, f'{prefix}.{name}'
+            for attr_name, attr in getattr(obj, '__dict__', {}).items():
+                if attr_name in {'where', 'with_'} or attr_name.startswith('_'):
+                    continue
+                if callable(attr) and attr in _Implement.permanent:
+                    yield attr, f'{prefix}.{name}.{attr_name}'
+
+
 def iter_registered_functions() -> list[Callable[..., Any]]:
     """Return registered functions in deterministic order."""
     ensure_registry_loaded()
     return sorted(
-        _Implement.permanent,
+        [
+            func
+            for func in _Implement.permanent
+            if _is_documented_module(func.__module__)
+        ],
         key=lambda func: (func.__module__, func.__name__),
     )
 
 
 def function_qualname(func: Callable[..., Any]) -> str:
     """Return a project-relative qualified name for a registered function."""
+    ensure_registry_loaded()
+    paths = [
+        path for candidate, path in _iter_public_function_paths() if candidate is func
+    ]
+    if paths:
+        return sorted(paths, key=lambda path: (path.count('.'), path))[0]
+
     module = func.__module__
     if module.startswith('typstpy.'):
         module = module[len('typstpy.') :]
@@ -71,7 +103,7 @@ def collect_implement_records(
                 implement.version,
             )
         )
-    return records
+    return sorted(records, key=lambda record: record.qualname)
 
 
 def _is_top_level_section_heading(line: str) -> bool:
@@ -118,7 +150,7 @@ def collect_example_blocks(
         if source is None:
             continue
         blocks.append(ExampleBlock(function_qualname(func), func, source))
-    return blocks
+    return sorted(blocks, key=lambda block: block.qualname)
 
 
 __all__ = [
