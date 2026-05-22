@@ -14,6 +14,7 @@ from typstpy._core import (
 )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/circle/; parameters match.
 @implement(
     'circle',
     hyperlink='https://typst.app/docs/reference/visualize/circle/',
@@ -53,12 +54,18 @@ def circle(
         '#circle([Hello, world!])'
         >>> circle('[Hello, world!]', radius='10pt')
         '#circle([Hello, world!], radius: 10pt)'
-        >>> circle('[Hello, world!]', width='100%', height='100%')
-        '#circle([Hello, world!], width: 100%, height: 100%)'
+        >>> circle('[Hello, world!]', width='100%')
+        '#circle([Hello, world!], width: 100%)'
     """
-    if radius != '0pt' and (width != 'auto' or height != 'auto'):
+    if (
+        sum(
+            value != default
+            for value, default in ((radius, '0pt'), (width, 'auto'), (height, 'auto'))
+        )
+        > 1
+    ):
         raise ValueError(
-            'circle requires width and height to be auto when radius is not 0pt'
+            'circle requires only one of radius, width, and height to be set'
         )
 
     return normal(
@@ -143,12 +150,13 @@ def luma(lightness, alpha=None, /):
     return positional(luma, *([lightness] if alpha is None else [lightness, alpha]))
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/color/#definitions-oklab; parameters match; supports 1-arg color conversion and 3-/4-arg component form.
 @implement(
     'oklab',
     hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-oklab',
     version='0.13.x',
 )
-def oklab(lightness, a, b, alpha=None, /):
+def oklab(lightness, a=None, b=None, alpha=None, /):
     """Interface of `oklab` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-oklab) for more information.
 
     Args:
@@ -166,18 +174,24 @@ def oklab(lightness, a, b, alpha=None, /):
         >>> oklab('50%', '0%', '0%', '50%')
         '#oklab(50%, 0%, 0%, 50%)'
     """
+    if a is None and b is None and alpha is None:
+        return positional(oklab, lightness)
+    if a is None or b is None:
+        raise TypeError('oklab expects either 1, 3, or 4 positional arguments')
+
     return positional(
         oklab,
         *([lightness, a, b] if alpha is None else [lightness, a, b, alpha]),
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/color/#definitions-oklch; parameters match; supports 1-arg color conversion and 3-/4-arg component form.
 @implement(
     'oklch',
     hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-oklch',
     version='0.13.x',
 )
-def oklch(lightness, chroma, hue, alpha=None, /):
+def oklch(lightness, chroma=None, hue=None, alpha=None, /):
     """Interface of `oklch` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-oklch) for more information.
 
     Args:
@@ -195,6 +209,11 @@ def oklch(lightness, chroma, hue, alpha=None, /):
         >>> oklch('50%', '0%', '0deg', '50%')
         '#oklch(50%, 0%, 0deg, 50%)'
     """
+    if chroma is None and hue is None and alpha is None:
+        return positional(oklch, lightness)
+    if chroma is None or hue is None:
+        raise TypeError('oklch expects either 1, 3, or 4 positional arguments')
+
     return positional(
         oklch,
         *(
@@ -205,12 +224,13 @@ def oklch(lightness, chroma, hue, alpha=None, /):
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb; parameters match; supports 1-arg color conversion and 3-/4-arg component form.
 @implement(
     'color.linear-rgb',
     hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb',
     version='0.13.x',
 )
-def _color_linear_rgb(red, green, blue, alpha=None, /):
+def _color_linear_rgb(red, green=None, blue=None, alpha=None, /):
     """Interface of `color.linear-rgb` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-linear-rgb) for more information.
 
     Args:
@@ -228,6 +248,13 @@ def _color_linear_rgb(red, green, blue, alpha=None, /):
         >>> color.linear_rgb('50%', '50%', '50%', '50%')
         '#color.linear-rgb(50%, 50%, 50%, 50%)'
     """
+    if green is None and blue is None and alpha is None:
+        return positional(_color_linear_rgb, red)
+    if green is None or blue is None:
+        raise TypeError(
+            'color.linear-rgb expects either 1, 3, or 4 positional arguments'
+        )
+
     return positional(
         _color_linear_rgb,
         *([red, green, blue] if alpha is None else [red, green, blue, alpha]),
@@ -297,12 +324,13 @@ def rgb(*args):
     return positional(rgb, *args)  # type: ignore
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/color/#definitions-cmyk; parameters match; supports 1-arg color conversion and 4-arg component form.
 @implement(
     'cmyk',
     hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-cmyk',
     version='0.13.x',
 )
-def cmyk(cyan, magenta, yellow, key, /):
+def cmyk(cyan, magenta=None, yellow=None, key=None, /):
     """Interface of `cmyk` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-cmyk) for more information.
 
     Args:
@@ -320,15 +348,21 @@ def cmyk(cyan, magenta, yellow, key, /):
         >>> cmyk('50%', '50%', '50%', '50%')
         '#cmyk(50%, 50%, 50%, 50%)'
     """
+    if magenta is None and yellow is None and key is None:
+        return positional(cmyk, cyan)
+    if magenta is None or yellow is None or key is None:
+        raise TypeError('cmyk expects either 1 or 4 positional arguments')
+
     return positional(cmyk, cyan, magenta, yellow, key)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/color/#definitions-hsl; parameters match; supports 1-arg color conversion and 3-/4-arg component form.
 @implement(
     'color.hsl',
     hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-hsl',
     version='0.13.x',
 )
-def _color_hsl(hue, saturation, lightness, alpha=None, /):
+def _color_hsl(hue, saturation=None, lightness=None, alpha=None, /):
     """Interface of `color.hsl` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-hsl) for more information.
 
     Args:
@@ -346,6 +380,11 @@ def _color_hsl(hue, saturation, lightness, alpha=None, /):
         >>> color.hsl('0deg', '50%', '50%')
         '#color.hsl(0deg, 50%, 50%)'
     """
+    if saturation is None and lightness is None and alpha is None:
+        return positional(_color_hsl, hue)
+    if saturation is None or lightness is None:
+        raise TypeError('color.hsl expects either 1, 3, or 4 positional arguments')
+
     return positional(
         _color_hsl,
         *(
@@ -356,12 +395,13 @@ def _color_hsl(hue, saturation, lightness, alpha=None, /):
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/color/#definitions-hsv; parameters match; supports 1-arg color conversion and 3-/4-arg component form.
 @implement(
     'color.hsv',
     hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-hsv',
     version='0.13.x',
 )
-def _color_hsv(hue, saturation, value, alpha=None, /):
+def _color_hsv(hue, saturation=None, value=None, alpha=None, /):
     """Interface of `color.hsv` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-hsv) for more information.
 
     Args:
@@ -379,6 +419,11 @@ def _color_hsv(hue, saturation, value, alpha=None, /):
         >>> color.hsv('0deg', '50%', '50%')
         '#color.hsv(0deg, 50%, 50%)'
     """
+    if saturation is None and value is None and alpha is None:
+        return positional(_color_hsv, hue)
+    if saturation is None or value is None:
+        raise TypeError('color.hsv expects either 1, 3, or 4 positional arguments')
+
     return positional(
         _color_hsv,
         *(
@@ -880,6 +925,7 @@ def curve(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/ellipse/; parameters match.
 @implement(
     'ellipse',
     hyperlink='https://typst.app/docs/reference/visualize/ellipse/',
@@ -892,7 +938,7 @@ def ellipse(
     width='auto',
     height='auto',
     fill=None,
-    stroke=None,
+    stroke='auto',
     inset='0% + 5pt',
     outset=dict(),
 ):
@@ -903,7 +949,7 @@ def ellipse(
         width: The ellipse's width, relative to its parent container. Defaults to 'auto'.
         height: The ellipse's height, relative to its parent container. Defaults to 'auto'.
         fill: How to fill the ellipse. Defaults to None.
-        stroke: How to stroke the ellipse. Defaults to None.
+        stroke: How to stroke the ellipse. Defaults to 'auto'.
         inset: How much to pad the ellipse's content. Defaults to '0% + 5pt'.
         outset: How much to expand the ellipse's size without affecting the layout. Defaults to dict().
 
@@ -928,6 +974,7 @@ def ellipse(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/gradient/#definitions-linear; parameters match.
 @implement(
     'gradient.linear',
     hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-linear',
@@ -937,12 +984,16 @@ def _gradient_linear(
     *stops,
     space='oklab',
     relative='auto',  # noqa
-):  # TODO: Implement argument `dir` and `angle`.
+    dir='ltr',
+    angle=None,
+):
     """Interface of `gradient.linear` in typst. See [the documentation](https://typst.app/docs/reference/visualize/gradient/#definitions-linear) for more information.
 
     Args:
         space: The color space in which to interpolate the gradient. Defaults to 'oklab'.
         relative: The relative placement of the gradient. Defaults to 'auto'.
+        dir: The direction of the gradient. Defaults to 'ltr'.
+        angle: The angle of the gradient. Defaults to None.
 
     Raises:
         ValueError: If `relative` is invalid.
@@ -957,7 +1008,14 @@ def _gradient_linear(
     if relative != 'auto':
         _validate_value(_gradient_linear, 'relative', relative, {'"self"', '"parent"'})
 
-    return pre_series(_gradient_linear, *stops, space=space, relative=relative)
+    return pre_series(
+        _gradient_linear,
+        *stops,
+        space=space,
+        relative=relative,
+        dir=dir,
+        angle=angle,
+    )
 
 
 @implement(
@@ -1362,6 +1420,7 @@ def gradient():
     version='1.1.1',
     reason='The `image.decode` is deprecated, directly pass bytes to `image` instead.',
 )
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/image/#definitions-decode; deprecated per Typst 0.15; parameters match.
 @implement(
     'image.decode',
     hyperlink='https://typst.app/docs/reference/visualize/image/#definitions-decode',
@@ -1376,6 +1435,7 @@ def _image_decode(
     height='auto',
     alt=None,
     fit='"cover"',
+    scaling='auto',
 ):
     """Interface of `image.decode` in typst. See [the documentation](https://typst.app/docs/reference/visualize/image/#definitions-decode) for more information.
 
@@ -1386,6 +1446,7 @@ def _image_decode(
         height: The height of the image. Defaults to 'auto'.
         alt: A text describing the image. Defaults to None.
         fit: How the image should adjust itself to a given area. Defaults to '"cover"'.
+        scaling: A hint to viewers how they should scale the image. Defaults to 'auto'.
 
     Raises:
         ValueError: If `format` or `fit` is invalid.
@@ -1393,18 +1454,31 @@ def _image_decode(
     Returns:
         Executable typst code.
     """
-    if format != 'auto':
+    if isinstance(format, str) and format != 'auto':
         _validate_value(
-            _image_decode, 'format', format, {'"png"', '"jpg"', '"gif"', '"svg"'}
+            _image_decode,
+            'format',
+            format,
+            {'"png"', '"jpg"', '"gif"', '"svg"', '"pdf"', '"webp"'},
         )
     _validate_value(_image_decode, 'fit', fit, {'"cover"', '"contain"', '"stretch"'})
+    if scaling != 'auto':
+        _validate_value(_image_decode, 'scaling', scaling, {'"smooth"', '"pixelated"'})
 
     return normal(
-        _image_decode, data, format=format, width=width, height=height, alt=alt, fit=fit
+        _image_decode,
+        data,
+        format=format,
+        width=width,
+        height=height,
+        alt=alt,
+        fit=fit,
+        scaling=scaling,
     )
 
 
 @attach_func(_image_decode, 'decode')
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/image/; parameters match.
 @implement(
     'image',
     hyperlink='https://typst.app/docs/reference/visualize/image/',
@@ -1418,6 +1492,7 @@ def image(
     width='auto',
     height='auto',
     alt=None,
+    page=1,
     fit='"cover"',
     scaling='auto',
     icc='auto',
@@ -1430,6 +1505,7 @@ def image(
         width: The width of the image. Defaults to 'auto'.
         height: The height of the image. Defaults to 'auto'.
         alt: A text describing the image. Defaults to None.
+        page: The page number that should be embedded as an image. Defaults to 1.
         fit: How the image should adjust itself to a given area (the area is defined by the width and height fields). Defaults to '"cover"'.
         scaling: A hint to viewers how they should scale the image. Defaults to 'auto'.
         icc: An ICC profile for the image. Defaults to 'auto'.
@@ -1446,7 +1522,7 @@ def image(
         >>> image('"image.png"', fit='"contain"')
         '#image("image.png", fit: "contain")'
     """
-    if format != 'auto':
+    if isinstance(format, str) and format != 'auto':
         _validate_value(
             image,
             'format',
@@ -1464,6 +1540,7 @@ def image(
         width=width,
         height=height,
         alt=alt,
+        page=page,
         fit=fit,
         scaling=scaling,
         icc=icc,
@@ -1569,9 +1646,10 @@ def path(
     version='1.1.1',
     reason='This type used to be called pattern. The name remains as an alias, but is deprecated since Typst 0.13.',
 )
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/tiling/#compatibility; deprecated alias for tiling since Typst 0.13; parameters match tiling constructor.
 @implement(
     'pattern',
-    hyperlink='https://typst.app/docs/reference/visualize/pattern/',
+    hyperlink='https://typst.app/docs/reference/visualize/tiling/#compatibility',
     version='0.13.x',
 )
 def pattern(
@@ -1582,7 +1660,7 @@ def pattern(
     spacing=('0pt', '0pt'),
     relative='auto',
 ):
-    """Interface of `pattern` in typst. See [the documentation](https://typst.app/docs/reference/visualize/pattern/) for more information.
+    """Interface of `pattern` in typst. See [the documentation](https://typst.app/docs/reference/visualize/tiling/#compatibility) for more information.
 
     Args:
         body: The content of each cell of the pattern.
@@ -1707,6 +1785,7 @@ def rect(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/visualize/square/; parameters match.
 @implement(
     'square',
     hyperlink='https://typst.app/docs/reference/visualize/square/',
@@ -1744,9 +1823,9 @@ def square(
     Returns:
         Executable typst code.
     """
-    if size != 'auto' and (width != 'auto' or height != 'auto'):
+    if sum(value != 'auto' for value in (size, width, height)) > 1:
         raise ValueError(
-            'square requires width and height to be auto when size is not auto'
+            'square requires only one of size, width, and height to be set'
         )
 
     return normal(

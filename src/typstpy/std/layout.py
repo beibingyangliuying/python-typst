@@ -1,16 +1,17 @@
 from typstpy._constants import VALID_PAPER_SIZES
 from typstpy._core import (
+    _call,
     _validate_value,
     attach_func,
     implement,
     normal,
-    positional,
     post_series,
 )
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import rect  # noqa
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/align/; parameters match; default alignment preserves body-first shorthand, non-default uses official argument order.
 @implement(
     'align',
     hyperlink='https://typst.app/docs/reference/layout/align/',
@@ -28,16 +29,15 @@ def align(body, alignment='start + top', /):
 
     Examples:
         >>> align('"Hello, World!"', 'center')
-        '#align("Hello, World!", center)'
+        '#align(center, "Hello, World!")'
         >>> align('[Hello, World!]', 'center')
-        '#align([Hello, World!], center)'
+        '#align(center, [Hello, World!])'
         >>> align(lorem(20), 'center')
-        '#align(lorem(20), center)'
+        '#align(center, lorem(20))'
     """
-    return positional(
-        align,
-        *([body] if alignment == 'start + top' else [body, alignment]),
-    )
+    if alignment == 'start + top':
+        return normal(align, body)
+    return _call(align, alignment, body)
 
 
 @implement(
@@ -195,6 +195,7 @@ def colbreak(*, weak=False):
     return normal(colbreak, weak=weak)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/columns/; parameters match; default count preserves body-first shorthand, non-default uses official argument order.
 @implement(
     'columns',
     hyperlink='https://typst.app/docs/reference/layout/columns/',
@@ -215,15 +216,13 @@ def columns(body, count=2, /, *, gutter='4% + 0pt'):
         >>> columns(lorem(20))
         '#columns(lorem(20))'
         >>> columns(lorem(20), 3)
-        '#columns(lorem(20), 3)'
+        '#columns(3, lorem(20))'
         >>> columns(lorem(20), 3, gutter='8% + 0pt')
-        '#columns(lorem(20), 3, gutter: 8% + 0pt)'
+        '#columns(3, lorem(20), gutter: 8% + 0pt)'
     """
-    return normal(
-        columns,
-        *([body] if count == 2 else [body, count]),  # type: ignore[list-item]
-        gutter=gutter,
-    )
+    if count == 2:
+        return normal(columns, body, gutter=gutter)
+    return _call(columns, count, body, gutter=gutter)
 
 
 @implement(
@@ -281,6 +280,7 @@ def _grid_cell(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/grid/#definitions-hline; parameters match.
 @implement(
     'grid.hline',
     hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-hline',
@@ -306,11 +306,14 @@ def _grid_hline(
     Returns:
         Executable typst code.
     """
+    _validate_value(_grid_hline, 'position', position, {'top', 'bottom'})
+
     return normal(
         _grid_hline, y=y, start=start, end=end, stroke=stroke, position=position
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/grid/#definitions-vline; parameters match; position also accepts left/right as discouraged aliases.
 @implement(
     'grid.vline',
     hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-vline',
@@ -336,28 +339,35 @@ def _grid_vline(
     Returns:
         Executable typst code.
     """
+    _validate_value(
+        _grid_vline, 'position', position, {'start', 'end', 'left', 'right'}
+    )
+
     return normal(
         _grid_vline, x=x, start=start, end=end, stroke=stroke, position=position
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/grid/#definitions-header; parameters match.
 @implement(
     'grid.header',
     hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-header',
     version='0.13.x',
 )
-def _grid_header(*children, repeat=True):
+def _grid_header(*children, repeat=True, level=1):
     """Interface of `grid.header` in typst. See [the documentation](https://typst.app/docs/reference/layout/grid/#definitions-header) for more information.
 
     Args:
         repeat: Whether this header should be repeated across pages. Defaults to True.
+        level: The level of the header. Must not be zero. Defaults to 1.
 
     Returns:
         Executable typst code.
     """
-    return post_series(_grid_header, *children, repeat=repeat)
+    return post_series(_grid_header, *children, repeat=repeat, level=level)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/grid/#definitions-footer; parameters match.
 @implement(
     'grid.footer',
     hyperlink='https://typst.app/docs/reference/layout/grid/#definitions-footer',
@@ -512,6 +522,7 @@ def move(body, /, *, dx='0% + 0pt', dy='0% + 0pt'):
     return normal(move, body, dx=dx, dy=dy)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/pad/; parameters match; body-first shorthand preserved when no positional amount given, non-default uses official argument order.
 @implement(
     'pad',
     hyperlink='https://typst.app/docs/reference/layout/pad/',
@@ -519,6 +530,7 @@ def move(body, /, *, dx='0% + 0pt', dy='0% + 0pt'):
 )
 def pad(
     body,
+    amount=None,
     /,
     *,
     left='0% + 0pt',
@@ -554,6 +566,20 @@ def pad(
         ... )
         '#pad(lorem(20), left: 4% + 0pt, top: 4% + 0pt, right: 4% + 0pt, bottom: 4% + 0pt)'
     """
+    if amount is not None:
+        return _call(
+            pad,
+            amount,
+            body,
+            left=left,
+            top=top,
+            right=right,
+            bottom=bottom,
+            x=x,
+            y=y,
+            rest=rest,
+        )
+
     return normal(
         pad,
         body,
@@ -567,13 +593,14 @@ def pad(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/page/; parameters match; footer_ascent is a non-official compatibility alias for footer_descent.
 @implement(
     'page',
     hyperlink='https://typst.app/docs/reference/layout/page/',
     version='0.13.x',
 )
 def page(
-    body,
+    body='',
     /,
     *,
     paper='"a4"',
@@ -585,13 +612,15 @@ def page(
     columns=1,
     fill='auto',
     numbering=None,
+    supplement='auto',
     number_align='center + bottom',
     header='auto',
     header_ascent='30% + 0pt',
     footer='auto',
-    footer_ascent='30% + 0pt',
+    footer_descent='30% + 0pt',
     background=None,
     foreground=None,
+    **kwargs,
 ):
     """Interface of `page` in typst. See [the documentation](https://typst.app/docs/reference/layout/page/) for more information.
 
@@ -606,11 +635,12 @@ def page(
         columns: How many columns the page has. Defaults to 1.
         fill: The page's background fill. Defaults to 'auto'.
         numbering: How to number the pages. Defaults to None.
+        supplement: A supplement for page references. Defaults to 'auto'.
         number_align: The alignment of the page numbering. Defaults to 'center + bottom'.
         header: The page's header. Defaults to 'auto'.
         header_ascent: The amount the header is raised into the top margin. Defaults to '30% + 0pt'.
         footer: The page's footer. Defaults to 'auto'.
-        footer_ascent: The amount the footer is lowered into the bottom margin. Defaults to '30% + 0pt'.
+        footer_descent: The amount the footer is lowered into the bottom margin. Defaults to '30% + 0pt'.
         background: Content in the page's background. Defaults to None.
         foreground: Content in the page's foreground. Defaults to None.
 
@@ -626,7 +656,17 @@ def page(
         >>> page(lorem(20), paper='"a0"', width='8.5in', height='11in')
         '#page(lorem(20), paper: "a0", width: 8.5in, height: 11in)'
     """
+    if 'footer_ascent' in kwargs:
+        if footer_descent != '30% + 0pt':
+            raise TypeError('page got both footer_descent and footer_ascent')
+        footer_descent = kwargs.pop('footer_ascent')
+    if kwargs:
+        fields = ', '.join(sorted(kwargs))
+        raise TypeError(f'page does not accept field(s): {fields}')
+
     _validate_value(page, 'paper', paper, VALID_PAPER_SIZES)
+    if binding != 'auto':
+        _validate_value(page, 'binding', binding, {'left', 'right'})
 
     return normal(
         page,
@@ -640,16 +680,18 @@ def page(
         columns=columns,
         fill=fill,
         numbering=numbering,
+        supplement=supplement,
         number_align=number_align,
         header=header,
         header_ascent=header_ascent,
         footer=footer,
-        footer_ascent=footer_ascent,
+        footer_descent=footer_descent,
         background=background,
         foreground=foreground,
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/pagebreak/; parameters match.
 @implement(
     'pagebreak',
     hyperlink='https://typst.app/docs/reference/layout/pagebreak/',
@@ -673,6 +715,9 @@ def pagebreak(*, weak=False, to=None):
         >>> pagebreak(to='"even"')
         '#pagebreak(to: "even")'
     """
+    if to is not None:
+        _validate_value(pagebreak, 'to', to, {'"even"', '"odd"'})
+
     return normal(pagebreak, weak=weak, to=to)
 
 
@@ -695,6 +740,7 @@ def _place_flush():
 
 
 @attach_func(_place_flush, 'flush')
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/place/; parameters match; default alignment preserves body-first shorthand, non-default uses official argument order.
 @implement(
     'place',
     hyperlink='https://typst.app/docs/reference/layout/place/',
@@ -729,11 +775,24 @@ def place(
         >>> place(lorem(20))
         '#place(lorem(20))'
         >>> place(lorem(20), 'top')
-        '#place(lorem(20), top)'
+        '#place(top, lorem(20))'
     """
-    return normal(
+    _validate_value(place, 'scope', scope, {'"column"', '"parent"'})
+
+    if alignment == 'start':
+        return normal(
+            place,
+            body,
+            scope=scope,
+            float=float,
+            clearance=clearance,
+            dx=dx,
+            dy=dy,
+        )
+    return _call(
         place,
-        *([body] if alignment == 'start' else [body, alignment]),
+        alignment,
+        body,
         scope=scope,
         float=float,
         clearance=clearance,
@@ -767,6 +826,7 @@ def repeat(body, /, *, gap='0pt', justify=True):
     return normal(repeat, body, gap=gap, justify=justify)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/rotate/; parameters match; default angle preserves body-first shorthand, non-default uses official argument order.
 @implement(
     'rotate',
     hyperlink='https://typst.app/docs/reference/layout/rotate/',
@@ -793,18 +853,16 @@ def rotate(
 
     Examples:
         >>> rotate(lorem(20), '20deg')
-        '#rotate(lorem(20), 20deg)'
+        '#rotate(20deg, lorem(20))'
         >>> rotate(lorem(20), '20deg', origin='left + horizon')
-        '#rotate(lorem(20), 20deg, origin: left + horizon)'
+        '#rotate(20deg, lorem(20), origin: left + horizon)'
     """
-    return normal(
-        rotate,
-        *([body] if angle == '0deg' else [body, angle]),
-        origin=origin,
-        reflow=reflow,
-    )
+    if angle == '0deg':
+        return normal(rotate, body, origin=origin, reflow=reflow)
+    return _call(rotate, angle, body, origin=origin, reflow=reflow)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/scale/; parameters match; default factor preserves body-first shorthand, non-default uses official argument order.
 @implement(
     'scale',
     hyperlink='https://typst.app/docs/reference/layout/scale/',
@@ -835,20 +893,15 @@ def scale(
 
     Examples:
         >>> scale(lorem(20), '50%')
-        '#scale(lorem(20), 50%)'
+        '#scale(50%, lorem(20))'
         >>> scale(lorem(20), x='50%', y='50%')
         '#scale(lorem(20), x: 50%, y: 50%)'
         >>> scale(lorem(20), '50%', x='50%', y='50%')
-        '#scale(lorem(20), 50%, x: 50%, y: 50%)'
+        '#scale(50%, lorem(20), x: 50%, y: 50%)'
     """
-    return normal(
-        scale,
-        *([body] if factor == '100%' else [body, factor]),
-        x=x,
-        y=y,
-        origin=origin,
-        reflow=reflow,
-    )
+    if factor == '100%':
+        return normal(scale, body, x=x, y=y, origin=origin, reflow=reflow)
+    return _call(scale, factor, body, x=x, y=y, origin=origin, reflow=reflow)
 
 
 @implement(
@@ -930,6 +983,7 @@ def vspace(amount, /, *, weak=False):
     return normal(vspace, amount, weak=weak)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/stack/; parameters match.
 @implement(
     'stack',
     hyperlink='https://typst.app/docs/reference/layout/stack/',
@@ -961,6 +1015,8 @@ def stack(
         ... )
         '#stack(dir: btt, ..(rect(width: 40pt), rect(width: 120pt), rect(width: 90pt)))'
     """
+    _validate_value(stack, 'dir', dir, {'ltr', 'rtl', 'ttb', 'btt'})
+
     return post_series(stack, *children, dir=dir, spacing=spacing)
 
 

@@ -395,6 +395,19 @@ def positional(func, *args):
     return f'#{_render_value(func)}{_render_value(args)}'
 
 
+def _call(func, *args, **kwargs):
+    """Render a function call with explicit positional argument order."""
+    kwargs = _filter_default_kwargs(func, kwargs)
+
+    params = []
+    if args:
+        params.append(_strip_brace(_render_value(args)))
+    if kwargs:
+        params.append(_strip_brace(_render_value(kwargs)))
+
+    return f'#{_render_value(func)}(' + ', '.join(params) + ')'
+
+
 def instance(func, instance, /, *args, **kwargs):
     """Represent the protocol of `pre_instance`.
 

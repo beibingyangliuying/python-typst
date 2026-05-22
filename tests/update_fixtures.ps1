@@ -1,0 +1,1 @@
+& ./activate_venv.ps1 && python scripts/generate_typst_fixture.py --write tests/fixtures/test.typ

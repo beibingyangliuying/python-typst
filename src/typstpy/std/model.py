@@ -1,5 +1,5 @@
-from typstpy._constants import VALID_CITATION_STYLES
 from typstpy._core import (
+    _call,
     _validate_value,
     attach_func,
     implement,
@@ -13,6 +13,7 @@ from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import image, line  # noqa
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/bibliography/; parameters match; style validation intentionally relaxed to accept strings, CSL paths, and raw bytes.
 @implement(
     'bibliography',
     hyperlink='https://typst.app/docs/reference/model/bibliography/',
@@ -34,9 +35,6 @@ def bibliography(
         full: Whether to include all works from the given bibliography files, even those that weren't cited in the document. Defaults to False.
         style: The bibliography style. Defaults to '"ieee"'.
 
-    Raises:
-        ValueError: If `style` is invalid.
-
     Returns:
         Executable typst code.
 
@@ -44,8 +42,6 @@ def bibliography(
         >>> bibliography('"bibliography.bib"', style='"cell"')
         '#bibliography("bibliography.bib", style: "cell")'
     """
-    _validate_value(bibliography, 'style', style, VALID_CITATION_STYLES)
-
     return normal(
         bibliography,
         path,
@@ -117,6 +113,7 @@ def bullet_list(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/cite/; form accepts none per official docs; style validation intentionally relaxed to accept strings, CSL paths, and raw bytes.
 @implement(
     'cite',
     hyperlink='https://typst.app/docs/reference/model/cite/',
@@ -127,7 +124,7 @@ def cite(
     /,
     *,
     supplement=None,
-    form='"normal"',
+    form: str | None = '"normal"',
     style='auto',
 ):  # Support version: 0.13.x
     """Interface of `cite` in typst. See [the documentation](https://typst.app/docs/reference/model/cite/) for more information.
@@ -139,7 +136,7 @@ def cite(
         style: The citation style. Defaults to 'auto'.
 
     Raises:
-        ValueError: If `form` or `style` is invalid.
+        ValueError: If `form` is invalid.
 
     Returns:
         Executable typst code.
@@ -159,11 +156,8 @@ def cite(
             cite,
             'form',
             form,
-            {'"normal"', '"prose"', '"full"', '"author"', '"year"'},
+            {'none', '"normal"', '"prose"', '"full"', '"author"', '"year"'},
         )
-    if style != 'auto':
-        _validate_value(cite, 'style', style, VALID_CITATION_STYLES)
-
     return normal(
         cite,
         key,
@@ -479,17 +473,18 @@ def link(dest, body=None, /):
     return positional(link, *([dest] if body is None else [dest, body]))
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/enum/#definitions-item; parameters match.
 @implement(
     'enum.item',
     hyperlink='https://typst.app/docs/reference/model/enum/#definitions-item',
     version='0.13.x',
 )
-def _numbered_list_item(body, /, *, number=None):
+def _numbered_list_item(body, /, *, number='auto'):
     """Interface of `enum.item` in typst. See [the documentation](https://typst.app/docs/reference/model/enum/#definitions-item) for more information.
 
     Args:
         body: The item's body.
-        number: The item's number. Defaults to None.
+        number: The item's number. Defaults to 'auto'.
 
     Returns:
         Executable typst code.
@@ -498,12 +493,13 @@ def _numbered_list_item(body, /, *, number=None):
         >>> numbered_list.item('[Hello, World!]', number=2)
         '#enum.item(2, [Hello, World!])'
     """
-    if number is None:
+    if number == 'auto':
         return normal(_numbered_list_item, body)
-    return normal(_numbered_list_item, number, body)
+    return _call(_numbered_list_item, number, body)
 
 
 @attach_func(_numbered_list_item, 'item')
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/enum/; parameters match.
 @implement(
     'enum',
     hyperlink='https://typst.app/docs/reference/model/enum/',
@@ -513,7 +509,7 @@ def numbered_list(
     *children,
     tight=True,
     numbering='"1."',
-    start=1,
+    start: int | str = 'auto',
     full=False,
     reversed=False,
     indent='0pt',
@@ -526,7 +522,7 @@ def numbered_list(
     Args:
         tight: Defines the default spacing of the enumeration. Defaults to True.
         numbering: How to number the enumeration. Defaults to '"1."'.
-        start: Which number to start the enumeration with. Defaults to 1.
+        start: Which number to start the enumeration with. Defaults to 'auto'.
         full: Whether to display the full numbering, including the numbers of all parent enumerations. Defaults to False.
         reversed: Whether to reverse the numbering for this enumeration. Defaults to False.
         indent: The indentation of each item. Defaults to '0pt'.
@@ -730,6 +726,7 @@ def outline(
     return normal(outline, title=title, target=target, depth=depth, indent=indent)
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/par/#definitions-line; parameters match.
 @implement(
     'par.line',
     hyperlink='https://typst.app/docs/reference/model/par/#definitions-line',
@@ -762,13 +759,13 @@ def _par_line(
         _par_line, 'numbering_scope', numbering_scope, {'"document"', '"page"'}
     )
 
-    return positional(
+    return normal(
         _par_line,
-        numbering,
-        number_align,
-        number_margin,
-        number_clearance,
-        numbering_scope,
+        numbering=numbering,
+        number_align=number_align,
+        number_margin=number_margin,
+        number_clearance=number_clearance,
+        numbering_scope=numbering_scope,
     )
 
 
@@ -1007,6 +1004,7 @@ def _table_cell(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/table/#definitions-hline; parameters match.
 @implement(
     'table.hline',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-hline',
@@ -1032,11 +1030,14 @@ def _table_hline(
     Returns:
         Executable typst code.
     """
+    _validate_value(_table_hline, 'position', position, {'top', 'bottom'})
+
     return normal(
         _table_hline, y=y, start=start, end=end, stroke=stroke, position=position
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/model/table/#definitions-vline; parameters match; position also accepts left/right as discouraged aliases.
 @implement(
     'table.vline',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-vline',
@@ -1062,6 +1063,10 @@ def _table_vline(
     Returns:
         Executable typst code.
     """
+    _validate_value(
+        _table_vline, 'position', position, {'start', 'end', 'left', 'right'}
+    )
+
     return normal(
         _table_vline, x=x, start=start, end=end, stroke=stroke, position=position
     )

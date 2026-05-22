@@ -1,2 +1,2 @@
-uvx.exe ruff check --select I --fix .
-uvx.exe ruff format .
+ruff check --select I --fix .
+ruff format .

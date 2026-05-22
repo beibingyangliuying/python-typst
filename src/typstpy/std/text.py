@@ -388,6 +388,7 @@ def strike(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/text/sub/; parameters match.
 @implement(
     'sub',
     hyperlink='https://typst.app/docs/reference/text/sub/',
@@ -398,16 +399,16 @@ def subscript(
     /,
     *,
     typographic=True,
-    baseline='0.2em',
-    size='0.6em',
+    baseline='auto',
+    size='auto',
 ):
     """Interface of `sub` in typst. See [the documentation](https://typst.app/docs/reference/text/sub/) for more information.
 
     Args:
         body: The text to display in subscript.
         typographic: Whether to prefer the dedicated subscript characters of the font. Defaults to True.
-        baseline: The baseline shift for synthetic subscripts. Defaults to '0.2em'.
-        size: The font size for synthetic subscripts. Defaults to '0.6em'.
+        baseline: The baseline shift for synthetic subscripts. Defaults to 'auto'.
+        size: The font size for synthetic subscripts. Defaults to 'auto'.
 
     Returns:
         Executable typst code.
@@ -431,6 +432,7 @@ def subscript(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/text/super/; parameters match.
 @implement(
     'super',
     hyperlink='https://typst.app/docs/reference/text/super/',
@@ -441,16 +443,16 @@ def superscript(
     /,
     *,
     typographic=True,
-    baseline='-0.5em',
-    size='0.6em',
+    baseline='auto',
+    size='auto',
 ):
     """Interface of `super` in typst. See [the documentation](https://typst.app/docs/reference/text/super/) for more information.
 
     Args:
         body: The text to display in superscript.
         typographic: Whether to prefer the dedicated superscript characters of the font. Defaults to True.
-        baseline: The baseline shift for synthetic superscripts. Defaults to '-0.5em'.
-        size: The font size for synthetic superscripts. Defaults to '0.6em'.
+        baseline: The baseline shift for synthetic superscripts. Defaults to 'auto'.
+        size: The font size for synthetic superscripts. Defaults to 'auto'.
 
     Returns:
         Executable typst code.
@@ -474,6 +476,7 @@ def superscript(
     )
 
 
+# * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/text/text/; parameters match; Python API uses a single body parameter where Typst has separate body (content) and text (str) positionals.
 @implement(
     'text',
     hyperlink='https://typst.app/docs/reference/text/text/',
@@ -486,14 +489,15 @@ def text(
     font='"libertinus serif"',
     fallback=True,
     style='"normal"',
-    weight='"regular"',
+    weight: int | str = '"regular"',
     stretch='100%',
     size='11pt',
     fill=luma('0%'),
     stroke=None,
     tracking='0pt',
     spacing='100% + 0pt',
-    cjk_latin_spacing='auto',
+    cjk_latin_spacing: str | None = 'auto',
+    baseline='0pt',
     overhang=True,
     top_edge='"cap-height"',
     bottom_edge='"baseline"',
@@ -530,6 +534,7 @@ def text(
         tracking: The amount of space that should be added between characters. Defaults to '0pt'.
         spacing: The amount of space between words. Defaults to '100% + 0pt'.
         cjk_latin_spacing: Whether to automatically insert spacing between CJK and Latin characters. Defaults to 'auto'.
+        baseline: An amount to shift the text baseline by. Defaults to '0pt'.
         overhang: Whether certain glyphs can hang over into the margin in justified text. Defaults to True.
         top_edge: The top end of the conceptual frame around the text used for layout and positioning. Defaults to '"cap-height"'.
         bottom_edge: The bottom end of the conceptual frame around the text used for layout and positioning. Defaults to '"baseline"'.
@@ -583,6 +588,10 @@ def text(
                 '"black"',
             },
         )
+    elif not 100 <= weight <= 900:
+        raise ValueError(
+            'text got invalid weight; expected an integer between 100 and 900'
+        )
     _validate_value(
         text,
         'top_edge',
@@ -604,6 +613,20 @@ def text(
             number_width,
             {'"proportional"', '"tabular"'},
         )
+    if cjk_latin_spacing is not None and cjk_latin_spacing != 'auto':
+        _validate_value(text, 'cjk_latin_spacing', cjk_latin_spacing, {'none'})
+    if dir != 'auto':
+        _validate_value(text, 'dir', dir, {'ltr', 'rtl'})
+    if stylistic_set is not None:
+        values = (
+            stylistic_set
+            if isinstance(stylistic_set, tuple | list)
+            else (stylistic_set,)
+        )
+        if any(not isinstance(value, int) or not 1 <= value <= 20 for value in values):
+            raise ValueError(
+                'text got invalid stylistic_set; expected int(s) between 1 and 20'
+            )
 
     return normal(
         text,
@@ -619,6 +642,7 @@ def text(
         tracking=tracking,
         spacing=spacing,
         cjk_latin_spacing=cjk_latin_spacing,
+        baseline=baseline,
         overhang=overhang,
         top_edge=top_edge,
         bottom_edge=bottom_edge,

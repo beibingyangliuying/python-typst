@@ -2,7 +2,20 @@ from typing import Any, cast
 
 import pytest
 
-from typstpy.std.visualize import color, curve, gradient, image, path, polygon, rgb
+from typstpy.std.visualize import (
+    circle,
+    cmyk,
+    color,
+    curve,
+    gradient,
+    image,
+    oklab,
+    oklch,
+    path,
+    polygon,
+    rgb,
+    square,
+)
 
 rgb_untyped = cast(Any, rgb)
 
@@ -21,6 +34,30 @@ def test_image_renders_representative_output():
     assert (
         image('"image.png"', fit='"contain"') == '#image("image.png", fit: "contain")'
     )
+    assert image('"document.pdf"', page=2) == '#image("document.pdf", page: 2)'
+    assert image('"image.webp"', format='"webp"', scaling='"pixelated"') == (
+        '#image("image.webp", format: "webp", scaling: "pixelated")'
+    )
+
+
+def test_visualize_functions_render_updated_typst_calls():
+    assert circle('[Hi]', width='100%') == '#circle([Hi], width: 100%)'
+    assert square('[Hi]', width='100%') == '#square([Hi], width: 100%)'
+    assert oklab(rgb(0, 0, 0)) == '#oklab(rgb(0, 0, 0))'
+    assert oklch(rgb(0, 0, 0)) == '#oklch(rgb(0, 0, 0))'
+    assert color.linear_rgb(rgb(0, 0, 0)) == '#color.linear-rgb(rgb(0, 0, 0))'
+    assert cmyk(rgb(0, 0, 0)) == '#cmyk(rgb(0, 0, 0))'
+    assert color.hsl(rgb(0, 0, 0)) == '#color.hsl(rgb(0, 0, 0))'
+    assert color.hsv(rgb(0, 0, 0)) == '#color.hsv(rgb(0, 0, 0))'
+    assert gradient.linear('red', 'blue', dir='ttb') == (
+        '#gradient.linear(red, blue, dir: ttb)'
+    )
+    assert gradient.linear('red', 'blue', angle='45deg') == (
+        '#gradient.linear(red, blue, angle: 45deg)'
+    )
+    assert image.decode('"data"', format='"pdf"', scaling='"smooth"') == (
+        '#image.decode("data", format: "pdf", scaling: "smooth")'
+    )
 
 
 def test_path_and_polygon_accept_even_odd_fill_rule():
@@ -36,8 +73,12 @@ def test_path_and_polygon_accept_even_odd_fill_rule():
     'call',
     [
         lambda: color.map('not-a-map'),
+        lambda: circle('[Hi]', width='100%', height='100%'),
         lambda: curve.close(mode='"bad"'),
         lambda: image('"image.png"', fit='"bad"'),
+        lambda: image('"image.png"', format='"bmp"'),
+        lambda: image('"image.png"', scaling='"nearest"'),
+        lambda: square('[Hi]', size='1em', width='100%'),
     ],
 )
 def test_visualize_functions_reject_invalid_arguments(call):
@@ -45,7 +86,19 @@ def test_visualize_functions_reject_invalid_arguments(call):
         call()
 
 
-@pytest.mark.parametrize('call', [lambda: rgb_untyped(), lambda: rgb_untyped(1, 2)])
-def test_rgb_rejects_invalid_argument_counts(call):
+@pytest.mark.parametrize(
+    'call',
+    [
+        lambda: rgb_untyped(),
+        lambda: rgb_untyped(1, 2),
+        lambda: oklab('50%', '0%'),
+        lambda: oklch('50%', '0%'),
+        lambda: color.linear_rgb('50%', '50%'),
+        lambda: cmyk('0%', '0%', '0%'),
+        lambda: color.hsl('0deg', '50%'),
+        lambda: color.hsv('0deg', '50%'),
+    ],
+)
+def test_color_constructors_reject_invalid_argument_counts(call):
     with pytest.raises(TypeError):
         call()
