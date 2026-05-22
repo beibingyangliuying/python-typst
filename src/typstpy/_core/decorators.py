@@ -1,5 +1,5 @@
-from ._registry import _Implement, _raise_unknown_fields
-from ._render import _render_value, _strip_brace
+from .registry import _Implement, _raise_unknown_fields
+from .render import _render_value, _strip_brace
 
 
 def attach_func(attached, name=None):

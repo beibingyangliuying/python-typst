@@ -45,6 +45,6 @@ docstring-code-format = true
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules --cov=src --cov-report=xml --cov-report=term-missing"
-pythonpath = ["src"]
+pythonpath = [".", "src"]
 testpaths = ["src", "tests"]
 python_files = "test_*.py"

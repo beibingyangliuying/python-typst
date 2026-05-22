@@ -2,7 +2,7 @@ import warnings
 from collections.abc import Callable, Iterable, Mapping
 from functools import singledispatch
 
-from ._registry import _Implement
+from .registry import _Implement
 
 
 def _render_key(key):

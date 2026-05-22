@@ -1,10 +1,10 @@
-from ._registry import (
+from .registry import (
     _function_label,
     _Implement,
     _keyword_defaults,
     _raise_unknown_fields,
 )
-from ._render import _render_value, _strip_brace
+from .render import _render_value, _strip_brace
 
 _SPREADABLE_CODE_PREFIXES = ('#color.map.',)
 _SPREAD_SINGLE_SEQUENCE_FUNCTIONS = frozenset(
