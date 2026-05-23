@@ -27,7 +27,7 @@ _DEFAULT_PAR_FIRST_LINE_INDENT = MappingProxyType({'amount': '0pt', 'all': False
 @implement(
     'bibliography',
     hyperlink='https://typst.app/docs/reference/model/bibliography/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def bibliography(
     path,
@@ -61,10 +61,11 @@ def bibliography(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/list/#definitions-item; parameters match.
 @implement(
     'list.item',
     hyperlink='https://typst.app/docs/reference/model/list/#definitions-item',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _bullet_list_item(body, /):
     """Interface of `list.item` in typst. See [the documentation](https://typst.app/docs/reference/model/list/#definitions-item) for more information.
@@ -83,10 +84,11 @@ def _bullet_list_item(body, /):
 
 
 @attach_func(_bullet_list_item, 'item')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/list/; parameters match.
 @implement(
     'list',
     hyperlink='https://typst.app/docs/reference/model/list/',
-    version='0.13.x',
+    version='0.14.2',
     spread_single=True,
 )
 def bullet_list(
@@ -130,7 +132,7 @@ def bullet_list(
 @implement(
     'cite',
     hyperlink='https://typst.app/docs/reference/model/cite/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def cite(
     key,
@@ -180,10 +182,11 @@ def cite(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/document/; parameters match.
 @implement(
     'document',
     hyperlink='https://typst.app/docs/reference/model/document/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def document(
     *,
@@ -215,10 +218,11 @@ def document(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/emph/; parameters match.
 @implement(
     'emph',
     hyperlink='https://typst.app/docs/reference/model/emph/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def emph(body, /):  # Support version: 0.13.x
     """Interface of `emph` in typst. See [the documentation](https://typst.app/docs/reference/model/emph/) for more information.
@@ -238,10 +242,11 @@ def emph(body, /):  # Support version: 0.13.x
     return normal(emph, body)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/figure/#definitions-caption; parameters match.
 @implement(
     'figure.caption',
     hyperlink='https://typst.app/docs/reference/model/figure/#definitions-caption',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _figure_caption(
     body,
@@ -270,6 +275,7 @@ def _figure_caption(
 
 
 @attach_func(_figure_caption, 'caption')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/figure/; parameters match; alt parameter moved to end in normal() call (non-breaking).
 @implement(
     'figure',
     hyperlink='https://typst.app/docs/reference/model/figure/',
@@ -332,10 +338,11 @@ def figure(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/footnote/#definitions-entry; parameters match.
 @implement(
     'footnote.entry',
     hyperlink='https://typst.app/docs/reference/model/footnote/#definitions-entry',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _footnote_entry(
     note,
@@ -369,10 +376,11 @@ def _footnote_entry(
 
 
 @attach_func(_footnote_entry, 'entry')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/footnote/; parameters match.
 @implement(
     'footnote',
     hyperlink='https://typst.app/docs/reference/model/footnote/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def footnote(body, /, *, numbering='"1"'):
     """Interface of `footnote` in typst. See [the documentation](https://typst.app/docs/reference/model/footnote/) for more information.
@@ -393,10 +401,11 @@ def footnote(body, /, *, numbering='"1"'):
     return normal(footnote, body, numbering=numbering)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/heading/; parameters match.
 @implement(
     'heading',
     hyperlink='https://typst.app/docs/reference/model/heading/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def heading(
     body,
@@ -462,10 +471,11 @@ def heading(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/link/; parameters match; body optionality follows Python convention for dest-only URL links.
 @implement(
     'link',
     hyperlink='https://typst.app/docs/reference/model/link/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def link(dest, body=None, /):
     """Interface of `link` in typst. See [the documentation](https://typst.app/docs/reference/model/link/) for more information.
@@ -490,7 +500,7 @@ def link(dest, body=None, /):
 @implement(
     'enum.item',
     hyperlink='https://typst.app/docs/reference/model/enum/#definitions-item',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _numbered_list_item(body, /, *, number='auto'):
     """Interface of `enum.item` in typst. See [the documentation](https://typst.app/docs/reference/model/enum/#definitions-item) for more information.
@@ -516,7 +526,7 @@ def _numbered_list_item(body, /, *, number='auto'):
 @implement(
     'enum',
     hyperlink='https://typst.app/docs/reference/model/enum/',
-    version='0.13.x',
+    version='0.14.2',
     spread_single=True,
 )
 def numbered_list(
@@ -568,10 +578,11 @@ def numbered_list(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/numbering/; parameters match.
 @implement(
     'numbering',
     hyperlink='https://typst.app/docs/reference/model/numbering/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def numbering(numbering_, /, *numbers):
     """Interface of `numbering` in typst. See [the documentation](https://typst.app/docs/reference/model/numbering/) for more information.
@@ -589,10 +600,11 @@ def numbering(numbering_, /, *numbers):
     return normal(numbering, numbering_, *numbers)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/outline/#definitions-entry; parameters match.
 @implement(
     'outline.entry',
     hyperlink='https://typst.app/docs/reference/model/outline/#definitions-entry',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _outline_entry(
     level,
@@ -614,10 +626,11 @@ def _outline_entry(
     return normal(_outline_entry, '', level, element, fill=fill)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-indented; parameters match.
 @implement(
     'indented',
     hyperlink='https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-indented',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _outline_indented(self, prefix, inner, /, *, gap='0.5em'):
     """Interface of `outline.indented` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-indented) for more information.
@@ -634,10 +647,11 @@ def _outline_indented(self, prefix, inner, /, *, gap='0.5em'):
     return instance(_outline_indented, self, prefix, inner, gap=gap)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-prefix; parameters match.
 @implement(
     'prefix',
     hyperlink='https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-prefix',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _outline_prefix(self, /):
     """Interface of `outline.prefix` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-prefix) for more information.
@@ -651,10 +665,11 @@ def _outline_prefix(self, /):
     return instance(_outline_prefix, self)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-inner; parameters match.
 @implement(
     'inner',
     hyperlink='https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-inner',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _outline_inner(self, /):
     """Interface of `outline.inner` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-inner) for more information.
@@ -668,10 +683,11 @@ def _outline_inner(self, /):
     return instance(_outline_inner, self)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-body; parameters match.
 @implement(
     'body',
     hyperlink='https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-body',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _outline_body(self, /):
     """Interface of `outline.body` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-body) for more information.
@@ -685,10 +701,11 @@ def _outline_body(self, /):
     return instance(_outline_body, self)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-page; parameters match.
 @implement(
     'page',
     hyperlink='https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-page',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _outline_page(self, /):
     """Interface of `outline.page` in typst. See [the documentation](https://typst.app/docs/reference/model/outline/#definitions-entry-definitions-page) for more information.
@@ -708,10 +725,11 @@ def _outline_page(self, /):
 @attach_func(_outline_inner, 'inner')
 @attach_func(_outline_body, 'body')
 @attach_func(_outline_page, 'page')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/outline/; parameters match.
 @implement(
     'outline',
     hyperlink='https://typst.app/docs/reference/model/outline/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def outline(
     *,
@@ -744,7 +762,7 @@ def outline(
 @implement(
     'par.line',
     hyperlink='https://typst.app/docs/reference/model/par/#definitions-line',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _par_line(
     *,
@@ -784,6 +802,7 @@ def _par_line(
 
 
 @attach_func(_par_line, 'line')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/par/; parameters match.
 @implement(
     'par', hyperlink='https://typst.app/docs/reference/model/par/', version='0.14.2'
 )
@@ -849,10 +868,11 @@ def par(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/parbreak/; parameters match.
 @implement(
     'parbreak',
     hyperlink='https://typst.app/docs/reference/model/parbreak/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def parbreak():
     """Interface of `parbreak` in typst. See [the documentation](https://typst.app/docs/reference/model/parbreak/) for more information.
@@ -867,10 +887,11 @@ def parbreak():
     return normal(parbreak)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/quote/; parameters match.
 @implement(
     'quote',
     hyperlink='https://typst.app/docs/reference/model/quote/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def quote(
     body,
@@ -904,10 +925,11 @@ def quote(
     return normal(quote, body, block=block, quotes=quotes, attribution=attribution)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/ref/; parameters match.
 @implement(
     'ref',
     hyperlink='https://typst.app/docs/reference/model/ref/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def ref(
     target,
@@ -940,10 +962,11 @@ def ref(
     return normal(ref, target, supplement=supplement, form=form)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/strong/; parameters match.
 @implement(
     'strong',
     hyperlink='https://typst.app/docs/reference/model/strong/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def strong(body, /, *, delta=300):
     """Interface of `strong` in typst. See [the documentation](https://typst.app/docs/reference/model/strong/) for more information.
@@ -964,10 +987,11 @@ def strong(body, /, *, delta=300):
     return normal(strong, body, delta=delta)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/table/#definitions-cell; parameters match.
 @implement(
     'table.cell',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-cell',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _table_cell(
     body,
@@ -1019,7 +1043,7 @@ def _table_cell(
 @implement(
     'table.hline',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-hline',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _table_hline(
     *,
@@ -1052,7 +1076,7 @@ def _table_hline(
 @implement(
     'table.vline',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-vline',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _table_vline(
     *,
@@ -1083,6 +1107,7 @@ def _table_vline(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/table/#definitions-header; parameters match.
 @implement(
     'table.header',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-header',
@@ -1101,10 +1126,11 @@ def _table_header(*children, repeat=True, level=1):
     return post_series(_table_header, *children, repeat=repeat, level=level)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/table/#definitions-footer; parameters match.
 @implement(
     'table.footer',
     hyperlink='https://typst.app/docs/reference/model/table/#definitions-footer',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _table_footer(*children, repeat=True):
     """Interface of `table.footer` in typst. See [the documentation](https://typst.app/docs/reference/model/table/#definitions-footer) for more information.
@@ -1123,10 +1149,11 @@ def _table_footer(*children, repeat=True):
 @attach_func(_table_vline, 'vline')
 @attach_func(_table_header, 'header')
 @attach_func(_table_footer, 'footer')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/table/; parameters match.
 @implement(
     'table',
     hyperlink='https://typst.app/docs/reference/model/table/',
-    version='0.13.x',
+    version='0.14.2',
     spread_single=True,
 )
 def table(
@@ -1191,6 +1218,7 @@ def table(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/title/; parameters match.
 @implement(
     'title',
     hyperlink='https://typst.app/docs/reference/model/title/',
@@ -1214,10 +1242,11 @@ def title(body='auto', /):
     return normal(title, body if body != 'auto' else '')
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/terms/#definitions-item; parameters match.
 @implement(
     'terms.item',
     hyperlink='https://typst.app/docs/reference/model/terms/#definitions-item',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _terms_item(term, description, /):
     """Interface of `terms.item` in typst. See [the documentation](https://typst.app/docs/reference/model/terms/#definitions-item) for more information.
@@ -1237,10 +1266,11 @@ def _terms_item(term, description, /):
 
 
 @attach_func(_terms_item, 'item')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/model/terms/; parameters match.
 @implement(
     'terms',
     hyperlink='https://typst.app/docs/reference/model/terms/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def terms(
     *children,

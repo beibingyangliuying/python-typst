@@ -9,10 +9,11 @@ _DEFAULT_TEXT_COSTS = MappingProxyType(
 _EMPTY_MAPPING = MappingProxyType({})
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/highlight/; parameters, defaults, and valid values match.
 @implement(
     'highlight',
     hyperlink='https://typst.app/docs/reference/text/highlight/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def highlight(
     body,
@@ -81,10 +82,11 @@ def highlight(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/linebreak/; parameters and defaults match.
 @implement(
     'linebreak',
     hyperlink='https://typst.app/docs/reference/text/linebreak/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def linebreak(*, justify=False):
     """Interface of `linebreak` in typst. See [the documentation](https://typst.app/docs/reference/text/linebreak/) for more information.
@@ -104,10 +106,11 @@ def linebreak(*, justify=False):
     return normal(linebreak, justify=justify)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/lorem/; parameters match.
 @implement(
     'lorem',
     hyperlink='https://typst.app/docs/reference/text/lorem/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def lorem(words, /):
     """Interface of `lorem` in typst. See [the documentation](https://typst.app/docs/reference/text/lorem/) for more information.
@@ -125,10 +128,11 @@ def lorem(words, /):
     return normal(lorem, words)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/lower/; parameters match.
 @implement(
     'lower',
     hyperlink='https://typst.app/docs/reference/text/lower/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def lower(text, /):
     """Interface of `lower` in typst. See [the documentation](https://typst.app/docs/reference/text/lower/) for more information.
@@ -150,10 +154,11 @@ def lower(text, /):
     return normal(lower, text)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/overline/; parameters and defaults match.
 @implement(
     'overline',
     hyperlink='https://typst.app/docs/reference/text/overline/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def overline(
     body,
@@ -204,10 +209,11 @@ def overline(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/raw/#definitions-line; parameters match.
 @implement(
     'raw.line',
     hyperlink='https://typst.app/docs/reference/text/raw/#definitions-line',
-    version='0.13.x',
+    version='0.14.2',
 )
 def _raw_line(number, count, text, body, /):
     """Interface of `raw.line` in typst. See [the documentation](https://typst.app/docs/reference/text/raw/#definitions-line) for more information.
@@ -229,10 +235,11 @@ def _raw_line(number, count, text, body, /):
 
 
 @attach_func(_raw_line, 'line')
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/raw/; parameters and defaults match.
 @implement(
     'raw',
     hyperlink='https://typst.app/docs/reference/text/raw/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def raw(
     text,
@@ -281,10 +288,11 @@ def raw(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/smallcaps/; parameters and defaults match.
 @implement(
     'smallcaps',
     hyperlink='https://typst.app/docs/reference/text/smallcaps/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def smallcaps(body, /, *, all=False):
     """Interface of `smallcaps` in typst. See [the documentation](https://typst.app/docs/reference/text/smallcaps/) for more information.
@@ -307,17 +315,18 @@ def smallcaps(body, /, *, all=False):
     return normal(smallcaps, body, all=all)
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/smartquote/; parameters match; quotes type widened to cover str|tuple|dict forms.
 @implement(
     'smartquote',
     hyperlink='https://typst.app/docs/reference/text/smartquote/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def smartquote(
     *,
     double=True,
     enabled=True,
     alternative=False,
-    quotes: str | tuple[str, str] = 'auto',
+    quotes: str | tuple[str, str] | dict = 'auto',
 ):
     """Interface of `smartquote` in typst. See [the documentation](https://typst.app/docs/reference/text/smartquote/) for more information.
 
@@ -325,7 +334,7 @@ def smartquote(
         double: Whether this should be a double quote. Defaults to True.
         enabled: Whether smart quotes are enabled. Defaults to True.
         alternative: Whether to use alternative quotes. Defaults to False.
-        quotes: The quotes to use. Defaults to 'auto'.
+        quotes: The quotes to use, as a string, tuple of (opening, closing), or dict with single/double keys. Defaults to 'auto'.
 
     Returns:
         Executable typst code.
@@ -345,10 +354,11 @@ def smartquote(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/strike/; parameters and defaults match.
 @implement(
     'strike',
     hyperlink='https://typst.app/docs/reference/text/strike/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def strike(
     body,
@@ -399,7 +409,7 @@ def strike(
 @implement(
     'sub',
     hyperlink='https://typst.app/docs/reference/text/sub/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def subscript(
     body,
@@ -443,7 +453,7 @@ def subscript(
 @implement(
     'super',
     hyperlink='https://typst.app/docs/reference/text/super/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def superscript(
     body,
@@ -487,7 +497,7 @@ def superscript(
 @implement(
     'text',
     hyperlink='https://typst.app/docs/reference/text/text/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def text(
     body,
@@ -673,10 +683,11 @@ def text(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/underline/; parameters and defaults match.
 @implement(
     'underline',
     hyperlink='https://typst.app/docs/reference/text/underline/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def underline(
     body,
@@ -727,10 +738,11 @@ def underline(
     )
 
 
+# * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/text/upper/; parameters match.
 @implement(
     'upper',
     hyperlink='https://typst.app/docs/reference/text/upper/',
-    version='0.13.x',
+    version='0.14.2',
 )
 def upper(text, /):
     """Interface of `upper` in typst. See [the documentation](https://typst.app/docs/reference/text/upper/) for more information.
