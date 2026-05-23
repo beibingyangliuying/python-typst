@@ -7,7 +7,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from typing import Any
 
-from typstpy._core import _Implement
+from typstpy._core import Implement
 
 _SECTION_HEADING_RE = re.compile(r'[A-Za-z][A-Za-z0-9 _-]*:')
 
@@ -48,12 +48,12 @@ def _iter_public_function_paths() -> Iterable[tuple[Callable[..., Any], str]]:
             module, '__all__', ()
         ):  # pragma: no branch - modules define it.
             obj = getattr(module, name, None)
-            if callable(obj) and obj in _Implement.permanent:
+            if callable(obj) and obj in Implement.permanent:
                 yield obj, f'{prefix}.{name}'
             for attr_name, attr in getattr(obj, '__dict__', {}).items():
                 if attr_name in {'where', 'with_'} or attr_name.startswith('_'):
                     continue
-                if callable(attr) and attr in _Implement.permanent:
+                if callable(attr) and attr in Implement.permanent:
                     yield attr, f'{prefix}.{name}.{attr_name}'
 
 
@@ -63,7 +63,7 @@ def iter_registered_functions() -> list[Callable[..., Any]]:
     return sorted(
         [
             func
-            for func in _Implement.permanent
+            for func in Implement.permanent
             if _is_documented_module(func.__module__)
         ],
         key=lambda func: (func.__module__, func.__name__),
@@ -94,7 +94,7 @@ def collect_implement_records(
 
     records: list[ImplementRecord] = []
     for func in functions:
-        implement = _Implement.permanent[func]
+        implement = Implement.permanent[func]
         records.append(
             ImplementRecord(
                 function_qualname(func),

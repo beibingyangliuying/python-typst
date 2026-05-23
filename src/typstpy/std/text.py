@@ -1,6 +1,6 @@
 from types import MappingProxyType
 
-from typstpy._core import _validate_value, attach_func, implement, normal, positional
+from typstpy._core import attach_func, implement, normal, positional, validate_value
 from typstpy.std.visualize import luma, rgb
 
 _DEFAULT_TEXT_COSTS = MappingProxyType(
@@ -56,13 +56,13 @@ def highlight(
         ... )
         '#highlight("Hello, world!", fill: rgb("#ffffff"), stroke: rgb("#000000"), top-edge: "bounds", bottom-edge: "bounds")'
     """
-    _validate_value(
+    validate_value(
         highlight,
         'top_edge',
         top_edge,
         {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
     )
-    _validate_value(
+    validate_value(
         highlight,
         'bottom_edge',
         bottom_edge,
@@ -577,9 +577,9 @@ def text(
         >>> text('[Hello, World!]', font='"Times New Roman"')
         '#text([Hello, World!], font: "Times New Roman")'
     """
-    _validate_value(text, 'style', style, {'"normal"', '"italic"', '"oblique"'})
+    validate_value(text, 'style', style, {'"normal"', '"italic"', '"oblique"'})
     if not isinstance(weight, int):
-        _validate_value(
+        validate_value(
             text,
             'weight',
             weight,
@@ -599,31 +599,31 @@ def text(
         raise ValueError(
             'text got invalid weight; expected an integer between 100 and 900'
         )
-    _validate_value(
+    validate_value(
         text,
         'top_edge',
         top_edge,
         {'"ascender"', '"cap-height"', '"x-height"', '"baseline"', '"bounds"'},
     )
-    _validate_value(
+    validate_value(
         text,
         'bottom_edge',
         bottom_edge,
         {'"baseline"', '"descender"', '"bounds"'},
     )
     if number_type != 'auto':
-        _validate_value(text, 'number_type', number_type, {'"lining"', '"old-style"'})
+        validate_value(text, 'number_type', number_type, {'"lining"', '"old-style"'})
     if number_width != 'auto':
-        _validate_value(
+        validate_value(
             text,
             'number_width',
             number_width,
             {'"proportional"', '"tabular"'},
         )
     if cjk_latin_spacing is not None and cjk_latin_spacing != 'auto':
-        _validate_value(text, 'cjk_latin_spacing', cjk_latin_spacing, {'none'})
+        validate_value(text, 'cjk_latin_spacing', cjk_latin_spacing, {'none'})
     if dir != 'auto':
-        _validate_value(text, 'dir', dir, {'ltr', 'rtl'})
+        validate_value(text, 'dir', dir, {'ltr', 'rtl'})
     if stylistic_set is not None:
         values = (
             stylistic_set

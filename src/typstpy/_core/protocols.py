@@ -1,8 +1,8 @@
 from collections.abc import Callable
 
 from .registry import (
+    Implement,
     _function_label,
-    _Implement,
     _keyword_defaults,
     _raise_unknown_fields,
 )
@@ -29,7 +29,7 @@ def _filter_default_kwargs(
     func: Callable[..., object], kwargs: dict[str, object]
 ) -> dict[str, object]:
     defaults = _keyword_defaults(func)
-    if func not in _Implement.temporary:
+    if func not in Implement.temporary:
         _raise_unknown_fields(func, kwargs)
     if not defaults:
         return kwargs
@@ -73,7 +73,7 @@ def set_(func: Callable[..., object], /, **kwargs: object) -> str:
     Returns:
         Executable typst code.
     """
-    if func not in _Implement.temporary:
+    if func not in Implement.temporary:
         _raise_unknown_fields(func, kwargs)
 
     params = _strip_brace(_render_value(kwargs)) if kwargs else ''
@@ -160,7 +160,7 @@ def positional(func: Callable[..., object], *args: object) -> str:
     return f'#{_render_value(func)}{_render_value(args)}'
 
 
-def _call(func: Callable[..., object], *args: object, **kwargs: object) -> str:
+def call(func: Callable[..., object], *args: object, **kwargs: object) -> str:
     """Render a function call with explicit positional argument order."""
     kwargs = _filter_default_kwargs(func, kwargs)
 

@@ -1,11 +1,11 @@
 from typstpy._constants import VALID_PAPER_SIZES
 from typstpy._core import (
-    _call,
-    _validate_value,
     attach_func,
+    call,
     implement,
     normal,
     post_series,
+    validate_value,
 )
 from typstpy.std.text import lorem  # noqa
 from typstpy.std.visualize import rect  # noqa
@@ -37,7 +37,7 @@ def align(body, alignment='start + top', /):
     """
     if alignment == 'start + top':
         return normal(align, body)
-    return _call(align, alignment, body)
+    return call(align, alignment, body)
 
 
 @implement(
@@ -222,7 +222,7 @@ def columns(body, count=2, /, *, gutter='4% + 0pt'):
     """
     if count == 2:
         return normal(columns, body, gutter=gutter)
-    return _call(columns, count, body, gutter=gutter)
+    return call(columns, count, body, gutter=gutter)
 
 
 @implement(
@@ -306,7 +306,7 @@ def _grid_hline(
     Returns:
         Executable typst code.
     """
-    _validate_value(_grid_hline, 'position', position, {'top', 'bottom'})
+    validate_value(_grid_hline, 'position', position, {'top', 'bottom'})
 
     return normal(
         _grid_hline, y=y, start=start, end=end, stroke=stroke, position=position
@@ -339,9 +339,7 @@ def _grid_vline(
     Returns:
         Executable typst code.
     """
-    _validate_value(
-        _grid_vline, 'position', position, {'start', 'end', 'left', 'right'}
-    )
+    validate_value(_grid_vline, 'position', position, {'start', 'end', 'left', 'right'})
 
     return normal(
         _grid_vline, x=x, start=start, end=end, stroke=stroke, position=position
@@ -567,7 +565,7 @@ def pad(
         '#pad(lorem(20), left: 4% + 0pt, top: 4% + 0pt, right: 4% + 0pt, bottom: 4% + 0pt)'
     """
     if amount is not None:
-        return _call(
+        return call(
             pad,
             amount,
             body,
@@ -664,9 +662,9 @@ def page(
         fields = ', '.join(sorted(kwargs))
         raise TypeError(f'page does not accept field(s): {fields}')
 
-    _validate_value(page, 'paper', paper, VALID_PAPER_SIZES)
+    validate_value(page, 'paper', paper, VALID_PAPER_SIZES)
     if binding != 'auto':
-        _validate_value(page, 'binding', binding, {'left', 'right'})
+        validate_value(page, 'binding', binding, {'left', 'right'})
 
     return normal(
         page,
@@ -716,7 +714,7 @@ def pagebreak(*, weak=False, to=None):
         '#pagebreak(to: "even")'
     """
     if to is not None:
-        _validate_value(pagebreak, 'to', to, {'"even"', '"odd"'})
+        validate_value(pagebreak, 'to', to, {'"even"', '"odd"'})
 
     return normal(pagebreak, weak=weak, to=to)
 
@@ -777,7 +775,7 @@ def place(
         >>> place(lorem(20), 'top')
         '#place(top, lorem(20))'
     """
-    _validate_value(place, 'scope', scope, {'"column"', '"parent"'})
+    validate_value(place, 'scope', scope, {'"column"', '"parent"'})
 
     if alignment == 'start':
         return normal(
@@ -789,7 +787,7 @@ def place(
             dx=dx,
             dy=dy,
         )
-    return _call(
+    return call(
         place,
         alignment,
         body,
@@ -859,7 +857,7 @@ def rotate(
     """
     if angle == '0deg':
         return normal(rotate, body, origin=origin, reflow=reflow)
-    return _call(rotate, angle, body, origin=origin, reflow=reflow)
+    return call(rotate, angle, body, origin=origin, reflow=reflow)
 
 
 # * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/scale/; parameters match; default factor preserves body-first shorthand, non-default uses official argument order.
@@ -901,7 +899,7 @@ def scale(
     """
     if factor == '100%':
         return normal(scale, body, x=x, y=y, origin=origin, reflow=reflow)
-    return _call(scale, factor, body, x=x, y=y, origin=origin, reflow=reflow)
+    return call(scale, factor, body, x=x, y=y, origin=origin, reflow=reflow)
 
 
 @implement(
@@ -1015,7 +1013,7 @@ def stack(
         ... )
         '#stack(dir: btt, ..(rect(width: 40pt), rect(width: 120pt), rect(width: 90pt)))'
     """
-    _validate_value(stack, 'dir', dir, {'ltr', 'rtl', 'ttb', 'btt'})
+    validate_value(stack, 'dir', dir, {'ltr', 'rtl', 'ttb', 'btt'})
 
     return post_series(stack, *children, dir=dir, spacing=spacing)
 

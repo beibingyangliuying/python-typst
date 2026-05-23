@@ -3,7 +3,7 @@ from collections.abc import Callable, Iterable, Mapping
 from functools import singledispatch
 
 from .ir import _MappingExpr, _RawExpr, _SequenceExpr, _TypstExpr
-from .registry import _Implement
+from .registry import Implement
 
 
 def _render_key(key: str) -> str:
@@ -48,7 +48,7 @@ def _(obj: Iterable) -> _TypstExpr:
 
 @_to_expr.register
 def _(obj: Callable) -> _TypstExpr:
-    implement = _Implement.permanent.get(obj, None)
+    implement = Implement.permanent.get(obj, None)
     if implement is None:
         warnings.warn(
             f'The function {obj} has not been registered. Use `implement` decorator to register it and set the correct original name.',

@@ -1,14 +1,14 @@
 from types import MappingProxyType
 
 from typstpy._core import (
-    _call,
-    _validate_value,
     attach_func,
+    call,
     implement,
     instance,
     normal,
     positional,
     post_series,
+    validate_value,
 )
 from typstpy.std.layout import hspace, repeat
 from typstpy.std.text import lorem  # noqa
@@ -162,7 +162,7 @@ def cite(
         '#cite(<label>, style: "annual-reviews")'
     """
     if form is not None:
-        _validate_value(
+        validate_value(
             cite,
             'form',
             form,
@@ -312,7 +312,7 @@ def figure(
         >>> figure(image('"image.png"'), caption='[Hello, World!]')
         '#figure(image("image.png"), caption: [Hello, World!])'
     """
-    _validate_value(figure, 'scope', scope, {'"column"', '"parent"'})
+    validate_value(figure, 'scope', scope, {'"column"', '"parent"'})
 
     return normal(
         figure,
@@ -505,7 +505,7 @@ def _numbered_list_item(body, /, *, number='auto'):
     """
     if number == 'auto':
         return normal(_numbered_list_item, body)
-    return _call(_numbered_list_item, number, body)
+    return call(_numbered_list_item, number, body)
 
 
 @attach_func(_numbered_list_item, 'item')
@@ -765,7 +765,7 @@ def _par_line(
     Returns:
         Executable typst code.
     """
-    _validate_value(
+    validate_value(
         _par_line, 'numbering_scope', numbering_scope, {'"document"', '"page"'}
     )
 
@@ -830,7 +830,7 @@ def par(
         '#par([Hello, World!], leading: 0.1em, spacing: 0.5em, justify: true, linebreaks: "simple", first-line-indent: 0.2em, hanging-indent: 0.3em)'
     """
     if linebreaks != 'auto':
-        _validate_value(par, 'linebreaks', linebreaks, {'"simple"', '"optimized"'})
+        validate_value(par, 'linebreaks', linebreaks, {'"simple"', '"optimized"'})
 
     return normal(
         par,
@@ -931,7 +931,7 @@ def ref(
         >>> ref('<label>', supplement='[Hello, World!]')
         '#ref(<label>, supplement: [Hello, World!])'
     """
-    _validate_value(ref, 'form', form, {'"normal"', '"page"'})
+    validate_value(ref, 'form', form, {'"normal"', '"page"'})
 
     return normal(ref, target, supplement=supplement, form=form)
 
@@ -1037,7 +1037,7 @@ def _table_hline(
     Returns:
         Executable typst code.
     """
-    _validate_value(_table_hline, 'position', position, {'top', 'bottom'})
+    validate_value(_table_hline, 'position', position, {'top', 'bottom'})
 
     return normal(
         _table_hline, y=y, start=start, end=end, stroke=stroke, position=position
@@ -1070,7 +1070,7 @@ def _table_vline(
     Returns:
         Executable typst code.
     """
-    _validate_value(
+    validate_value(
         _table_vline, 'position', position, {'start', 'end', 'left', 'right'}
     )
 

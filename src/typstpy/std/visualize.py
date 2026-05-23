@@ -3,7 +3,6 @@ from typing import overload
 from deprecated import deprecated
 
 from typstpy._core import (
-    _validate_value,
     attach_func,
     implement,
     instance,
@@ -11,6 +10,7 @@ from typstpy._core import (
     positional,
     post_series,
     pre_series,
+    validate_value,
 )
 
 
@@ -102,7 +102,7 @@ def _color_map(name, /):
         >>> color.map('turbo')
         '#color.map.turbo'
     """
-    _validate_value(
+    validate_value(
         _color_map,
         'name',
         name,
@@ -874,7 +874,7 @@ def _curve_close(*, mode='"smooth"'):
         >>> curve.close(mode='"straight"')
         '#curve.close(mode: "straight")'
     """
-    _validate_value(_curve_close, 'mode', mode, {'"smooth"', '"straight"'})
+    validate_value(_curve_close, 'mode', mode, {'"smooth"', '"straight"'})
 
     return normal(_curve_close, '', mode=mode)
 
@@ -918,7 +918,7 @@ def curve(
         ... )
         '#curve(stroke: blue, curve.move((0pt, 50pt)), curve.line((100pt, 50pt)), curve.cubic(none, (90pt, 0pt), (50pt, 0pt)), curve.close())'
     """
-    _validate_value(curve, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
+    validate_value(curve, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
 
     return post_series(
         curve, *components, fill=fill, fill_rule=fill_rule, stroke=stroke
@@ -1006,7 +1006,7 @@ def _gradient_linear(
         '#gradient.linear(rgb(255, 255, 255), rgb(0, 0, 0))'
     """
     if relative != 'auto':
-        _validate_value(_gradient_linear, 'relative', relative, {'"self"', '"parent"'})
+        validate_value(_gradient_linear, 'relative', relative, {'"self"', '"parent"'})
 
     return pre_series(
         _gradient_linear,
@@ -1055,7 +1055,7 @@ def _gradient_radial(
         '#gradient.radial(..color.map.viridis, focal-center: (10%, 40%), focal-radius: 5%)'
     """
     if relative != 'auto':
-        _validate_value(_gradient_radial, 'relative', relative, {'"self"', '"parent"'})
+        validate_value(_gradient_radial, 'relative', relative, {'"self"', '"parent"'})
 
     return pre_series(
         _gradient_radial,
@@ -1100,7 +1100,7 @@ def _gradient_conic(
         '#gradient.conic(..color.map.viridis, angle: 90deg, center: (10%, 40%))'
     """
     if relative != 'auto':
-        _validate_value(_gradient_conic, 'relative', relative, {'"self"', '"parent"'})
+        validate_value(_gradient_conic, 'relative', relative, {'"self"', '"parent"'})
 
     return pre_series(
         _gradient_conic,
@@ -1455,15 +1455,15 @@ def _image_decode(
         Executable typst code.
     """
     if isinstance(format, str) and format != 'auto':
-        _validate_value(
+        validate_value(
             _image_decode,
             'format',
             format,
             {'"png"', '"jpg"', '"gif"', '"svg"', '"pdf"', '"webp"'},
         )
-    _validate_value(_image_decode, 'fit', fit, {'"cover"', '"contain"', '"stretch"'})
+    validate_value(_image_decode, 'fit', fit, {'"cover"', '"contain"', '"stretch"'})
     if scaling != 'auto':
-        _validate_value(_image_decode, 'scaling', scaling, {'"smooth"', '"pixelated"'})
+        validate_value(_image_decode, 'scaling', scaling, {'"smooth"', '"pixelated"'})
 
     return normal(
         _image_decode,
@@ -1524,15 +1524,15 @@ def image(
         '#image("image.png", fit: "contain")'
     """
     if isinstance(format, str) and format != 'auto':
-        _validate_value(
+        validate_value(
             image,
             'format',
             format,
             {'"png"', '"jpg"', '"gif"', '"svg"', '"pdf"', '"webp"'},
         )
-    _validate_value(image, 'fit', fit, {'"cover"', '"contain"', '"stretch"'})
+    validate_value(image, 'fit', fit, {'"cover"', '"contain"', '"stretch"'})
     if scaling != 'auto':
-        _validate_value(image, 'scaling', scaling, {'"smooth"', '"pixelated"'})
+        validate_value(image, 'scaling', scaling, {'"smooth"', '"pixelated"'})
 
     return normal(
         image,
@@ -1636,7 +1636,7 @@ def path(
         ... )
         '#path(fill: red, stroke: blue, (0%, 0%), (100%, 0%), (100%, 100%), (0%, 100%))'
     """
-    _validate_value(path, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
+    validate_value(path, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
 
     return post_series(
         path, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke, closed=closed
@@ -1676,7 +1676,7 @@ def pattern(
         A repeating pattern fill.
     """
     if relative != 'auto':
-        _validate_value(pattern, 'relative', relative, {'"self"', '"parent"'})
+        validate_value(pattern, 'relative', relative, {'"self"', '"parent"'})
 
     return normal(pattern, body, size=size, spacing=spacing, relative=relative)
 
@@ -1734,7 +1734,7 @@ def polygon(
     Returns:
         Executable typst code.
     """
-    _validate_value(polygon, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
+    validate_value(polygon, 'fill_rule', fill_rule, {'"non-zero"', '"even-odd"'})
 
     return post_series(
         polygon, *vertices, fill=fill, fill_rule=fill_rule, stroke=stroke
@@ -1876,7 +1876,7 @@ def tiling(
         '#tiling([#place(line(start: (0%, 0%), end: (100%, 100%))), #place(line(start: (0%, 100%), end: (100%, 0%)))], size: (30pt, 30pt))'
     """
     if relative != 'auto':
-        _validate_value(tiling, 'relative', relative, {'"self"', '"parent"'})
+        validate_value(tiling, 'relative', relative, {'"self"', '"parent"'})
 
     return normal(tiling, body, size=size, spacing=spacing, relative=relative)
 

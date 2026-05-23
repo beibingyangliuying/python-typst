@@ -5,7 +5,7 @@ from weakref import WeakKeyDictionary, WeakSet
 
 
 @dataclass(frozen=True)
-class _Implement:
+class Implement:
     permanent: ClassVar[WeakKeyDictionary[Callable, Self]] = WeakKeyDictionary()
     temporary: ClassVar[WeakSet[Callable]] = WeakSet()
 
@@ -15,7 +15,7 @@ class _Implement:
 
 
 def _function_label(func: Callable[..., object]) -> str:
-    implement = _Implement.permanent.get(func, None)
+    implement = Implement.permanent.get(func, None)
     if implement is not None:
         return implement.original_name
     return getattr(func, '__name__', repr(func))
@@ -35,7 +35,7 @@ def _raise_unknown_fields(
         raise TypeError(f'{_function_label(func)} does not accept field(s): {fields}')
 
 
-def _validate_value(
+def validate_value(
     func: Callable[..., object], name: str, value: object, allowed: Iterable[object]
 ) -> None:
     if value not in allowed:
