@@ -2,7 +2,7 @@ import warnings
 from collections.abc import Callable, Iterable, Mapping
 from functools import singledispatch
 
-from .ir import _MappingExpr, _RawExpr, _SequenceExpr, _TypstExpr
+from .ir import MappingExpr, RawExpr, SequenceExpr, TypstExpr
 from .registry import Implement
 
 
@@ -11,24 +11,24 @@ def _render_key(key: str) -> str:
 
 
 @singledispatch
-def _to_expr(obj: object) -> _TypstExpr:
-    return _RawExpr(str(obj))
+def _to_expr(obj: object) -> TypstExpr:
+    return RawExpr(str(obj))
 
 
 @_to_expr.register
-def _(obj: bool | None) -> _TypstExpr:
-    return _RawExpr(str(obj).lower())
+def _(obj: bool | None) -> TypstExpr:
+    return RawExpr(str(obj).lower())
 
 
 @_to_expr.register
-def _(obj: str) -> _TypstExpr:
+def _(obj: str) -> TypstExpr:
     if obj.startswith('#'):
-        return _RawExpr(obj[1:])
-    return _RawExpr(obj)
+        return RawExpr(obj[1:])
+    return RawExpr(obj)
 
 
 @_to_expr.register
-def _(obj: bytes | bytearray | memoryview) -> _TypstExpr:
+def _(obj: bytes | bytearray | memoryview) -> TypstExpr:
     raise TypeError(
         'Python bytes-like objects cannot be rendered as Typst code; pass a Typst '
         'source string such as `"image.png"` instead'
@@ -36,31 +36,31 @@ def _(obj: bytes | bytearray | memoryview) -> _TypstExpr:
 
 
 @_to_expr.register
-def _(obj: Mapping) -> _TypstExpr:
+def _(obj: Mapping) -> TypstExpr:
     entries = tuple((_render_key(k), _to_expr(v)) for k, v in obj.items())
-    return _MappingExpr(entries)
+    return MappingExpr(entries)
 
 
 @_to_expr.register
-def _(obj: Iterable) -> _TypstExpr:
-    return _SequenceExpr(tuple(_to_expr(v) for v in obj))
+def _(obj: Iterable) -> TypstExpr:
+    return SequenceExpr(tuple(_to_expr(v) for v in obj))
 
 
 @_to_expr.register
-def _(obj: Callable) -> _TypstExpr:
+def _(obj: Callable) -> TypstExpr:
     implement = Implement.permanent.get(obj, None)
     if implement is None:
         warnings.warn(
             f'The function {obj} has not been registered. Use `implement` decorator to register it and set the correct original name.',
             stacklevel=3,
         )
-        return _RawExpr(obj.__name__)
-    return _RawExpr(implement.original_name)
+        return RawExpr(obj.__name__)
+    return RawExpr(implement.original_name)
 
 
-def _render_value(obj: object) -> str:
+def render_value(obj: object) -> str:
     return _to_expr(obj).render()
 
 
-def _strip_brace(value: str) -> str:
+def strip_brace(value: str) -> str:
     return value[1:-1]

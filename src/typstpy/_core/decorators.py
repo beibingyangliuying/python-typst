@@ -2,7 +2,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .registry import Implement, _raise_unknown_fields
-from .render import _render_value, _strip_brace
+from .render import render_value, strip_brace
 
 
 def attach_func(
@@ -53,7 +53,7 @@ def implement(
             if func not in Implement.temporary:
                 _raise_unknown_fields(func, kwargs)
 
-            params = _strip_brace(_render_value(kwargs)) if kwargs else ''
+            params = strip_brace(render_value(kwargs)) if kwargs else ''
             return f'#{original_name}.where({params})'
 
         def with_(*args: Any, **kwargs: Any) -> str:
@@ -63,9 +63,9 @@ def implement(
 
             params = []
             if args:
-                params.append(_strip_brace(_render_value(args)))
+                params.append(strip_brace(render_value(args)))
             if kwargs:
-                params.append(_strip_brace(_render_value(kwargs)))
+                params.append(strip_brace(render_value(kwargs)))
 
             return f'#{original_name}.with({", ".join(params)})'
 

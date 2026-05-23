@@ -7,9 +7,10 @@ import importlib
 import io
 import sys
 import warnings
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
+
+import attrs
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = PROJECT_ROOT / 'src'
@@ -19,7 +20,7 @@ if str(SRC_ROOT) not in sys.path:
 from typstpy._docs import collect_example_blocks  # noqa: E402
 
 
-@dataclass(frozen=True)
+@attrs.frozen
 class TypstExample:
     """A Typst snippet collected from one Python doctest example."""
 
@@ -29,7 +30,7 @@ class TypstExample:
     typst: str
 
 
-@dataclass(frozen=True)
+@attrs.frozen
 class SkippedExample:
     """A doctest example or result intentionally excluded from the fixture."""
 
@@ -39,7 +40,7 @@ class SkippedExample:
     reason: str
 
 
-@dataclass(frozen=True)
+@attrs.frozen
 class FailedExample:
     """A doctest example that failed while being executed."""
 

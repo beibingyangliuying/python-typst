@@ -1,11 +1,10 @@
-from __future__ import annotations
-
 import importlib
 import inspect
 import re
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass
 from typing import Any
+
+import attrs
 
 from typstpy._core import Implement
 
@@ -16,7 +15,7 @@ def _is_documented_module(module: str) -> bool:
     return module == 'typstpy.subpar' or module.startswith('typstpy.std.')
 
 
-@dataclass(frozen=True)
+@attrs.frozen
 class ImplementRecord:
     """Structured metadata for one registered typstpy function."""
 
@@ -26,7 +25,7 @@ class ImplementRecord:
     version: str | None
 
 
-@dataclass(frozen=True)
+@attrs.frozen
 class ExampleBlock:
     """Google-style Examples section extracted from one function."""
 

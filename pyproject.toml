@@ -11,6 +11,7 @@ requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"
 dependencies = [
+    "attrs>=25.3.0",
     "deprecated>=1.2.18",
 ]
 

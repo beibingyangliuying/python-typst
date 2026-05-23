@@ -1,30 +1,31 @@
-from dataclasses import dataclass
 from typing import Protocol
 
+import attrs
 
-class _TypstExpr(Protocol):
+
+class TypstExpr(Protocol):
     def render(self) -> str: ...
 
 
-@dataclass(frozen=True)
-class _RawExpr:
+@attrs.frozen
+class RawExpr:
     source: str
 
     def render(self) -> str:
         return self.source
 
 
-@dataclass(frozen=True)
-class _SequenceExpr:
-    items: tuple['_TypstExpr', ...]
+@attrs.frozen
+class SequenceExpr:
+    items: tuple['TypstExpr', ...]
 
     def render(self) -> str:
         return f'({", ".join(item.render() for item in self.items)})'
 
 
-@dataclass(frozen=True)
-class _MappingExpr:
-    entries: tuple[tuple[str, '_TypstExpr'], ...]
+@attrs.frozen
+class MappingExpr:
+    entries: tuple[tuple[str, 'TypstExpr'], ...]
 
     def render(self) -> str:
         if not self.entries:

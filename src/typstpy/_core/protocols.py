@@ -6,7 +6,7 @@ from .registry import (
     _keyword_defaults,
     _raise_unknown_fields,
 )
-from .render import _render_value, _strip_brace
+from .render import render_value, strip_brace
 
 _SPREADABLE_CODE_PREFIXES = ('#color.map.',)
 _SPREAD_SINGLE_SEQUENCE_FUNCTIONS = frozenset(
@@ -56,9 +56,9 @@ def _render_series_children(
     if len(children) == 1:
         child = children[0]
         if _should_spread_single_child(func, child):
-            return [f'..{_render_value(child)}']
-        return [_render_value(child)]
-    return [_strip_brace(_render_value(children))]
+            return [f'..{render_value(child)}']
+        return [render_value(child)]
+    return [strip_brace(render_value(children))]
 
 
 def set_(func: Callable[..., object], /, **kwargs: object) -> str:
@@ -76,8 +76,8 @@ def set_(func: Callable[..., object], /, **kwargs: object) -> str:
     if func not in Implement.temporary:
         _raise_unknown_fields(func, kwargs)
 
-    params = _strip_brace(_render_value(kwargs)) if kwargs else ''
-    return f'#set {_render_value(func)}({params})'
+    params = strip_brace(render_value(kwargs)) if kwargs else ''
+    return f'#set {render_value(func)}({params})'
 
 
 def show_(element: object, appearance: object, /) -> str:
@@ -95,8 +95,8 @@ def show_(element: object, appearance: object, /) -> str:
         '#show: it => it'
     """
     if element is None:
-        return f'#show: {_render_value(appearance)}'
-    return f'#show {_render_value(element)}: {_render_value(appearance)}'
+        return f'#show: {render_value(appearance)}'
+    return f'#show {render_value(element)}: {render_value(appearance)}'
 
 
 def import_(path: object, /, *names: object) -> str:
@@ -116,7 +116,7 @@ def import_(path: object, /, *names: object) -> str:
     """
     if not names:
         return f'#import {path}'
-    return f'#import {path}: {_strip_brace(_render_value(names))}'
+    return f'#import {path}: {strip_brace(render_value(names))}'
 
 
 def normal(
@@ -139,13 +139,13 @@ def normal(
 
     params = []
     if body != '':
-        params.append(_render_value(body))
+        params.append(render_value(body))
     if args:
-        params.append(_strip_brace(_render_value(args)))
+        params.append(strip_brace(render_value(args)))
     if kwargs:
-        params.append(_strip_brace(_render_value(kwargs)))
+        params.append(strip_brace(render_value(kwargs)))
 
-    return f'#{_render_value(func)}(' + ', '.join(params) + ')'
+    return f'#{render_value(func)}(' + ', '.join(params) + ')'
 
 
 def positional(func: Callable[..., object], *args: object) -> str:
@@ -157,7 +157,7 @@ def positional(func: Callable[..., object], *args: object) -> str:
     Returns:
         Executable typst code.
     """
-    return f'#{_render_value(func)}{_render_value(args)}'
+    return f'#{render_value(func)}{render_value(args)}'
 
 
 def call(func: Callable[..., object], *args: object, **kwargs: object) -> str:
@@ -166,11 +166,11 @@ def call(func: Callable[..., object], *args: object, **kwargs: object) -> str:
 
     params = []
     if args:
-        params.append(_strip_brace(_render_value(args)))
+        params.append(strip_brace(render_value(args)))
     if kwargs:
-        params.append(_strip_brace(_render_value(kwargs)))
+        params.append(strip_brace(render_value(kwargs)))
 
-    return f'#{_render_value(func)}(' + ', '.join(params) + ')'
+    return f'#{render_value(func)}(' + ', '.join(params) + ')'
 
 
 def instance(
@@ -189,11 +189,11 @@ def instance(
 
     params = []
     if args:
-        params.append(_strip_brace(_render_value(args)))
+        params.append(strip_brace(render_value(args)))
     if kwargs:
-        params.append(_strip_brace(_render_value(kwargs)))
+        params.append(strip_brace(render_value(kwargs)))
 
-    return f'{instance}.{_render_value(func)}(' + ', '.join(params) + ')'
+    return f'{instance}.{render_value(func)}(' + ', '.join(params) + ')'
 
 
 def pre_series(func: Callable[..., object], *children: object, **kwargs: object) -> str:
@@ -209,9 +209,9 @@ def pre_series(func: Callable[..., object], *children: object, **kwargs: object)
 
     params = _render_series_children(func, children)
     if kwargs:
-        params.append(_strip_brace(_render_value(kwargs)))
+        params.append(strip_brace(render_value(kwargs)))
 
-    return f'#{_render_value(func)}(' + ', '.join(params) + ')'
+    return f'#{render_value(func)}(' + ', '.join(params) + ')'
 
 
 def post_series(
@@ -229,7 +229,7 @@ def post_series(
 
     params = []
     if kwargs:
-        params.append(_strip_brace(_render_value(kwargs)))
+        params.append(strip_brace(render_value(kwargs)))
     params.extend(_render_series_children(func, children))
 
-    return f'#{_render_value(func)}(' + ', '.join(params) + ')'
+    return f'#{render_value(func)}(' + ', '.join(params) + ')'

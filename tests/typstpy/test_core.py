@@ -14,7 +14,7 @@ from typstpy._core import (
     set_,
     show_,
 )
-from typstpy._core.render import _render_value
+from typstpy._core.render import render_value
 from typstpy.std import heading, outline, text
 
 
@@ -118,53 +118,53 @@ def test_post_series_protocol_does_not_spread_single_plain_child():
 
 class TestRenderValue:
     def test_bool_renders_lowercase(self):
-        assert _render_value(True) == 'true'
-        assert _render_value(False) == 'false'
+        assert render_value(True) == 'true'
+        assert render_value(False) == 'false'
 
     def test_none_renders_lowercase(self):
-        assert _render_value(None) == 'none'
+        assert render_value(None) == 'none'
 
     def test_str_preserves_content(self):
-        assert _render_value('hello') == 'hello'
-        assert _render_value('[Hi]') == '[Hi]'
+        assert render_value('hello') == 'hello'
+        assert render_value('[Hi]') == '[Hi]'
 
     def test_str_strips_leading_hash(self):
-        assert _render_value('#red') == 'red'
-        assert _render_value('#grid') == 'grid'
+        assert render_value('#red') == 'red'
+        assert render_value('#grid') == 'grid'
 
     def test_bytes_raises_typeerror(self):
         with pytest.raises(TypeError, match='bytes-like'):
-            _render_value(b'data')
+            render_value(b'data')
         with pytest.raises(TypeError, match='bytes-like'):
-            _render_value(bytearray(b'data'))
+            render_value(bytearray(b'data'))
         with pytest.raises(TypeError, match='bytes-like'):
-            _render_value(memoryview(b'data'))
+            render_value(memoryview(b'data'))
 
     def test_empty_dict_renders_empty_map(self):
-        assert _render_value({}) == '(:)'
+        assert render_value({}) == '(:)'
 
     def test_dict_renders_map_with_kebab_keys(self):
-        assert _render_value({'fill': 'red', 'column_gutter': '1em'}) == (
+        assert render_value({'fill': 'red', 'column_gutter': '1em'}) == (
             '(fill: red, column-gutter: 1em)'
         )
 
     def test_empty_list_renders_empty_sequence(self):
-        assert _render_value([]) == '()'
-        assert _render_value(()) == '()'
+        assert render_value([]) == '()'
+        assert render_value(()) == '()'
 
     def test_list_renders_sequence(self):
-        assert _render_value(['1fr', '2fr', '3fr']) == '(1fr, 2fr, 3fr)'
+        assert render_value(['1fr', '2fr', '3fr']) == '(1fr, 2fr, 3fr)'
 
     def test_nested_mapping_in_sequence(self):
-        result = _render_value([{'x': '1em'}, {'y': '2em'}])
+        result = render_value([{'x': '1em'}, {'y': '2em'}])
         assert result == '((x: 1em), (y: 2em))'
 
     def test_nested_sequence_in_mapping(self):
-        result = _render_value({'dash': ['solid', '1em']})
+        result = render_value({'dash': ['solid', '1em']})
         assert result == '(dash: (solid, 1em))'
 
     def test_deeply_nested_structure(self):
-        result = _render_value({'columns': ('1fr', '2fr'), 'fill': None})
+        result = render_value({'columns': ('1fr', '2fr'), 'fill': None})
         assert result == '(columns: (1fr, 2fr), fill: none)'
 
     def test_unregistered_callable_warns_and_uses_name(self):
@@ -173,10 +173,10 @@ class TestRenderValue:
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter('always')
-            _render_value(unregistered)
+            render_value(unregistered)
             assert len(w) == 1
             assert 'not been registered' in str(w[0].message)
 
     def test_placeholder_object_renders_str(self):
-        assert _render_value(42) == '42'
-        assert _render_value(3.14) == '3.14'
+        assert render_value(42) == '42'
+        assert render_value(3.14) == '3.14'

@@ -1,5 +1,6 @@
 from .decorators import attach_func, implement, temporary
 from .protocols import (
+    call,
     import_,
     instance,
     normal,
@@ -9,11 +10,15 @@ from .protocols import (
     set_,
     show_,
 )
+from .registry import Implement, validate_value
 
 __all__ = [
     'attach_func',
+    'call',
+    'Implement',
     'implement',
     'temporary',
+    'validate_value',
     'set_',
     'show_',
     'import_',

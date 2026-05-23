@@ -1,10 +1,11 @@
 from collections.abc import Callable, Iterable, Mapping
-from dataclasses import dataclass
 from typing import ClassVar, Self
 from weakref import WeakKeyDictionary, WeakSet
 
+import attrs
 
-@dataclass(frozen=True)
+
+@attrs.frozen
 class Implement:
     permanent: ClassVar[WeakKeyDictionary[Callable, Self]] = WeakKeyDictionary()
     temporary: ClassVar[WeakSet[Callable]] = WeakSet()
