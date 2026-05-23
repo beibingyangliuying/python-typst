@@ -1,0 +1,1 @@
+ts=2026-05-23T00:00:00.000Z type=learning scope=project content="Before running tests, always update fixtures and README first by running `& ./tests/update_fixtures.ps1` and `& ./tests/update_readme.ps1`, then execute the tests. This prevents false failures caused by stale fixture/README content."

@@ -1,0 +1,1 @@
+& ./activate_venv.ps1 && python scripts/generate_readme.py --write-readme README.md
