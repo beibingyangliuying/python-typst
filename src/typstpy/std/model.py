@@ -2,7 +2,7 @@ from types import MappingProxyType
 
 from typstpy._core import (
     attach_func,
-    call,
+    call_,
     implement,
     instance,
     normal,
@@ -84,8 +84,10 @@ def _bullet_list_item(body, /):
 
 @attach_func(_bullet_list_item, 'item')
 @implement(
-    'list', hyperlink='https://typst.app/docs/reference/model/list/',
-    version='0.13.x', spread_single=True,
+    'list',
+    hyperlink='https://typst.app/docs/reference/model/list/',
+    version='0.13.x',
+    spread_single=True,
 )
 def bullet_list(
     *children,
@@ -506,7 +508,7 @@ def _numbered_list_item(body, /, *, number='auto'):
     """
     if number == 'auto':
         return normal(_numbered_list_item, body)
-    return call(_numbered_list_item, number, body)
+    return call_(_numbered_list_item, number, body)
 
 
 @attach_func(_numbered_list_item, 'item')

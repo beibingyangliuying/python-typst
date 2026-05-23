@@ -1,7 +1,7 @@
 from typstpy._constants import VALID_PAPER_SIZES
 from typstpy._core import (
     attach_func,
-    call,
+    call_,
     implement,
     normal,
     post_series,
@@ -37,7 +37,7 @@ def align(body, alignment='start + top', /):
     """
     if alignment == 'start + top':
         return normal(align, body)
-    return call(align, alignment, body)
+    return call_(align, alignment, body)
 
 
 @implement(
@@ -222,7 +222,7 @@ def columns(body, count=2, /, *, gutter='4% + 0pt'):
     """
     if count == 2:
         return normal(columns, body, gutter=gutter)
-    return call(columns, count, body, gutter=gutter)
+    return call_(columns, count, body, gutter=gutter)
 
 
 @implement(
@@ -566,7 +566,7 @@ def pad(
         '#pad(lorem(20), left: 4% + 0pt, top: 4% + 0pt, right: 4% + 0pt, bottom: 4% + 0pt)'
     """
     if amount is not None:
-        return call(
+        return call_(
             pad,
             amount,
             body,
@@ -788,7 +788,7 @@ def place(
             dx=dx,
             dy=dy,
         )
-    return call(
+    return call_(
         place,
         alignment,
         body,
@@ -858,7 +858,7 @@ def rotate(
     """
     if angle == '0deg':
         return normal(rotate, body, origin=origin, reflow=reflow)
-    return call(rotate, angle, body, origin=origin, reflow=reflow)
+    return call_(rotate, angle, body, origin=origin, reflow=reflow)
 
 
 # * Typst docs verified on 2026-05-22: https://typst.app/docs/reference/layout/scale/; parameters match; default factor preserves body-first shorthand, non-default uses official argument order.
@@ -900,7 +900,7 @@ def scale(
     """
     if factor == '100%':
         return normal(scale, body, x=x, y=y, origin=origin, reflow=reflow)
-    return call(scale, factor, body, x=x, y=y, origin=origin, reflow=reflow)
+    return call_(scale, factor, body, x=x, y=y, origin=origin, reflow=reflow)
 
 
 @implement(

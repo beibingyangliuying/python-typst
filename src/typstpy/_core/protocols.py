@@ -147,7 +147,7 @@ def positional(func: Callable[..., object], *args: object) -> str:
     return f'#{render_value(func)}{render_value(args)}'
 
 
-def call(func: Callable[..., object], *args: object, **kwargs: object) -> str:
+def call_(func: Callable[..., object], *args: object, **kwargs: object) -> str:
     """Render a function call with explicit positional argument order."""
     kwargs = _filter_default_kwargs(func, kwargs)
 
