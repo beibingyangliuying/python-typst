@@ -40,10 +40,16 @@ def test_pre_series_factory_does_not_spread_single_plain_child():
     assert subpar_grid('[]') == '#subpar.grid([])'
 
 
-def test_pre_series_factory_spreads_single_sequence_for_known_series_function():
+def test_pre_series_factory_spreads_single_sequence():
     subpar_grid = pre_series('subpar.grid')
 
     assert subpar_grid(('[]', '[]')) == '#subpar.grid(..([], []))'
+
+
+def test_pre_series_factory_spreads_single_sequence_for_custom_label():
+    demo_series = pre_series('demo.series')
+
+    assert demo_series(('[a]', '[b]')) == '#demo.series(..([a], [b]))'
 
 
 def test_post_series_factory_places_keywords_before_children():
@@ -60,7 +66,13 @@ def test_post_series_factory_does_not_spread_single_plain_child():
     assert table('[1]') == '#table([1])'
 
 
-def test_post_series_factory_spreads_single_sequence_for_known_series_function():
+def test_post_series_factory_spreads_single_sequence():
     table = post_series('table')
 
     assert table(('[1]', '[2]')) == '#table(..([1], [2]))'
+
+
+def test_post_series_factory_spreads_single_sequence_for_custom_label():
+    demo_series = post_series('demo.series')
+
+    assert demo_series(('[a]', '[b]')) == '#demo.series(..([a], [b]))'

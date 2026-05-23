@@ -392,6 +392,7 @@ def _grid_footer(*children, repeat=True):
     'grid',
     hyperlink='https://typst.app/docs/reference/layout/grid/',
     version='0.13.x',
+    spread_single=True,
 )
 def grid(
     *children,
@@ -986,6 +987,7 @@ def vspace(amount, /, *, weak=False):
     'stack',
     hyperlink='https://typst.app/docs/reference/layout/stack/',
     version='0.13.x',
+    spread_single=True,
 )
 def stack(
     *children,

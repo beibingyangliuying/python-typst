@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import Any
 
-from .registry import Implement, _raise_unknown_fields
+from .registry import Implement, raise_unknown_fields
 from .render import render_value, strip_brace
 
 
@@ -32,7 +32,11 @@ def attach_func(
 
 
 def implement(
-    original_name: str, *, hyperlink: str | None = None, version: str | None = None
+    original_name: str,
+    *,
+    hyperlink: str | None = None,
+    version: str | None = None,
+    spread_single: bool = False,
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Register a typst function and attach it with `where` and `with_` functions.
 
@@ -40,18 +44,21 @@ def implement(
         original_name: The original function name in typst.
         hyperlink: The hyperlink of the documentation in typst. Defaults to None.
         version: The current supported version. Defaults to None.
+        spread_single: Whether a single list/tuple child should be spread. Defaults to False.
 
     Returns:
         The decorator function.
     """
 
     def wrapper(func: Callable[..., Any]) -> Callable[..., Any]:
-        Implement.permanent[func] = Implement(original_name, hyperlink, version)
+        Implement.permanent[func] = Implement(
+            original_name, hyperlink, version, spread_single
+        )
 
         def where(**kwargs: Any) -> str:
             """Returns a selector that filters for elements belonging to this function whose fields have the values of the given arguments."""
             if func not in Implement.temporary:
-                _raise_unknown_fields(func, kwargs)
+                raise_unknown_fields(func, kwargs)
 
             params = strip_brace(render_value(kwargs)) if kwargs else ''
             return f'#{original_name}.where({params})'
@@ -59,7 +66,7 @@ def implement(
         def with_(*args: Any, **kwargs: Any) -> str:
             """Returns a new function that has the given arguments pre-applied."""
             if func not in Implement.temporary:
-                _raise_unknown_fields(func, kwargs)
+                raise_unknown_fields(func, kwargs)
 
             params = []
             if args:

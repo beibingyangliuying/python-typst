@@ -4,7 +4,11 @@ from typstpy._core import implement, pre_series
 from typstpy.std import figure, image  # noqa
 
 
-@implement('subpar.grid', hyperlink='https://typst.app/universe/package/subpar')
+@implement(
+    'subpar.grid',
+    hyperlink='https://typst.app/universe/package/subpar',
+    spread_single=True,
+)
 def grid(
     *children,
     columns='auto',

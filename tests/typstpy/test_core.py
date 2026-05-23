@@ -108,12 +108,20 @@ def test_pre_series_protocol_does_not_spread_single_plain_child():
     assert demo_pre('[a]') == '#demo.pre([a])'
 
 
+def test_pre_series_protocol_does_not_spread_single_sequence_by_default():
+    assert demo_pre(('[a]', '[b]')) == '#demo.pre(([a], [b]))'
+
+
 def test_post_series_protocol_places_keywords_before_children():
     assert demo_post('[a]', '[b]', gap='1em') == '#demo.post(gap: 1em, [a], [b])'
 
 
 def test_post_series_protocol_does_not_spread_single_plain_child():
     assert demo_post('[a]') == '#demo.post([a])'
+
+
+def test_post_series_protocol_does_not_spread_single_sequence_by_default():
+    assert demo_post(('[a]', '[b]')) == '#demo.post(([a], [b]))'
 
 
 class TestRenderValue:

@@ -84,7 +84,8 @@ def _bullet_list_item(body, /):
 
 @attach_func(_bullet_list_item, 'item')
 @implement(
-    'list', hyperlink='https://typst.app/docs/reference/model/list/', version='0.13.x'
+    'list', hyperlink='https://typst.app/docs/reference/model/list/',
+    version='0.13.x', spread_single=True,
 )
 def bullet_list(
     *children,
@@ -514,6 +515,7 @@ def _numbered_list_item(body, /, *, number='auto'):
     'enum',
     hyperlink='https://typst.app/docs/reference/model/enum/',
     version='0.13.x',
+    spread_single=True,
 )
 def numbered_list(
     *children,
@@ -1123,6 +1125,7 @@ def _table_footer(*children, repeat=True):
     'table',
     hyperlink='https://typst.app/docs/reference/model/table/',
     version='0.13.x',
+    spread_single=True,
 )
 def table(
     *children,

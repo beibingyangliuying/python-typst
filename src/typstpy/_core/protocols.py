@@ -2,35 +2,20 @@ from collections.abc import Callable
 
 from .registry import (
     Implement,
-    _function_label,
-    _keyword_defaults,
-    _raise_unknown_fields,
+    keyword_defaults,
+    raise_unknown_fields,
 )
 from .render import render_value, strip_brace
 
 _SPREADABLE_CODE_PREFIXES = ('#color.map.',)
-_SPREAD_SINGLE_SEQUENCE_FUNCTIONS = frozenset(
-    {
-        'color.mix',
-        'enum',
-        'gradient.conic',
-        'gradient.linear',
-        'gradient.radial',
-        'grid',
-        'list',
-        'stack',
-        'subpar.grid',
-        'table',
-    }
-)
 
 
 def _filter_default_kwargs(
     func: Callable[..., object], kwargs: dict[str, object]
 ) -> dict[str, object]:
-    defaults = _keyword_defaults(func)
+    defaults = keyword_defaults(func)
     if func not in Implement.temporary:
-        _raise_unknown_fields(func, kwargs)
+        raise_unknown_fields(func, kwargs)
     if not defaults:
         return kwargs
     return {
@@ -44,7 +29,9 @@ def _should_spread_single_child(func: Callable[..., object], child: object) -> b
     if isinstance(child, str) and child.startswith(_SPREADABLE_CODE_PREFIXES):
         return True
     if isinstance(child, list | tuple):
-        return _function_label(func) in _SPREAD_SINGLE_SEQUENCE_FUNCTIONS
+        impl = Implement.permanent.get(func)
+        if impl is not None:
+            return impl.spread_single
     return False
 
 
@@ -74,7 +61,7 @@ def set_(func: Callable[..., object], /, **kwargs: object) -> str:
         Executable typst code.
     """
     if func not in Implement.temporary:
-        _raise_unknown_fields(func, kwargs)
+        raise_unknown_fields(func, kwargs)
 
     params = strip_brace(render_value(kwargs)) if kwargs else ''
     return f'#set {render_value(func)}({params})'

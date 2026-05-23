@@ -637,6 +637,7 @@ def _color_rotate(self, angle, /, *, space='oklch'):
     'color.mix',
     hyperlink='https://typst.app/docs/reference/visualize/color/#definitions-mix',
     version='0.13.x',
+    spread_single=True,
 )
 def _color_mix(*colors, space='oklab'):
     """Interface of `color.mix` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-mix) for more information.
@@ -979,6 +980,7 @@ def ellipse(
     'gradient.linear',
     hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-linear',
     version='0.13.x',
+    spread_single=True,
 )
 def _gradient_linear(
     *stops,
@@ -1022,6 +1024,7 @@ def _gradient_linear(
     'gradient.radial',
     hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-radial',
     version='0.13.x',
+    spread_single=True,
 )
 def _gradient_radial(
     *stops,
@@ -1073,6 +1076,7 @@ def _gradient_radial(
     'gradient.conic',
     hyperlink='https://typst.app/docs/reference/visualize/gradient/#definitions-conic',
     version='0.13.x',
+    spread_single=True,
 )
 def _gradient_conic(
     *stops,

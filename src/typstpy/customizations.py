@@ -116,7 +116,7 @@ def post_series(original_name: str, /) -> Callable[..., str]:
     """
 
     @temporary
-    @implement(original_name)
+    @implement(original_name, spread_single=True)
     def wrapped(*children, **kwargs) -> str:
         return _post_series(wrapped, *children, **kwargs)
 
@@ -147,7 +147,7 @@ def pre_series(original_name: str, /) -> Callable[..., str]:
     """
 
     @temporary
-    @implement(original_name)
+    @implement(original_name, spread_single=True)
     def wrapped(*children, **kwargs) -> str:
         return _pre_series(wrapped, *children, **kwargs)
 
