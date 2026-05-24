@@ -804,7 +804,7 @@ wheels = [
 
 [[package]]
 name = "typstpy"
-version = "1.3.1a0"
+version = "1.4.0a0"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
