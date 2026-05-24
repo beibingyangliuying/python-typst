@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "typstpy"
-version = "1.3.1-alpha.0"
+version = "1.4.0-alpha.0"
 description = "Python interface to generate executable Typst code."
 authors = [{ name = "chenjunhan", email = "beibingyangliuying@foxmail.com" }]
 requires-python = ">=3.11"
@@ -38,7 +38,7 @@ typeCheckingMode = "basic"
 reportUnsupportedDunderAll = "none"
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "I", "D202"]
+select = ["E4", "E7", "E9", "F", "I", "D202", "UP"]
 
 [tool.ruff.format]
 quote-style = "single"

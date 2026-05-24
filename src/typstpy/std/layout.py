@@ -307,6 +307,9 @@ def _grid_hline(
         stroke: The line's stroke. Defaults to '1pt + black'.
         position: The position at which the line is placed, given its row (y) - either top to draw above it or bottom to draw below it. Defaults to 'top'.
 
+    Raises:
+        ValueError: If `position` is invalid.
+
     Returns:
         Executable typst code.
     """
@@ -339,6 +342,9 @@ def _grid_vline(
         end: The row on top of which the vertical line ends (zero-indexed, exclusive). Defaults to None.
         stroke: The line's stroke. Defaults to '1pt + black'.
         position: The position at which the line is placed, given its column (x) - either start to draw before it or end to draw after it. Defaults to 'start'.
+
+    Raises:
+        ValueError: If `position` is invalid.
 
     Returns:
         Executable typst code.
@@ -712,6 +718,9 @@ def pagebreak(*, weak=False, to=None):
         weak: If true, the page break is skipped if the current page is already empty. Defaults to False.
         to: If given, ensures that the next page will be an even/odd page, with an empty page in between if necessary. Defaults to None.
 
+    Raises:
+        ValueError: If `to` is invalid.
+
     Returns:
         Executable typst code.
 
@@ -776,6 +785,9 @@ def place(
         clearance: The spacing between the placed element and other elements in a floating layout. Defaults to '1.5em'.
         dx: The horizontal displacement of the placed content. Defaults to '0% + 0pt'.
         dy: The vertical displacement of the placed content. Defaults to '0% + 0pt'.
+
+    Raises:
+        ValueError: If `scope` is invalid.
 
     Returns:
         Executable typst code.
@@ -1013,6 +1025,9 @@ def stack(
     Args:
         dir: The direction along which the items are stacked. Defaults to 'ttb'.
         spacing: Spacing to insert between items where no explicit spacing was provided. Defaults to None.
+
+    Raises:
+        ValueError: If `dir` is invalid.
 
     Returns:
         Executable typst code.

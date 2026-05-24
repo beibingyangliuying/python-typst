@@ -1,11 +1,35 @@
 from collections.abc import Callable
 
+from typstpy._core import call_ as _call_
 from typstpy._core import implement, temporary
 from typstpy._core import instance as _instance
 from typstpy._core import normal as _normal
 from typstpy._core import positional as _positional
 from typstpy._core import post_series as _post_series
 from typstpy._core import pre_series as _pre_series
+
+
+def call_(original_name: str, /) -> Callable[..., str]:
+    """Function factory, create function that represent the protocol of `call_`.
+
+    Args:
+        original_name: The original function name in typst.
+
+    Returns:
+        A function that represent the protocol of `call_`.
+
+    Examples:
+        >>> demo = call_('demo')
+        >>> demo(1, 2, 3, fill='red')
+        '#demo(1, 2, 3, fill: red)'
+    """
+
+    @temporary
+    @implement(original_name)
+    def wrapped(*args, **kwargs) -> str:
+        return _call_(wrapped, *args, **kwargs)
+
+    return wrapped
 
 
 def normal(original_name: str, /) -> Callable[..., str]:
@@ -154,4 +178,4 @@ def pre_series(original_name: str, /) -> Callable[..., str]:
     return wrapped
 
 
-__all__ = ['normal', 'instance', 'positional', 'post_series', 'pre_series']
+__all__ = ['call_', 'normal', 'instance', 'positional', 'post_series', 'pre_series']

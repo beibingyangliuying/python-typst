@@ -1062,6 +1062,9 @@ def _table_hline(
         stroke: The line's stroke. Defaults to '1pt + black'.
         position: The position at which the line is placed, given its row (y) - either top to draw above it or bottom to draw below it. Defaults to 'top'.
 
+    Raises:
+        ValueError: If `position` is invalid.
+
     Returns:
         Executable typst code.
     """
@@ -1094,6 +1097,9 @@ def _table_vline(
         end: The row on top of which the vertical line ends (zero-indexed, exclusive). Defaults to None.
         stroke: The line's stroke. Defaults to '1pt + black'.
         position: The position at which the line is placed, given its column (x) - either start to draw before it or end to draw after it. Defaults to 'start'.
+
+    Raises:
+        ValueError: If `position` is invalid.
 
     Returns:
         Executable typst code.

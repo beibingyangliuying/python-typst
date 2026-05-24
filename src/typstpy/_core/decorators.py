@@ -2,7 +2,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .registry import Implement, raise_unknown_fields
-from .render import render_value, strip_brace
+from .render import render_content
 
 
 def attach_func(
@@ -31,6 +31,32 @@ def attach_func(
     return wrapper
 
 
+def _make_where_func(
+    func: Callable[..., Any], original_name: str
+) -> Callable[..., str]:
+    def where(**kwargs: Any) -> str:
+        if func not in Implement.temporary:
+            raise_unknown_fields(func, kwargs)
+        params = render_content(kwargs) if kwargs else ''
+        return f'#{original_name}.where({params})'
+
+    return where
+
+
+def _make_with_func(func: Callable[..., Any], original_name: str) -> Callable[..., str]:
+    def with_(*args: Any, **kwargs: Any) -> str:
+        if func not in Implement.temporary:
+            raise_unknown_fields(func, kwargs)
+        params = []
+        if args:
+            params.append(render_content(args))
+        if kwargs:
+            params.append(render_content(kwargs))
+        return f'#{original_name}.with({", ".join(params)})'
+
+    return with_
+
+
 def implement(
     original_name: str,
     *,
@@ -55,26 +81,15 @@ def implement(
             original_name, hyperlink, version, spread_single
         )
 
-        def where(**kwargs: Any) -> str:
-            """Returns a selector that filters for elements belonging to this function whose fields have the values of the given arguments."""
-            if func not in Implement.temporary:
-                raise_unknown_fields(func, kwargs)
-
-            params = strip_brace(render_value(kwargs)) if kwargs else ''
-            return f'#{original_name}.where({params})'
-
-        def with_(*args: Any, **kwargs: Any) -> str:
-            """Returns a new function that has the given arguments pre-applied."""
-            if func not in Implement.temporary:
-                raise_unknown_fields(func, kwargs)
-
-            params = []
-            if args:
-                params.append(strip_brace(render_value(args)))
-            if kwargs:
-                params.append(strip_brace(render_value(kwargs)))
-
-            return f'#{original_name}.with({", ".join(params)})'
+        where = _make_where_func(func, original_name)
+        where.__doc__ = (
+            'Returns a selector that filters for elements belonging to this '
+            'function whose fields have the values of the given arguments.'
+        )
+        with_ = _make_with_func(func, original_name)
+        with_.__doc__ = (
+            'Returns a new function that has the given arguments pre-applied.'
+        )
 
         attach_func(where, 'where')(func)
         attach_func(with_, 'with_')(func)

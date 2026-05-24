@@ -7,6 +7,7 @@ from .registry import Implement
 
 
 def _render_key(key: str) -> str:
+    """Convert Python snake_case parameter names to Typst kebab-case."""
     return key.replace('_', '-')
 
 
@@ -48,10 +49,16 @@ def _(obj: Iterable) -> TypstExpr:
 
 @_to_expr.register
 def _(obj: Callable) -> TypstExpr:
+    """Render a registered function to its original Typst name.
+
+    Unregistered callables fall back to ``__name__`` with a warning,
+    since the correct Typst name cannot be inferred automatically.
+    """
     implement = Implement.permanent.get(obj, None)
     if implement is None:
         warnings.warn(
-            f'The function {obj} has not been registered. Use `implement` decorator to register it and set the correct original name.',
+            f'The function {obj} has not been registered. '
+            'Use `implement` decorator to register it and set the correct original name.',
             stacklevel=3,
         )
         return RawExpr(obj.__name__)
@@ -59,8 +66,14 @@ def _(obj: Callable) -> TypstExpr:
 
 
 def render_value(obj: object) -> str:
+    """Render a Python object to its full Typst source representation."""
     return _to_expr(obj).render()
 
 
-def strip_brace(value: str) -> str:
-    return value[1:-1]
+def render_content(obj: object) -> str:
+    """Render a Python object without outer parentheses, for use as inline arguments.
+
+    Equivalent to ``strip_brace(render_value(obj))`` but implemented at the IR
+    level to avoid fragile character-index assumptions.
+    """
+    return _to_expr(obj).render_content()

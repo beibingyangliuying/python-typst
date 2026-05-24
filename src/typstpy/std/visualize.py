@@ -264,38 +264,11 @@ def _color_linear_rgb(red, green=None, blue=None, alpha=None, /):
 
 
 @overload
-def rgb(red, green, blue, alpha=None, /):
-    """Interface of `rgb` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-rgb) for more information.
-
-    Args:
-        red: The red component.
-        green: The green component.
-        blue: The blue component.
-        alpha: The alpha component. Defaults to None.
-
-    Returns:
-        A color in a specific color space.
-
-    Examples:
-        >>> rgb(255, 255, 255)
-        '#rgb(255, 255, 255)'
-    """
+def rgb(red, green, blue, alpha=None, /): ...
 
 
 @overload
-def rgb(hex, /):
-    """Interface of `rgb` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-rgb) for more information.
-
-    Args:
-        hex: The color in hexadecimal notation.
-
-    Returns:
-        A color in a specific color space.
-
-    Examples:
-        >>> rgb('"#ffffff"')
-        '#rgb("#ffffff")'
-    """
+def rgb(hex, /): ...
 
 
 # * Typst docs verified on 2026-05-23: https://typst.app/docs/reference/visualize/color/#definitions-rgb; parameters match; supports 1-arg (hex or color conversion) and 3-/4-arg component form.
@@ -306,6 +279,12 @@ def rgb(hex, /):
 )
 def rgb(*args):
     """Interface of `rgb` in typst. See [the documentation](https://typst.app/docs/reference/visualize/color/#definitions-rgb) for more information.
+
+    Args:
+        *args: Positional arguments: either 1 arg (hex string, e.g.
+            ``'"#ffffff"'``, or another color to convert), 3 args (red,
+            green, blue components), or 4 args (red, green, blue, alpha
+            components).
 
     Raises:
         TypeError: If the number of arguments is not 1, 3, or 4.
@@ -1911,6 +1890,9 @@ def tiling(
         size: The bounding box of each cell of the tiling. Defaults to 'auto'.
         spacing: The spacing between cells of the tiling. Defaults to ('0pt', '0pt').
         relative: The relative placement of the tiling. Defaults to 'auto'.
+
+    Raises:
+        ValueError: If `relative` is invalid.
 
     Returns:
         Executable typst code.

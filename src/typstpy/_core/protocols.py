@@ -5,14 +5,19 @@ from .registry import (
     keyword_defaults,
     raise_unknown_fields,
 )
-from .render import render_value, strip_brace
+from .render import render_content, render_value
 
 _SPREADABLE_CODE_PREFIXES = ('#color.map.',)
+"""Typst color-map values (e.g. ``'#color.map.turbo'``) carry a ``#`` prefix
+in raw Python form; ``render_value()`` strips the ``#`` during rendering,
+so the spread output becomes ``..color.map.turbo`` as expected by Typst.
+"""
 
 
 def _filter_default_kwargs(
     func: Callable[..., object], kwargs: dict[str, object]
 ) -> dict[str, object]:
+    """Drop keyword arguments whose value matches the function's own default."""
     defaults = keyword_defaults(func)
     if func not in Implement.temporary:
         raise_unknown_fields(func, kwargs)
@@ -25,9 +30,13 @@ def _filter_default_kwargs(
     }
 
 
-def _should_spread_single_child(func: Callable[..., object], child: object) -> bool:
-    if isinstance(child, str) and child.startswith(_SPREADABLE_CODE_PREFIXES):
-        return True
+def _should_spread_color_map(child: object) -> bool:
+    """Return True if *child* is a color-map value that should be spread."""
+    return isinstance(child, str) and child.startswith(_SPREADABLE_CODE_PREFIXES)
+
+
+def _should_spread_list_sequence(func: Callable[..., object], child: object) -> bool:
+    """Return True if a single list/tuple *child* should be spread per the function's config."""
     if isinstance(child, list | tuple):
         impl = Implement.permanent.get(func)
         if impl is not None:
@@ -35,9 +44,15 @@ def _should_spread_single_child(func: Callable[..., object], child: object) -> b
     return False
 
 
+def _should_spread_single_child(func: Callable[..., object], child: object) -> bool:
+    """Return True if a single child value should be spread into multiple arguments."""
+    return _should_spread_color_map(child) or _should_spread_list_sequence(func, child)
+
+
 def _render_series_children(
     func: Callable[..., object], children: tuple[object, ...]
 ) -> list[str]:
+    """Render variadic children for series protocols, applying spread when needed."""
     if not children:
         return []
     if len(children) == 1:
@@ -45,7 +60,7 @@ def _render_series_children(
         if _should_spread_single_child(func, child):
             return [f'..{render_value(child)}']
         return [render_value(child)]
-    return [strip_brace(render_value(children))]
+    return [render_content(children)]
 
 
 def set_(func: Callable[..., object], /, **kwargs: object) -> str:
@@ -63,7 +78,7 @@ def set_(func: Callable[..., object], /, **kwargs: object) -> str:
     if func not in Implement.temporary:
         raise_unknown_fields(func, kwargs)
 
-    params = strip_brace(render_value(kwargs)) if kwargs else ''
+    params = render_content(kwargs) if kwargs else ''
     return f'#set {render_value(func)}({params})'
 
 
@@ -103,7 +118,7 @@ def import_(path: object, /, *names: object) -> str:
     """
     if not names:
         return f'#import {path}'
-    return f'#import {path}: {strip_brace(render_value(names))}'
+    return f'#import {path}: {render_content(names)}'
 
 
 def normal(
@@ -128,9 +143,9 @@ def normal(
     if body != '':
         params.append(render_value(body))
     if args:
-        params.append(strip_brace(render_value(args)))
+        params.append(render_content(args))
     if kwargs:
-        params.append(strip_brace(render_value(kwargs)))
+        params.append(render_content(kwargs))
 
     return f'#{render_value(func)}(' + ', '.join(params) + ')'
 
@@ -153,9 +168,9 @@ def call_(func: Callable[..., object], *args: object, **kwargs: object) -> str:
 
     params = []
     if args:
-        params.append(strip_brace(render_value(args)))
+        params.append(render_content(args))
     if kwargs:
-        params.append(strip_brace(render_value(kwargs)))
+        params.append(render_content(kwargs))
 
     return f'#{render_value(func)}(' + ', '.join(params) + ')'
 
@@ -176,9 +191,9 @@ def instance(
 
     params = []
     if args:
-        params.append(strip_brace(render_value(args)))
+        params.append(render_content(args))
     if kwargs:
-        params.append(strip_brace(render_value(kwargs)))
+        params.append(render_content(kwargs))
 
     return f'{instance}.{render_value(func)}(' + ', '.join(params) + ')'
 
@@ -196,7 +211,7 @@ def pre_series(func: Callable[..., object], *children: object, **kwargs: object)
 
     params = _render_series_children(func, children)
     if kwargs:
-        params.append(strip_brace(render_value(kwargs)))
+        params.append(render_content(kwargs))
 
     return f'#{render_value(func)}(' + ', '.join(params) + ')'
 
@@ -216,7 +231,7 @@ def post_series(
 
     params = []
     if kwargs:
-        params.append(strip_brace(render_value(kwargs)))
+        params.append(render_content(kwargs))
     params.extend(_render_series_children(func, children))
 
     return f'#{render_value(func)}(' + ', '.join(params) + ')'

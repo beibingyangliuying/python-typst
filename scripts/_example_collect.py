@@ -7,8 +7,9 @@ import importlib
 import io
 import sys
 import warnings
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import attrs
 
@@ -84,6 +85,10 @@ def collect_typst_examples() -> tuple[
                 ):
                     warnings.simplefilter('ignore', DeprecationWarning)
                     result = _run_source(example.source, namespace)
+            # Intentionally broad: doctests may raise any exception type;
+            # we report them as failures without crashing the collector.
+            # Infrastructure errors (ImportError, SystemExit) are unlikely
+            # in normal operation since all modules are already imported.
             except Exception as exc:  # noqa: BLE001 - report doctest failures.
                 failed.append(FailedExample(block.qualname, index, source, repr(exc)))
                 continue

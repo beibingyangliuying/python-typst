@@ -1,10 +1,23 @@
 from typstpy.customizations import (
+    call_,
     instance,
     normal,
     positional,
     post_series,
     pre_series,
 )
+
+
+def test_call_factory_renders_positional_args_and_keywords():
+    demo = call_('demo')
+
+    assert demo(1, 2, 3, fill='red') == '#demo(1, 2, 3, fill: red)'
+
+
+def test_call_factory_renders_only_keywords():
+    demo = call_('demo')
+
+    assert demo(fill='red') == '#demo(fill: red)'
 
 
 def test_normal_factory_renders_body_and_keywords():
